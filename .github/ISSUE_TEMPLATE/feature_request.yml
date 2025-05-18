@@ -5,7 +5,8 @@ labels: ["feature"]
 body:
   - type: dropdown
     attributes:
-      label: Tipo de Feature
+      label: Time responsável
+      description: "Selecione o time responsável pela feature."
       options:
         - "back-end"
         - "front-end"
