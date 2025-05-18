@@ -23,22 +23,3 @@ body:
       options:
         - label: "Está implementando um novo recurso?"
           required: false
-name: 🦟🏸 Bugfix
-description: Relate um bug ou erro
-title: "[MÓDULO]: [RECURSO]: [Descrição simples sobre o bug] "
-labels: ["bug"]
-body:
-  - type: dropdown
-    attributes:
-      label: Tipo de Bug
-      options:
-        - "back-end"
-        - "front-end"
-    validations:
-      required: true
-  - type: textarea
-    attributes:
-      label: Descrição
-      description: "Descreva o bug que você irá corrigir."
-    validations:
-      required: true
