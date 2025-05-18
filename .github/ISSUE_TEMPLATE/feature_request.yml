@@ -1,0 +1,25 @@
+name: ✨ Feature Request
+description: Sugira uma nova funcionalidade
+title: "[FEATURE] "
+labels: ["feature"]
+body:
+  - type: dropdown
+    attributes:
+      label: Tipo de Feature
+      options:
+        - "back-end"
+        - "front-end"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Descrição
+      description: "Descreva a funcionalidade desejada"
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: "Checklist"
+      options:
+        - label: "Isso resolve um problema existente?"
+          required: false
