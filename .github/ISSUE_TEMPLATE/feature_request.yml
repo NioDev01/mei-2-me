@@ -15,6 +15,19 @@ body:
     attributes:
       label: Descrição
       description: "Descreva a feature que você irá implementar."
+      value: |
+        **Recurso que será desenvolvido**:  
+        (ex.: "Implementar o recurso de login com Google")  
+
+        **ID dos requisitos funcionais relacionados**:  
+        [RF05]  
+
+        **Objetivos intermediários**:  
+        1. ...  
+        2. ...  
+
+        **Informações Adicionais**:  
+        (referências, etc.)
     validations:
       required: true
   - type: checkboxes
