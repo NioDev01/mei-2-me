@@ -1,6 +1,6 @@
-name: ✨ Feature Request
+name: ✨ Feature
 description: Sugira uma nova funcionalidade
-title: "[FEATURE] "
+title: "[MÓDULO]: [RECURSO]: [Descrição simples sobre a feature] "
 labels: ["feature"]
 body:
   - type: dropdown
@@ -14,12 +14,31 @@ body:
   - type: textarea
     attributes:
       label: Descrição
-      description: "Descreva a funcionalidade desejada"
+      description: "Descreva a feature que você irá implementar."
     validations:
       required: true
   - type: checkboxes
     attributes:
-      label: "Checklist"
+      label: "Controle de Versão"
       options:
-        - label: "Isso resolve um problema existente?"
+        - label: "Está implementando um novo recurso?"
           required: false
+name: 🦟🏸 Bugfix
+description: Relate um bug ou erro
+title: "[MÓDULO]: [RECURSO]: [Descrição simples sobre o bug] "
+labels: ["bug"]
+body:
+  - type: dropdown
+    attributes:
+      label: Tipo de Bug
+      options:
+        - "back-end"
+        - "front-end"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Descrição
+      description: "Descreva o bug que você irá corrigir."
+    validations:
+      required: true
