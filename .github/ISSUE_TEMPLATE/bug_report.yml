@@ -9,6 +9,7 @@ body:
       options:
         - "back-end"
         - "front-end"
+        - "infra"
     validations:
       required: true
   - type: textarea

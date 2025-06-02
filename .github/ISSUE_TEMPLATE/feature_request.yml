@@ -10,6 +10,8 @@ body:
       options:
         - "back-end"
         - "front-end"
+        - "infra"
+        - "todos"
     validations:
       required: true
   - type: textarea
