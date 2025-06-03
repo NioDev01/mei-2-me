@@ -8,39 +8,42 @@ on:
 jobs:
   create-prs:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout the code
+      - name: Checkout the repo
         uses: actions/checkout@v3
 
-      - name: Install GitHub CLI
-        run: sudo apt-get install gh -y
+      - name: Setup GitHub CLI
+        uses: cli/cli-action@v2
 
-      - name: Create PR to develop
+      - name: Create PR from main to develop
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if ! gh pr list --base develop --head main --json number --jq '.[0]' > /dev/null; then
+          echo "Checking if PR from main to develop exists..."
+          if gh pr list --base develop --head main --json number --jq '.[0]' | grep -q null; then
+            echo "Creating PR from main to develop..."
             gh pr create \
-              --title "Merge main into develop" \
-              --body "Automatic PR to keep develop up to date with main" \
               --base develop \
-              --head main
+              --head main \
+              --title "Merge main into develop" \
+              --body "Automated PR to keep develop up to date with main"
           else
             echo "PR from main to develop already exists"
           fi
 
-
-      - name: Create PR to hotfix
+      - name: Create PR from main to hotfix
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if ! gh pr list --base hotfix --head main --json number --jq '.[0]' > /dev/null; then
+          echo "Checking if PR from main to hotfix exists..."
+          if gh pr list --base hotfix --head main --json number --jq '.[0]' | grep -q null; then
+            echo "Creating PR from main to hotfix..."
             gh pr create \
-              --title "Merge main into hotfix" \
-              --body "Automatic PR to keep hotfix up to date with main" \
               --base hotfix \
-              --head main
+              --head main \
+              --title "Merge main into hotfix" \
+              --body "Automated PR to keep hotfix up to date with main"
           else
             echo "PR from main to hotfix already exists"
           fi
-
