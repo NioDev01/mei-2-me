@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '.github/**'
   schedule:
     - cron: '0 9 * * 1-5' # Dias úteis às 9h (ajuste conforme fuso horário)
 
@@ -23,16 +27,16 @@ jobs:
           fetch-depth: 0
 
       - name: Create Sync PR
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v5.0.2 # Versão fixa explícita
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: sync main to ${{ matrix.target-branch }}"
-          title: "🔀 Sync: main → ${{ matrix.target-branch }}"
-          body: "Automated sync from main branch"
+          title: "Sync: main → ${{ matrix.target-branch }}"
+          body: "Automated PR created by GitHub Actions"
           branch: "sync/main-to-${{ matrix.target-branch }}"
           base: "${{ matrix.target-branch }}"
           labels: "automated"
           delete-branch: true
-          # Configurações de auto-merge CORRETAS:
-          auto-merge: true
-          auto-merge-method: merge
+          # Configuração alternativa para auto-merge:
+          automerge: true  # Note o nome diferente do parâmetro
+          automerge-method: merge  # Novo formato
