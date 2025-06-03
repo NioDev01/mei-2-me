@@ -1,0 +1,46 @@
+name: Auto-Sync Main to Protected Branches
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 9 * * 1-5' # Dias úteis às 9h (ajuste conforme fuso horário)
+
+jobs:
+  create-sync-prs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    strategy:
+      matrix:
+        target-branch: ['develop', 'hotfix']
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create sync PR
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: sync main to ${{ matrix.target-branch }} [skip ci]"
+          title: "🔀 Sync: main → ${{ matrix.target-branch }} (automated)"
+          body: |
+            ### PR de Sync Automático
+            Esse PR foi criado automaticamente para sincronizar as branches `${{ matrix.target-branch }}` com as últimas alterações da branch `main`.
+            
+            *Esse Pr foi gerado pelo GitHub Action workflow.*
+          branch: "sync/main-to-${{ matrix.target-branch }}-${{ github.run_id }}"
+          base: "${{ matrix.target-branch }}"
+          labels: "automação"
+          assignees: "${{ github.actor }}"
+          reviewers: "Tech Leaders"
+          milestone: "Sync"
+          delete-branch: true
+          draft: false
+          auto-merge: true
+          auto-merge-method: merge
+          signoff: true
