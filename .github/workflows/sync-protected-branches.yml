@@ -1,42 +1,31 @@
-name: Auto-Sync Main to Protected Branches
+name: Create PR from main to develop and hotfix
 
 on:
   push:
     branches:
       - main
-    paths-ignore:
-      - 'README.md'
-      - 'docs/**'
-      - '.github/**'
-  schedule:
-    - cron: '0 9 * * 1-5' # Dias úteis às 9h (ajuste conforme fuso horário)
 
 jobs:
-  create-sync-prs:
+  create-prs:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    strategy:
-      matrix:
-        target-branch: ['develop', 'hotfix']
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v3
 
-      - name: Create Sync PR
-        uses: peter-evans/create-pull-request@v5.0.2 # Versão fixa explícita
+      - name: Create PR to develop
+        uses: devops-infra/action-pull-request@v0.5.2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: sync main to ${{ matrix.target-branch }}"
-          title: "Sync: main → ${{ matrix.target-branch }}"
-          body: "Automated PR created by GitHub Actions"
-          branch: "sync/main-to-${{ matrix.target-branch }}"
-          base: "${{ matrix.target-branch }}"
-          labels: "automated"
-          delete-branch: true
-          # Configuração alternativa para auto-merge:
-          automerge: true  # Note o nome diferente do parâmetro
-          automerge-method: merge  # Novo formato
+          source_branch: main
+          target_branch: develop
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          title: 'Merge main into develop'
+          body: 'Automatic PR: Sync main with develop'
+
+      - name: Create PR to hotfix
+        uses: devops-infra/action-pull-request@v0.5.2
+        with:
+          source_branch: main
+          target_branch: hotfix
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          title: 'Merge main into hotfix'
+          body: 'Automatic PR: Sync main with hotfix'
