@@ -1,4 +1,4 @@
-name: Create PR from main to develop and hotfix
+name: Create PRs from main to develop and hotfix
 
 on:
   push:
@@ -9,23 +9,41 @@ jobs:
   create-prs:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout the code
         uses: actions/checkout@v3
 
+      - name: Install GitHub CLI
+        run: sudo apt-get install gh -y
+
       - name: Create PR to develop
-        uses: devops-infra/action-pull-request@v0.5.2
-        with:
-          source_branch: main
-          target_branch: develop
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          title: 'Merge main into develop'
-          body: 'Automatic PR: Sync main with develop'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh auth login --with-token <<< "$GITHUB_TOKEN"
+
+          # Verifica se já existe PR aberta
+          if ! gh pr list --base develop --head main --json number --jq '.[0]' > /dev/null; then
+            gh pr create \
+              --title "Merge main into develop" \
+              --body "Automatic PR to keep develop up to date with main" \
+              --base develop \
+              --head main
+          else
+            echo "PR from main to develop already exists"
+          fi
 
       - name: Create PR to hotfix
-        uses: devops-infra/action-pull-request@v0.5.2
-        with:
-          source_branch: main
-          target_branch: hotfix
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          title: 'Merge main into hotfix'
-          body: 'Automatic PR: Sync main with hotfix'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh auth login --with-token <<< "$GITHUB_TOKEN"
+
+          if ! gh pr list --base hotfix --head main --json number --jq '.[0]' > /dev/null; then
+            gh pr create \
+              --title "Merge main into hotfix" \
+              --body "Automatic PR to keep hotfix up to date with main" \
+              --base hotfix \
+              --head main
+          else
+            echo "PR from main to hotfix already exists"
+          fi
