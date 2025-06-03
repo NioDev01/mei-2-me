@@ -22,25 +22,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create sync PR
+      - name: Create Sync PR
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: sync main to ${{ matrix.target-branch }} [skip ci]"
-          title: "🔀 Sync: main → ${{ matrix.target-branch }} (automated)"
-          body: |
-            ### PR de Sync Automático
-            Esse PR foi criado automaticamente para sincronizar as branches `${{ matrix.target-branch }}` com as últimas alterações da branch `main`.
-            
-            *Esse Pr foi gerado pelo GitHub Action workflow.*
-          branch: "sync/main-to-${{ matrix.target-branch }}-${{ github.run_id }}"
+          commit-message: "chore: sync main to ${{ matrix.target-branch }}"
+          title: "🔀 Sync: main → ${{ matrix.target-branch }}"
+          body: "Automated sync from main branch"
+          branch: "sync/main-to-${{ matrix.target-branch }}"
           base: "${{ matrix.target-branch }}"
-          labels: "automação"
-          assignees: "${{ github.actor }}"
-          reviewers: "Tech Leaders"
-          milestone: "Sync"
+          labels: "automated"
           delete-branch: true
-          draft: false
+          # Configurações de auto-merge CORRETAS:
           auto-merge: true
           auto-merge-method: merge
-          signoff: true
