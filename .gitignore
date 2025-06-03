@@ -1,1 +1,53 @@
- 
+ # ========================
+# Global ignores
+# ========================
+node_modules/
+dist/
+.env
+.env.*     # Ex: .env.production, .env.development
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+*.local
+.DS_Store
+Thumbs.db
+
+# ========================
+# Editor/OS files
+# ========================
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ========================
+# Build outputs
+# ========================
+**/build/
+**/dist/
+**/out/
+
+# ========================
+# System files
+# ========================
+*.bak
+*.tmp
+
+# ========================
+# Frontend (client)
+# ========================
+client/node_modules/
+client/dist/
+client/.env
+client/.env.*
+
+# ========================
+# Backend (server)
+# ========================
+server/node_modules/
+server/dist/
+server/.env
+server/.env.*
+
