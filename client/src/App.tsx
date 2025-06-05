@@ -1,11 +1,13 @@
-import { Button } from "@/components/ui/button"
+import { MessageForm } from "./pages/message";
+import { Toaster } from "sonner";
 
 function App() {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center">
-      <Button>Clique aqui</Button>
+      <Toaster position="top-center" />
+      <MessageForm />
     </div>
-  )
+  );
 }
 
 export default App
