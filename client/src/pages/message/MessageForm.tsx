@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input"
 
 const FormSchema = z.object({
-    message: z.string().min(2, {
+    mensagem: z.string().min(2, {
         message: 'Sua mensagem deve ter pelo menos 2 caracteres.',
     })
 })
@@ -27,13 +27,13 @@ export function MessageForm() {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            message: '',
+            mensagem: '',
         },
     });
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
         await axios.post(`${import.meta.env.VITE_API_URL}/mensagens`, {
-            conteudo: data.message,
+            conteudo: data.mensagem,
         })
         .then((response) => {
             toast.success(`Mensagem salva: ${response.data.conteudo}`);
@@ -58,7 +58,7 @@ export function MessageForm() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
                 <FormField
                     control={form.control}
-                    name='message'
+                    name='mensagem'
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Mensagem</FormLabel>
