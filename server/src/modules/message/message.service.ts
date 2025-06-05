@@ -1,16 +1,26 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Message } from 'src/db/entities/message.entity';
+import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dto/create-message.dto';
 
 @Injectable()
 export class MessageService {
-  private mensagens: string[] = []; // temporário, simula um banco de dados
+  constructor(
+    @InjectRepository(Message)
+    private messageRepository: Repository<Message>,
+  ) {}
 
-  create(dto: CreateMessageDto) {
-    this.mensagens.push(dto.conteudo);
-    return { conteudo: dto.conteudo };
+  async create(dto: CreateMessageDto): Promise<Message> {
+    const novaMensagem = this.messageRepository.create({
+      conteudo: dto.conteudo,
+    });
+    return await this.messageRepository.save(novaMensagem);
   }
 
-  findAll() {
-    return this.mensagens;
+  async findAll(): Promise<Message[]> {
+    return await this.messageRepository.find({
+      order: { criadoEm: 'DESC' }, // Ordena por data de criação, do mais recente para o mais antigo
+    });
   }
 }
