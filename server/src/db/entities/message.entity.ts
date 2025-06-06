@@ -8,11 +8,11 @@ import {
 @Entity('mensagens')
 export class Message {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ type: 'text' })
-  conteudo: string;
+  conteudo!: string;
 
   @CreateDateColumn({ type: 'timestamp' })
-  criadoEm: Date;
+  criadoEm!: Date;
 }

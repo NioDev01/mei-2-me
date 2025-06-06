@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Message } from 'src/db/entities/message.entity';
+import { PrismaService } from '../../../prisma/prisma.service'; // ajuste o caminho se precisar
 import { MessageService } from './message.service';
 import { MessageController } from './message.controller';
+import { MessageRepository } from './message.repository'; // se tiver repositório customizado
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Message])],
+  imports: [], // não precisa do TypeOrmModule aqui
   controllers: [MessageController],
-  providers: [MessageService],
+  providers: [MessageService, PrismaService, MessageRepository],
+  exports: [MessageService],
 })
 export class MessageModule {}
