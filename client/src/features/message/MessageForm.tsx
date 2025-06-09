@@ -23,7 +23,11 @@ const FormSchema = z.object({
     })
 })
 
-export function MessageForm() {
+type Props = {
+    aoEnviar: () => void;
+};
+
+export function MessageForm({ aoEnviar}: Props) {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -38,19 +42,20 @@ export function MessageForm() {
         .then((response) => {
             toast.success(`Mensagem salva: ${response.data.conteudo}`);
             form.reset();
+            aoEnviar();
         })
         .catch((error) => {
             console.error(error);
             toast.error('Erro ao enviar mensagem.');
         });
 
-        toast("Você enviou a seguinte mensagem:", {
-            description: (
-                <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-                    <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-        })
+        // toast("Você enviou a seguinte mensagem:", {
+        //     description: (
+        //         <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
+        //             <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        //         </pre>
+        //     ),
+        // })
     }
 
     return (
