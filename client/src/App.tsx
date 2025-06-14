@@ -8,6 +8,7 @@ function App() {
       <nav className="space-x-4 mb-6">
         <Link to="/" className="text-blue-500 hover:underline">Início</Link>
         <Link to="/mensagens" className="text-blue-500 hover:underline">Mensagens</Link>
+        <Link to="/treinamento" className="text-blue-500 hover:underline">Treinamento</Link>
       </nav>
 
       {/* Rotas */}
