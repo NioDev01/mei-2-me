@@ -13,12 +13,19 @@ async function bootstrap() {
     }),
   );
 
+  // Configurar CORS para aceitar requisições do frontend
   app.enableCors({
-    origin: 'http://localhost:5173', // permite apenas seu frontend
+    origin: process.env.FRONTEND_URL || '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
   });
+
+  // Prefixo global para API
+  app.setGlobalPrefix('api');
 
   await app.listen(process.env.PORT ?? 3000);
 }
+
 bootstrap().catch((err) => {
   console.error('Erro ao iniciar a aplicação:', err);
   process.exit(1);
