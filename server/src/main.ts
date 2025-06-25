@@ -15,7 +15,7 @@ async function bootstrap() {
 
   // Configurar CORS para aceitar requisições do frontend
   app.enableCors({
-    origin: process.env.FRONTEND_URL || '*',
+    origin: process.env.FRONTEND_URL && process.env.FRONTEND_LOCAL_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
