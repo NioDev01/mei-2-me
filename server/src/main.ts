@@ -2,10 +2,21 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('Bootstrap');
+
+  // Configuração do Swagger, para documentação da API
+  const config = new DocumentBuilder()
+    .setTitle('MEI-2-ME')
+    .setDescription('Documentação da API da aplicação MEI-2-ME.')
+    .setVersion('0.1')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/document', app, document);
 
   // Configuração de validação global
   app.useGlobalPipes(
