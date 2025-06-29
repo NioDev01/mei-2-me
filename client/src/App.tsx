@@ -3,11 +3,11 @@ import { AppRoutes } from './routes';
 
 function App() {
   return (
-    <div className="p-6">
+    <div>
       {/* Navegação */}
-      <nav className="space-x-4 mb-6">
-        <Link to="/" className="text-blue-500 hover:underline">Início</Link>
-        <Link to="/mensagens" className="text-blue-500 hover:underline">Mensagens</Link>
+      <nav className="fixed z-50 top-0 left-0 flex items-center space-x-4 mb-6 bg-sidebar-primary w-full h-1/10">
+        <Link to="/"><img className='mx-8 h-1/3 w-1/3' src='/mei2mew.png'></img></Link>
+        <Link to="/mensagens" className="text-background hover:underline">Mensagens</Link>
       </nav>
 
       {/* Rotas */}
