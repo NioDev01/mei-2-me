@@ -30,7 +30,7 @@ export function Mensagens() {
   }, []);
 
   return (
-    <div className="max-w-xl mx-auto mt-10 space-y-10">
+    <div className="pt-15 max-w-xl mx-auto mt-10 space-y-10">
       <Toaster position="top-center" />
       <MessageForm aoEnviar={recarregarMensagens}/>
       <MessageList mensagens={mensagens} loading={loading}/>

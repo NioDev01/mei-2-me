@@ -11,8 +11,10 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  base: process.env.VITE_PUBLIC_URL || '/',
   build: {
     outDir: 'dist',
+    assetsDir: 'assets',
     sourcemap: process.env.NODE_ENV !== 'production',
   },
 })
