@@ -11,7 +11,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/',
+  base: process.env.VITE_PUBLIC_URL || '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
