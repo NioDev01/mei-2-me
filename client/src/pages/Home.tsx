@@ -1,14 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { NavBarMain } from "@/features/NavBarMain";
+import { Link } from 'react-router-dom';
 import { Users, Cog, ArrowRight, Headphones } from "lucide-react";
 
 export function Home() {
   return (
     <div className="pt-15 min-h-screen bg-background text-foreground font-sans">
+
+      {/* Navigation Bar */}
+      <NavBarMain />
+
       {/* Hero Section */}
       <section className="py-16 px-6">
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-start">
+
             {/* Left Column - Main Content */}
             <div className="space-y-8">
               <div>
@@ -39,8 +46,8 @@ export function Home() {
                 <p className="text-secondary text-center mb-8 text-lg">
                   Em poucos minutos, tenha clareza sobre as oportunidades e o melhor caminho para sua empresa.
                 </p>
-                <Button variant={"secondary"} className="w-full h-full font-bold py-4 px-8 text-xl">
-                  Faça o Diagnóstico Gratuito
+                <Button variant={"secondary"} className="w-full h-full font-bold py-4 px-8 text-xl" asChild>
+                  <Link to="/mensagens">Faça o Diagnóstico Gratuito</Link>
                 </Button>
               </div>
             </div>
@@ -114,8 +121,8 @@ export function Home() {
           <h2 className="text-3xl lg:text-4xl font-bold mb-8">
             Pronto para transformar o seu negócio?
           </h2>
-          <Button className="py-4 px-12 h-14 text-lg">
-            Comece Agora Gratuitamente
+          <Button className="py-4 px-12 h-14 text-lg" asChild>
+            <Link to="/mensagens">Comece Agora Gratuitamente</Link>
           </Button>
         </div>
       </section>
