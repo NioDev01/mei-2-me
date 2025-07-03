@@ -8,7 +8,20 @@ datasource db {
 }
 
 model Mensagem {
-  id        Int      @id @default(autoincrement())
-  conteudo  String
-  criadoEm  DateTime @default(now())
+  id       Int      @id @default(autoincrement())
+  conteudo String
+  criadoEm DateTime @default(now())
+}
+
+model DiagnosticoInicial {
+  id                    String  @id @default(uuid())
+  cnpj                  String  @unique
+  razaoSocial           String
+  nomeFantasia          String?
+  uf                    String
+  municipio             String
+  dataAbertura          String
+  atividadePrincipal    Json
+  atividadesSecundarias Json?
+  naturezaJuridica      String
 }
