@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { NavBarMain } from "@/features/NavBarMain";
 import { MessageForm, MessageList } from "@/features/message";
 import { Toaster, toast } from "sonner";
 
@@ -32,6 +33,7 @@ export function Mensagens() {
   return (
     <div className="pt-15 max-w-xl mx-auto mt-10 space-y-10">
       <Toaster position="top-center" />
+      <NavBarMain/>
       <MessageForm aoEnviar={recarregarMensagens}/>
       <MessageList mensagens={mensagens} loading={loading}/>
     </div>
