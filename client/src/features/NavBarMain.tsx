@@ -10,7 +10,7 @@ export function NavBarMain() {
             <Link to="/"><img className='mx-8 h-1/3 w-1/3' src={mei2mew} alt='Logo'></img></Link>
             <Link to="/mensagens" className="text-background hover:underline">Mensagens</Link>
             <Button variant={'secondary'} className='mx-8 hover:scale-110 transition-transform duration-300' asChild>
-            <Link to="/mensagens"><User className="text-secondary-foreground w-8 h-8"/>Login</Link>
+                <Link to="/mensagens"><User className="text-secondary-foreground w-8 h-8"/>Login</Link>
             </Button>
         </nav>
     </div>
