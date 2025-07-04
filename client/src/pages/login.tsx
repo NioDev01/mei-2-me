@@ -11,7 +11,7 @@ import mei2me from '@/assets/mei2me.png';
 export function Login() {
   
 return (
-    <div className="grid min-h-svh lg:grid-cols-2">
+    <div className="grid min-h-svh lg:grid-cols-2 ">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
         </div>
