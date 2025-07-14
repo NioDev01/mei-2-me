@@ -1,0 +1,3 @@
+export function FaturamentoAnual() {
+  // Lógica de análise de faturamento...
+}
