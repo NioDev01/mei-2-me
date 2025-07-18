@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Home } from '@/pages/Home';
 import { Mensagens } from '@/pages/Mensagens';
 import { Login} from '@/pages/login';
-import { DiaInicial } from '@/pages/diagnostico-inicial';
+import { DiaInicial } from '@/pages/DiagnosticoInicial';
 
 export function AppRoutes() {
   return (

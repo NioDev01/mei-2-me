@@ -4,11 +4,13 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
+import { NavBarMain } from "@/features/NavBarMain";
 
 export function DiaInicial() {
   return (
     <div className="min-h-screen  p-6">
-      <div className="max-w-4xl mx-auto">
+        <NavBarMain />
+      <div className="max-w-4xl mx-auto px-6 py-24">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold mb-4">DIAGNÓSTICO INICIAL</h1>
@@ -25,19 +27,19 @@ export function DiaInicial() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* CNPJ da empresa */}
             <div>
-              <Label htmlFor="cnpj" className="text-white">
+              <Label htmlFor="cnpj" className="">
                 CNPJ da empresa *
               </Label>
               <Input
                 id="cnpj"
                 placeholder="Ex: 00.000.000/0001-00"
-                className="mt-2 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                className="mt-2 "
               />
             </div>
 
             {/* Quantidade de funcionários */}
             <div>
-              <Label htmlFor="funcionarios" className="text-white">
+              <Label htmlFor="funcionarios" className="">
                 Quantidade de funcionários na empresa *
               </Label>
               <Input
@@ -49,7 +51,7 @@ export function DiaInicial() {
 
             {/* UF de registro */}
             <div>
-              <Label htmlFor="uf" className="text-white">
+              <Label htmlFor="uf" className="">
                 UF de registro *
               </Label>
               <Input
@@ -61,7 +63,7 @@ export function DiaInicial() {
 
             {/* Município de registro */}
             <div>
-              <Label htmlFor="municipio" className="text-white">
+              <Label htmlFor="municipio" className="">
                 Município de registro *
               </Label>
               <Input
@@ -73,7 +75,7 @@ export function DiaInicial() {
 
             {/* Quanto foi o faturamento de MEI */}
             <div>
-              <Label htmlFor="faturamento-mei" className="text-white">
+              <Label htmlFor="faturamento-mei" className="">
                 Quanto foi o faturamento de MEI nos últimos 12 meses? *
               </Label>
               <Input
@@ -85,7 +87,7 @@ export function DiaInicial() {
 
             {/* Quanto foi gasto em compras */}
             <div>
-              <Label htmlFor="gasto-compras" className="text-white">
+              <Label htmlFor="gasto-compras" className="">
                 Quanto foi gasto em compras de mercadorias ou insumos nos últimos 12 meses? *
               </Label>
               <Input
@@ -106,11 +108,11 @@ export function DiaInicial() {
               <RadioGroup className="space-y-2">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="sim1" id="sim1" />
-                  <Label htmlFor="sim1" className="text-white">Sim</Label>
+                  <Label htmlFor="sim1" className="">Sim</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="nao1" id="nao1" />
-                  <Label htmlFor="nao1" className="text-white">Não</Label>
+                  <Label htmlFor="nao1" className="">Não</Label>
                 </div>
               </RadioGroup>
             </div>
