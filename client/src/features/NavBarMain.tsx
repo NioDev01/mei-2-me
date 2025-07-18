@@ -1,18 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { User, Moon, Sun } from "lucide-react"; // Adicionei o ícone Sun
+import { User } from "lucide-react"; 
 import mei2mew from '@/assets/mei2mew.png';
-import { useState } from 'react';
+import { ToggleTemas} from './BotaoTemas';
 
 export function NavBarMain() {
-    const [isDarkMode, setIsDarkMode] = useState(false);
-
-    const toggleDarkMode = () => {
-        setIsDarkMode(!isDarkMode);
-        // Opcional: Adicionar lógica para alterar o tema da aplicação
-        document.documentElement.classList.toggle('dark', !isDarkMode);
-    };
-
+    
     return (
         <div>
             <nav className="fixed z-50 top-0 left-0 flex justify-between items-center space-x-4 mb-6 bg-sidebar-primary w-full h-1/10">
@@ -22,18 +15,7 @@ export function NavBarMain() {
                     <Button variant={'secondary'} className='hover:scale-110 transition-transform duration-300' asChild>
                         <Link to="/login"><User className="text-secondary-foreground w-8 h-8"/>Login</Link>
                     </Button>
-                    <Button 
-                        variant={'secondary'} 
-                        size="icon" 
-                        className='hover:scale-110 transition-transform duration-300'
-                        onClick={toggleDarkMode}
-                    >
-                        {isDarkMode ? (
-                            <Sun className="text-secondary-foreground w-8 h-8" />
-                        ) : (
-                            <Moon className="text-secondary-foreground w-8 h-8" />
-                        )}
-                    </Button>
+                    <ToggleTemas />
                 </div>
             </nav>
         </div>
