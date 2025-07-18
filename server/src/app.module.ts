@@ -4,9 +4,10 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { ReceitawsApiService } from './integrations/receitaws-api/receitaws-api.service';
 import { DiagnosticoInicialModule } from './modules/diagnostico-inicial/diagnostico-inicial.module';
 import { HttpModule } from '@nestjs/axios';
+import { AnaliseMigracaoModule } from './modules/analise-migracao/analise-migracao.module';
 
 @Module({
-  imports: [PrismaModule, MessageModule, DiagnosticoInicialModule, HttpModule],
+  imports: [PrismaModule, MessageModule, DiagnosticoInicialModule, HttpModule, AnaliseMigracaoModule],
   providers: [ReceitawsApiService],
 })
 export class AppModule {}
