@@ -1,3 +1,3 @@
 export function FaturamentoAnual() {
-  // Lógica de análise de faturamento...
+  throw new Error("Not implemented: FaturamentoAnual function is incomplete.");
 }
