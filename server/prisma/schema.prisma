@@ -13,15 +13,37 @@ model Mensagem {
   criadoEm DateTime @default(now())
 }
 
-model DiagnosticoInicial {
-  id                    String  @id @default(uuid())
-  cnpj                  String  @unique
-  razaoSocial           String
-  nomeFantasia          String?
-  uf                    String
-  municipio             String
-  dataAbertura          String
-  atividadePrincipal    Json
-  atividadesSecundarias Json?
-  naturezaJuridica      String
+model Mei {
+  id_mei            Int           @id @default(autoincrement())
+  nome_mei          String
+  email_mei         String       @unique
+  senha_mei         String
+  cnpj_mei          String       @unique
+  numero_celular    String
+  data_abertura     DateTime
+  uf_mei            String       @db.Char(2)
+  razao_social      String
+  nome_fantasia     String
+  municipio_mei     String
+  cnae_principal    String       @db.Char(9)
+  cnaes_secundarios String
+  natureza_juridica String
+
+  diagnosticos      Diagnostico?
+}
+
+model Diagnostico {
+  id_diag            Int     @id @default(autoincrement())
+  id_mei             Int     @unique
+  qtd_funcionarios   Int
+  paga_acima_piso    Boolean
+  socio_outra_empresa Boolean
+  importa_mercadoria Boolean
+  faturamento_12m    Int
+  compras_12m        Int
+  resultado_diag     String
+  criado_em          DateTime @default(now())
+  atualizado_em      DateTime @updatedAt
+
+  mei                Mei    @relation(fields: [id_mei], references: [id_mei])
 }
