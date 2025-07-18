@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react"; 
 import mei2mew from '@/assets/mei2mew.png';
-import { ToggleTemas} from './BotaoTemas';
+import { ToggleTemas} from './ToggleTemas';
 
 export function NavBarMain() {
     
