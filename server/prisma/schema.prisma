@@ -42,7 +42,7 @@ model Diagnostico {
   id_mei           Int      @id
   resultado_diag   String   @db.VarChar(255)
   atualizado_em    DateTime @db.Timestamp(0)
-  motivos_resultado String  @db.Text
+  motivos_resultado Json
 
   mei              Mei      @relation(fields: [id_mei], references: [id_mei])
 
