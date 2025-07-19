@@ -13,20 +13,7 @@ model Mensagem {
   criadoEm DateTime @default(now())
 }
 
-model DiagnosticoInicial {
-  id                    String  @id @default(uuid())
-  cnpj                  String  @unique
-  razaoSocial           String
-  nomeFantasia          String?
-  uf                    String
-  municipio             String
-  dataAbertura          String
-  atividadePrincipal    Json
-  atividadesSecundarias Json?
-  naturezaJuridica      String
-}
-
-model MEI {
+model Mei {
   id_mei               Int      @id @default(autoincrement())
   cnpj_mei             String   @unique @db.VarChar(18)
   data_abertura        DateTime @db.Date
@@ -35,8 +22,8 @@ model MEI {
   nome_fantasia        String   @db.VarChar(255)
   municipio_mei        String   @db.VarChar(255)
   cnae_principal       Json
-  cnae_secundario      Json?    // opcional
-  natureza_juridica    String   @db.VarChar(150)
+  cnae_secundario      Json?   
+  natureza_juridica    String   @db.VarChar(255)
   possui_filial        Boolean
   qtd_funcionario      Int
   paga_acima_piso      Boolean
@@ -45,38 +32,38 @@ model MEI {
   compras_12m          Decimal  @db.Decimal(8, 2)
   exporta_acima_limite Boolean
 
-  diagnostico          DIAGNOSTICO?
-  usuarios             USUARIO[]
+  diagnostico          Diagnostico?
+  usuarios             Usuario?
 
-  @@map("MEI")
+  @@map("Mei")
 }
 
-model DIAGNOSTICO {
+model Diagnostico {
   id_mei           Int      @id
   resultado_diag   String   @db.VarChar(255)
   atualizado_em    DateTime @db.Timestamp(0)
   motivos_resultado String  @db.Text
 
-  mei              MEI      @relation(fields: [id_mei], references: [id_mei])
+  mei              Mei      @relation(fields: [id_mei], references: [id_mei])
 
-  @@map("DIAGNOSTICO")
+  @@map("Diagnostico")
 }
 
-model CNAE {
+model Cnae {
   cnae               String   @id @db.Char(9)
   ocupacao_cnae      String   @db.Text
   descricao_subclasse String  @db.Text
-  iss_cnae           Boolean
-  icms_cnae          Boolean
+  iss_cnae           String   @db.Char(1)
+  icms_cnae          String   @db.Char(1)
 
   @@index([cnae], name: "cnae_cnae_index")
   @@index([cnae, ocupacao_cnae], name: "cnae_cnae_ocupacao_cnae_index")
   @@index([cnae, descricao_subclasse], name: "cnae_cnae_descricao_subclasse_index")
 
-  @@map("CNAE")
+  @@map("Cnae")
 }
 
-model USUARIO {
+model Usuario {
   id_user        Int     @id @default(autoincrement())
   id_mei         Int     @unique
   nome_user      String  @db.Text
@@ -85,7 +72,7 @@ model USUARIO {
   senha_user     String  @db.Text
   celular_user   String  @db.VarChar(14)
 
-  mei            MEI     @relation(fields: [id_mei], references: [id_mei])
+  mei            Mei     @relation(fields: [id_mei], references: [id_mei])
 
-  @@map("USUARIO")
+  @@map("Usuario")
 }
