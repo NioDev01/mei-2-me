@@ -27,28 +27,28 @@ model DiagnosticoInicial {
 }
 
 model MEI {
-  id_mei               Int       @id @default(autoincrement())
-  cnpj_mei             String    @unique @db.VarChar(18)
-  data_abertura        DateTime  @db.Date
-  uf_mei               String    @db.Char(2)
-  razao_social         String    @db.VarChar(255)
-  nome_fantasia        String    @db.VarChar(255)
-  municipio_mei        String    @db.VarChar(255)
-  cnae_principal       String    @db.Char(9)
-  natureza_juridica    String    @db.VarChar(150)
+  id_mei               Int      @id @default(autoincrement())
+  cnpj_mei             String   @unique @db.VarChar(18)
+  data_abertura        DateTime @db.Date
+  uf_mei               String   @db.Char(2)
+  razao_social         String   @db.VarChar(255)
+  nome_fantasia        String   @db.VarChar(255)
+  municipio_mei        String   @db.VarChar(255)
+  cnae_principal       Json
+  cnae_secundario      Json?    // opcional
+  natureza_juridica    String   @db.VarChar(150)
   possui_filial        Boolean
   qtd_funcionario      Int
   paga_acima_piso      Boolean
   participa_outra_empresa Boolean
-  faturamento_12m      Decimal   @db.Decimal(8, 2)
-  compras_12m          Decimal   @db.Decimal(8, 2)
+  faturamento_12m      Decimal  @db.Decimal(8, 2)
+  compras_12m          Decimal  @db.Decimal(8, 2)
   exporta_acima_limite Boolean
 
   diagnostico          DIAGNOSTICO?
   usuarios             USUARIO[]
-  meiCnaeSecundario    MEI_CNAE_SECUNDARIO[]
 
-  @@index([cnae_principal])
+  @@map("MEI")
 }
 
 model DIAGNOSTICO {
@@ -58,6 +58,8 @@ model DIAGNOSTICO {
   motivos_resultado String  @db.Text
 
   mei              MEI      @relation(fields: [id_mei], references: [id_mei])
+
+  @@map("DIAGNOSTICO")
 }
 
 model CNAE {
@@ -67,11 +69,11 @@ model CNAE {
   iss_cnae           Boolean
   icms_cnae          Boolean
 
-  meiCnaeSecundario  MEI_CNAE_SECUNDARIO[]
+  @@index([cnae], name: "cnae_cnae_index")
+  @@index([cnae, ocupacao_cnae], name: "cnae_cnae_ocupacao_cnae_index")
+  @@index([cnae, descricao_subclasse], name: "cnae_cnae_descricao_subclasse_index")
 
-  @@index([cnae])
-  @@index([cnae, ocupacao_cnae])
-  @@index([cnae, descricao_subclasse])
+  @@map("CNAE")
 }
 
 model USUARIO {
@@ -84,15 +86,6 @@ model USUARIO {
   celular_user   String  @db.VarChar(14)
 
   mei            MEI     @relation(fields: [id_mei], references: [id_mei])
-}
 
-model MEI_CNAE_SECUNDARIO {
-  id_mei            Int
-  cnae              String  @db.Char(9)
-  descricao_subclasse String  @db.Text
-
-  mei               MEI     @relation(fields: [id_mei], references: [id_mei])
-  cnaeRel           CNAE    @relation(fields: [cnae], references: [cnae])
-
-  @@id([id_mei, cnae])
+  @@map("USUARIO")
 }
