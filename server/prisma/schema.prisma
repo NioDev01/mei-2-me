@@ -50,7 +50,7 @@ model Diagnostico {
 }
 
 model Cnae {
-  cnae               String   @id @db.Char(9)
+  cnae               String   @db.Char(9)
   ocupacao_cnae      String   @db.Text
   descricao_subclasse String  @db.Text
   iss_cnae           String   @db.Char(1)
