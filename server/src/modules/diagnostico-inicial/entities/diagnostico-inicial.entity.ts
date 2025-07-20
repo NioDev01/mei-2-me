@@ -1,1 +1,1 @@
-export class DiagnosticoInicial {}
+// export class DiagnosticoInicial {}
