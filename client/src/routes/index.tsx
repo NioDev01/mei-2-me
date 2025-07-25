@@ -4,6 +4,7 @@ import { Mensagens } from '@/pages/Mensagens';
 import { Login} from '@/pages/login';
 import { DiaInicial } from '@/pages/DiagnosticoInicial';
 
+
 export function AppRoutes() {
   return (
     <Routes>
