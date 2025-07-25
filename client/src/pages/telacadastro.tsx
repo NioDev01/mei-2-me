@@ -5,7 +5,6 @@ import { Label } from '@/components/ui/label.jsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Eye, EyeOff, User, Building2, Mail, Phone, Lock } from 'lucide-react'
 
-
 function App() {
   const [formData, setFormData] = useState({
     nome: '',
@@ -15,11 +14,11 @@ function App() {
     senha: '',
     confirmacaoSenha: ''
   })
-  
+
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
@@ -27,17 +26,17 @@ function App() {
     }))
   }
 
-  const formatCNPJ = (value) => {
+  const formatCNPJ = (value: string) => {
     const numbers = value.replace(/\D/g, '')
     return numbers.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5')
   }
 
-  const formatPhone = (value) => {
+  const formatPhone = (value: string) => {
     const numbers = value.replace(/\D/g, '')
     return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
   }
 
-  const handleCNPJChange = (e) => {
+  const handleCNPJChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatCNPJ(e.target.value)
     setFormData(prev => ({
       ...prev,
@@ -45,7 +44,7 @@ function App() {
     }))
   }
 
-  const handlePhoneChange = (e) => {
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhone(e.target.value)
     setFormData(prev => ({
       ...prev,
@@ -53,7 +52,7 @@ function App() {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     console.log('Dados do cadastro:', formData)
   }
@@ -217,4 +216,3 @@ function App() {
 }
 
 export default App
-
