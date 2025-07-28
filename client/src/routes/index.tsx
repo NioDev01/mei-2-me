@@ -5,6 +5,7 @@ import { Login} from '@/pages/login';
 import { DiaInicial } from '@/pages/DiagnosticoInicial';
 import { RedefinirSenha } from '@/pages/RedefinirSenha';
 import { RecuperarSenha } from '@/pages/RecuperarSenha';
+import { Cadastro } from '@/pages/TelaCadastro';
 
 
 export function AppRoutes() {
@@ -16,7 +17,7 @@ export function AppRoutes() {
       <Route path="/diagnostico" element={<DiaInicial />} />
       <Route path="/redefinirsenha" element={<RedefinirSenha />} />
       <Route path="/recuperarsenha" element={<RecuperarSenha />} />
-
+      <Route path="/cadastro" element={<Cadastro />} />
     </Routes>
   );
 }

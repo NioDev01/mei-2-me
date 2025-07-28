@@ -48,7 +48,7 @@ export function RecuperarSenha() {
             </div>
 
             <Button type="submit" className="w-full" size="lg">
-              Enviar Instruções
+              Confirmar
             </Button>
 
             <div className="text-center">

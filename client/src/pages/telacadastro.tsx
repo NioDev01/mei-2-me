@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label.jsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Eye, EyeOff, User, Building2, Mail, Phone, Lock } from 'lucide-react'
 
-function App() {
+export function Cadastro() {
   const [formData, setFormData] = useState({
     nome: '',
     cnpj: '',
@@ -213,6 +213,4 @@ function App() {
       </Card>
     </div>
   )
-}
-
-export default App
+} 
