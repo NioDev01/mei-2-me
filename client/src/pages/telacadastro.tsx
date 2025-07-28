@@ -2,8 +2,18 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Input } from '@/components/ui/input.jsx'
 import { Label } from '@/components/ui/label.jsx'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
-import { Eye, EyeOff, User, Building2, Mail, Phone, Lock } from 'lucide-react'
+import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/components/ui/card.jsx'
+import {
+  Eye,
+  EyeOff,
+  User,
+  Building2,
+  Mail,
+  Phone,
+  Lock,
+  Check,
+  AlertCircle
+} from 'lucide-react'
 
 export function Cadastro() {
   const [formData, setFormData] = useState({
@@ -15,8 +25,61 @@ export function Cadastro() {
     confirmacaoSenha: ''
   })
 
+  const [errors, setErrors] = useState<Record<string, string | undefined>>({})
+  const [validFields, setValidFields] = useState<Record<string, boolean>>({})
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+  const validateField = (name: string, value: string) => {
+    const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/
+    const cnpjRegex = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/
+    const phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/
+
+    switch (name) {
+      case 'nome':
+        return value.trim() ? null : 'Nome completo é obrigatório.'
+      case 'cnpj':
+        if (!value) return 'CNPJ é obrigatório.'
+        if (!cnpjRegex.test(value)) return 'CNPJ inválido. Formato esperado: 00.000.000/0000-00'
+        return null
+      case 'email':
+        if (!value) return 'E-mail é obrigatório.'
+        if (!emailRegex.test(value)) return 'E-mail inválido.'
+        return null
+      case 'telefone':
+        if (!value) return 'Telefone é obrigatório.'
+        if (!phoneRegex.test(value)) return 'Telefone inválido. Formato esperado: (00) 00000-0000'
+        return null
+      case 'senha':
+        if (!value) return 'Senha é obrigatória.'
+        if (value.length < 6) return 'A senha deve ter pelo menos 6 caracteres.'
+        return null
+      case 'confirmacaoSenha':
+        if (!value) return 'Confirmação de senha é obrigatória.'
+        if (value !== formData.senha) return 'As senhas não coincidem.'
+        return null
+      default:
+        return null
+    }
+  }
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+    const newValidFields: Record<string, boolean> = {}
+
+    Object.keys(formData).forEach(field => {
+      const error = validateField(field, formData[field as keyof typeof formData])
+      if (error) {
+        newErrors[field] = error
+      } else {
+        newValidFields[field] = true
+      }
+    })
+
+    setErrors(newErrors)
+    setValidFields(newValidFields)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -24,16 +87,37 @@ export function Cadastro() {
       ...prev,
       [name]: value
     }))
+
+    const error = validateField(name, value)
+    if (error) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: error
+      }))
+      setValidFields(prev => ({
+        ...prev,
+        [name]: false
+      }))
+    } else {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }))
+      setValidFields(prev => ({
+        ...prev,
+        [name]: true
+      }))
+    }
   }
 
   const formatCNPJ = (value: string) => {
     const numbers = value.replace(/\D/g, '')
-    return numbers.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5')
+    return numbers.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5')
   }
 
   const formatPhone = (value: string) => {
     const numbers = value.replace(/\D/g, '')
-    return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+    return numbers.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')
   }
 
   const handleCNPJChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,6 +126,27 @@ export function Cadastro() {
       ...prev,
       cnpj: formatted
     }))
+
+    const error = validateField('cnpj', formatted)
+    if (error) {
+      setErrors(prev => ({
+        ...prev,
+        cnpj: error
+      }))
+      setValidFields(prev => ({
+        ...prev,
+        cnpj: false
+      }))
+    } else {
+      setErrors(prev => ({
+        ...prev,
+        cnpj: undefined
+      }))
+      setValidFields(prev => ({
+        ...prev,
+        cnpj: true
+      }))
+    }
   }
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,11 +155,57 @@ export function Cadastro() {
       ...prev,
       telefone: formatted
     }))
+
+    const error = validateField('telefone', formatted)
+    if (error) {
+      setErrors(prev => ({
+        ...prev,
+        telefone: error
+      }))
+      setValidFields(prev => ({
+        ...prev,
+        telefone: false
+      }))
+    } else {
+      setErrors(prev => ({
+        ...prev,
+        telefone: undefined
+      }))
+      setValidFields(prev => ({
+        ...prev,
+        telefone: true
+      }))
+    }
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log('Dados do cadastro:', formData)
+    if (validateForm()) {
+      console.log('Dados do cadastro:', formData)
+    } else {
+      console.log('Formulário contém erros.')
+    }
+  }
+
+  const getFieldClassName = (fieldName: string) => {
+    const baseClass = 'pl-10'
+    if (errors[fieldName]) {
+      return `${baseClass} border-red-500 focus:border-red-500`
+    }
+    if (validFields[fieldName]) {
+      return `${baseClass} border-green-500 focus:border-green-500`
+    }
+    return baseClass
+  }
+
+  const getFieldIcon = (fieldName: string) => {
+    if (errors[fieldName]) {
+      return <AlertCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+    }
+    if (validFields[fieldName]) {
+      return <Check className="absolute right-3 top-3 h-4 w-4 text-green-500" />
+    }
+    return null
   }
 
   return (
@@ -68,133 +219,150 @@ export function Cadastro() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="nome" className="text-sm font-medium">
-                Nome Completo
-              </Label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="nome"
-                  name="nome"
-                  type="text"
-                  placeholder="Digite seu nome completo"
-                  value={formData.nome}
-                  onChange={handleInputChange}
-                  className="pl-10"
-                  required
-                />
-              </div>
-            </div>
+            {/* Nome */}
+           <div className="space-y-2">
+  <Label htmlFor="nome">Nome Completo</Label>
+      <div className="relative">
+    <     User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="nome"
+              name="nome"
+              value={formData.nome}
+              onChange={handleInputChange}
+              onKeyDown={(e) => {
+                const key = e.key
+                if (!/^[a-zA-ZÀ-ÖØ-öø-ÿ\s]$/.test(key) && key.length === 1) {
+                  e.preventDefault()
+                }
+              }}
+              className={getFieldClassName('nome')}
+              placeholder="Digite seu nome completo"
+              required
+            />
+            {getFieldIcon('nome')}
+            {errors.nome && <p className="text-red-500 text-xs mt-1">{errors.nome}</p>}
+          </div>
+          </div>
 
+            {/* CNPJ */}
             <div className="space-y-2">
-              <Label htmlFor="cnpj" className="text-sm font-medium">
-                CNPJ
-              </Label>
+              <Label htmlFor="cnpj">CNPJ</Label>
               <div className="relative">
                 <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="cnpj"
                   name="cnpj"
-                  type="text"
-                  placeholder="00.000.000/0000-00"
                   value={formData.cnpj}
                   onChange={handleCNPJChange}
-                  className="pl-10"
+                  className={getFieldClassName('cnpj')}
                   maxLength={18}
+                  placeholder="00.000.000/0000-00"
                   required
                 />
+                {getFieldIcon('cnpj')}
+                {errors.cnpj && <p className="text-red-500 text-xs mt-1">{errors.cnpj}</p>}
               </div>
             </div>
 
+            {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">
-                E-mail
-              </Label>
+              <Label htmlFor="email">E-mail</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="seu@email.com"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="pl-10"
+                  className={getFieldClassName('email')}
+                  placeholder="seu@email.com"
                   required
                 />
+                {getFieldIcon('email')}
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
               </div>
             </div>
 
+            {/* Telefone */}
             <div className="space-y-2">
-              <Label htmlFor="telefone" className="text-sm font-medium">
-                Telefone
-              </Label>
+              <Label htmlFor="telefone">Telefone</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="telefone"
                   name="telefone"
-                  type="tel"
-                  placeholder="(00) 00000-0000"
                   value={formData.telefone}
                   onChange={handlePhoneChange}
-                  className="pl-10"
+                  className={getFieldClassName('telefone')}
+                  placeholder="(00) 00000-0000"
                   maxLength={15}
                   required
                 />
+                {getFieldIcon('telefone')}
+                {errors.telefone && <p className="text-red-500 text-xs mt-1">{errors.telefone}</p>}
               </div>
             </div>
 
+            {/* Senha */}
             <div className="space-y-2">
-              <Label htmlFor="senha" className="text-sm font-medium">
-                Senha
-              </Label>
+              <Label htmlFor="senha">Senha</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="senha"
                   name="senha"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Digite sua senha"
+                  type={showPassword ? 'text' : 'password'}
                   value={formData.senha}
                   onChange={handleInputChange}
-                  className="pl-10 pr-10"
+                  className={`${getFieldClassName('senha')} pr-16`}
+                  placeholder="Digite sua senha"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-10 top-3 h-4 w-4 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
+                <div className="absolute right-3 top-3">{getFieldIcon('senha')}</div>
+                {errors.senha && <p className="text-red-500 text-xs mt-1">{errors.senha}</p>}
               </div>
             </div>
 
+            {/* Confirmar senha */}
             <div className="space-y-2">
-              <Label htmlFor="confirmacaoSenha" className="text-sm font-medium">
-                Confirmar Senha
-              </Label>
+              <Label htmlFor="confirmacaoSenha">Confirmar Senha</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="confirmacaoSenha"
                   name="confirmacaoSenha"
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Confirme sua senha"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   value={formData.confirmacaoSenha}
                   onChange={handleInputChange}
-                  className="pl-10 pr-10"
+                  className={`${getFieldClassName('confirmacaoSenha')} pr-16`}
+                  placeholder="Confirme sua senha"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-3 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-10 top-3 h-4 w-4 text-muted-foreground hover:text-foreground"
                 >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
+                <div className="absolute right-3 top-3">
+                  {getFieldIcon('confirmacaoSenha')}
+                </div>  
+                {errors.confirmacaoSenha && (
+                  <p className="text-red-500 text-xs mt-1">{errors.confirmacaoSenha}</p>
+                )}
               </div>
             </div>
 
@@ -213,4 +381,4 @@ export function Cadastro() {
       </Card>
     </div>
   )
-} 
+}
