@@ -1,19 +1,10 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button.jsx'
 import { Input } from '@/components/ui/input.jsx'
 import { Label } from '@/components/ui/label.jsx'
 import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/components/ui/card.jsx'
-import {
-  Eye,
-  EyeOff,
-  User,
-  Building2,
-  Mail,
-  Phone,
-  Lock,
-  Check,
-  AlertCircle
-} from 'lucide-react'
+import {Eye,EyeOff,User,Building2,Mail,Phone,Lock,Check,AlertCircle} from 'lucide-react'
 
 export function Cadastro() {
   const [formData, setFormData] = useState({
@@ -372,9 +363,12 @@ export function Cadastro() {
 
             <div className="text-center text-sm text-muted-foreground mt-4">
               Já tem uma conta?{' '}
-              <button type="button" className="text-primary hover:underline font-medium">
-                Fazer login
-              </button>
+              
+              <Link to="/login" className="text-primary hover:underline font-medium">
+               Faça login
+              </Link>
+
+              
             </div>
           </form>
         </CardContent>
