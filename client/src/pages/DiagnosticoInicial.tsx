@@ -35,6 +35,37 @@ export function DiaInicial() {
       const numbersOnly = e.target.value.replace(/\D/g, '');
       setValue(numbersOnly);
     };
+<Input
+  name="uf"
+  value={formData.uf}
+  readOnly
+  onChange={handleChange}
+/>
+
+<Input
+  name="municipio"
+  value={formData.municipio}
+  readOnly
+  onChange={handleChange}
+/>
+
+<Input
+  name="qtdFuncionarios"
+  value={formData.qtdFuncionarios}
+  onChange={handleChange}
+/>
+
+<Input
+  name="faturamento"
+  value={formData.faturamento}
+  onChange={handleChange}
+/>
+
+<Input
+  name="gastos"
+  value={formData.gastos}
+  onChange={handleChange}
+/>
 
   return (
     <div className="min-h-screen  p-6">
