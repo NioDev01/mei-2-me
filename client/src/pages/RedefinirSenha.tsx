@@ -2,13 +2,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Input } from '@/components/ui/input.jsx'
 import { Label } from '@/components/ui/label.jsx'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card.jsx'
+import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/components/ui/card.jsx'
 import { Eye, EyeOff, Lock, ArrowLeft } from 'lucide-react'
 
 export function RedefinirSenha() {
