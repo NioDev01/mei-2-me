@@ -4,9 +4,38 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
+import { useState, useEffect } from 'react'
 import { NavBarMain } from "@/features/NavBarMain";
 
+
+
 export function DiaInicial() {
+    const [cnpj, setCnpj] = useState('');
+  const [funcionarios, setFuncionarios] = useState('');
+  const [faturamentoMei, setFaturamentoMei] = useState('');
+  const [gastoCompras, setGastoCompras] = useState('');
+
+  // Formatação automática do CNPJ
+  const formatCNPJ = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 14);
+    return digits
+      .replace(/^(\d{2})(\d)/, '$1.$2')
+      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/\.(\d{3})(\d)/, '.$1/$2')
+      .replace(/(\d{4})(\d)/, '$1-$2');
+  };
+
+  const handleCnpjChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCnpj(formatCNPJ(value));
+  };
+
+  const handleOnlyNumbers = (setValue: (v: string) => void) => 
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const numbersOnly = e.target.value.replace(/\D/g, '');
+      setValue(numbersOnly);
+    };
+
   return (
     <div className="min-h-screen  p-6">
         <NavBarMain />
