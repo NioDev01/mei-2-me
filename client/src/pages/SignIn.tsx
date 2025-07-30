@@ -121,7 +121,7 @@ export function SignIn() {
 
     switch (strength) {
         case 0:
-        return { senhaFeedBackCor: "bg-zinc-300", senhaFeedBackTexto: "Senha muito fraca. Use pelo menos 6 caracteres." }
+        return { senhaFeedBackCor: "bg-accent-foreground", senhaFeedBackTexto: "Senha muito fraca. Use pelo menos 6 caracteres." }
         case 1:
         return { senhaFeedBackCor: "bg-red-500", senhaFeedBackTexto: "Adicione letras maiúsculas para aumentar a segurança." }
         case 2:
