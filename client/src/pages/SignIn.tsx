@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Card,
   CardContent,
@@ -22,6 +23,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog"
+
 
 import {
   User,
@@ -47,6 +59,9 @@ const formSchema = z
       .regex(/^\(\d{2}\) \d{5}-\d{4}$/, "Telefone inválido."),
     senha: z.string().min(6, "A senha deve ter pelo menos 6 caracteres."),
     confirmacaoSenha: z.string(),
+    termos: z.boolean().refine(val => val, {
+      message: "Você precisa aceitar os termos de uso.",
+    }),
   })
   .refine((data) => data.senha === data.confirmacaoSenha, {
     message: "As senhas não coincidem.",
@@ -68,6 +83,7 @@ export function SignIn() {
       telefone: "",
       senha: "",
       confirmacaoSenha: "",
+      termos: false,
     },
     mode: "onChange",
     reValidateMode: "onChange",
@@ -323,6 +339,69 @@ export function SignIn() {
                   </FormItem>
                 )}
               />
+
+              {/* Checkbox termos */}
+              <FormField
+                control={form.control}
+                name="termos"
+                render={({ field }) => (
+                    <FormItem className="flex items-start space-x-2 space-y-0">
+                    <FormControl>
+                        <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        />
+                    </FormControl>
+                    <div className="leading-none text-sm">
+                        <FormLabel className="font-normal">
+                        Li e aceito os{" "}
+                        <Dialog>
+                            <DialogTrigger asChild>
+                            <button
+                                type="button"
+                                className="text-primary underline hover:opacity-80"
+                            >
+                                termos de uso
+                            </button>
+                            </DialogTrigger>
+                            <DialogContent className="max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                                <DialogTitle>Termos de Uso</DialogTitle>
+                                <DialogDescription>
+                                Por favor, leia atentamente os termos antes de continuar.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="mt-4 space-y-4 text-sm leading-relaxed text-muted-foreground">
+                                <p>
+                                Este é um exemplo de termos de uso. Aqui você pode inserir
+                                suas condições de uso, políticas de privacidade, responsabilidades e regras do sistema.
+                                </p>
+                                <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
+                                feugiat quam sit amet augue efficitur, id tincidunt magna
+                                fringilla. Integer ac malesuada purus. Nulla facilisi. Donec
+                                quis mi vel lorem sollicitudin luctus non ac ante.
+                                </p>
+                                <p>
+                                Ao aceitar, você concorda em utilizar o sistema conforme as
+                                diretrizes aqui estabelecidas.
+                                </p>
+                                {/* adicione mais seções conforme necessário */}
+                            </div>
+                            <DialogFooter className="mt-4">
+                                <DialogClose asChild>
+                                <Button type="button">Fechar</Button>
+                                </DialogClose>
+                            </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                        </FormLabel>
+                        <FormMessage />
+                    </div>
+                    </FormItem>
+                )}
+              />
+
 
               <Button type="submit" className="w-full mt-6" size="lg">
                 Criar Conta
