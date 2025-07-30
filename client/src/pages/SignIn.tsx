@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -105,9 +106,41 @@ export function SignIn() {
     return null
   }
 
+  const getSenhaStrength = (senha: string) => {
+    if (!senha) return 0
+    let strength = 0
+    if (senha.length >= 6) strength++
+    if (/[A-Z]/.test(senha)) strength++
+    if (/[0-9]/.test(senha)) strength++
+    if (/[^A-Za-z0-9]/.test(senha)) strength++
+    return strength
+  }
+
+  const getSenhaFeedback = (senha: string) => {
+    const strength = getSenhaStrength(senha)
+
+    switch (strength) {
+        case 0:
+        return { senhaFeedBackCor: "bg-zinc-300", senhaFeedBackTexto: "Senha muito fraca. Use pelo menos 6 caracteres." }
+        case 1:
+        return { senhaFeedBackCor: "bg-red-500", senhaFeedBackTexto: "Adicione letras maiúsculas para aumentar a segurança." }
+        case 2:
+        return { senhaFeedBackCor: "bg-yellow-500", senhaFeedBackTexto: "Inclua números e símbolos." }
+        case 3:
+        return { senhaFeedBackCor: "bg-blue-500", senhaFeedBackTexto: "Senha razoável. Tente torná-la mais complexa." }
+        case 4:
+        return { senhaFeedBackCor: "bg-green-500", senhaFeedBackTexto: "Senha forte!" }
+        default:
+        return { senhaFeedBackCor: "bg-accent-foreground", senhaFeedBackTexto: "" }
+    }
+  }
+
   const onSubmit = (data: FormValues) => {
     console.log("Dados do cadastro:", data)
   }
+
+  const senhaStrength = getSenhaStrength(form.watch("senha"))
+  const { senhaFeedBackCor, senhaFeedBackTexto } = getSenhaFeedback(form.watch("senha"))
 
   return (
     <div className="min-h-screen overflow-hidden flex items-center justify-center p-4 bg-background">
@@ -248,6 +281,13 @@ export function SignIn() {
                         {getFieldIcon("senha")}
                       </div>
                     </FormControl>
+                     <FormDescription className="text-xs mt-1">{senhaFeedBackTexto}</FormDescription>
+                    <div className="h-2 mt-1 rounded bg-accent-foreground overflow-hidden">
+                        <div
+                        className={`h-full transition-all ${senhaFeedBackCor}`}
+                        style={{ width: `${(senhaStrength / 4) * 100}%` }}
+                        />
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
