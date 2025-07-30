@@ -3,28 +3,136 @@ import { Button } from '@/components/ui/button.jsx'
 import { Input } from '@/components/ui/input.jsx'
 import { Label } from '@/components/ui/label.jsx'
 import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/components/ui/card.jsx'
-import { Eye, EyeOff, Lock, ArrowLeft } from 'lucide-react'
+import { Eye, EyeOff, Lock, ArrowLeft, Check, AlertCircle } from 'lucide-react'
+
+interface FormData {
+  novaSenha: string
+  confirmarSenha: string
+}
+
+interface FormErrors {
+  novaSenha?: string
+  confirmarSenha?: string
+}
+
+interface ValidFields {
+  novaSenha?: boolean
+  confirmarSenha?: boolean
+}
+
+type FieldName = keyof FormData
 
 export function RedefinirSenha() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     novaSenha: '',
     confirmarSenha: ''
   })
 
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [validFields, setValidFields] = useState<ValidFields>({})
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
+  const validateField = (name: FieldName, value: string): string | null => {
+    switch (name) {
+      case 'novaSenha':
+        if (!value) return 'A nova senha é obrigatória.'
+        if (value.length < 6) return 'A senha deve ter mais de seis caracteres.'
+        if (!/[a-z]/.test(value)) return 'A senha deve conter letras minúsculas.'
+        if (!/[A-Z]/.test(value)) return 'A senha deve conter letras maiúsculas.'
+        if (!/[0-9]/.test(value)) return 'A senha deve conter números.'
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) return 'A senha deve conter caracteres especiais.'
+        return null
+      case 'confirmarSenha':
+        if (!value) return 'A confirmação da senha é obrigatória.'
+        if (value !== formData.novaSenha) return 'As senhas não coincidem.'
+        return null
+      default:
+        return null
+    }
+  }
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {}
+    const newValidFields: ValidFields = {}
+    let formIsValid = true
+
+    Object.keys(formData).forEach((field) => {
+      const fieldName = field as FieldName
+      const error = validateField(fieldName, formData[fieldName])
+      if (error) {
+        newErrors[fieldName] = error
+        formIsValid = false
+      } else {
+        newValidFields[fieldName] = true
+      }
+    })
+
+    setErrors(newErrors)
+    setValidFields(newValidFields)
+    return formIsValid
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
+    const fieldName = name as FieldName
+
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [fieldName]: value
     }))
+
+    const error = validateField(fieldName, value)
+    if (error) {
+      setErrors(prev => ({
+        ...prev,
+        [fieldName]: error
+      }))
+      setValidFields(prev => ({
+        ...prev,
+        [fieldName]: false
+      }))
+    } else {
+      setErrors(prev => ({
+        ...prev,
+        [fieldName]: undefined
+      }))
+      setValidFields(prev => ({
+        ...prev,
+        [fieldName]: true
+      }))
+    }
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log('Nova senha definida:', formData)
+    if (validateForm()) {
+      console.log('Nova senha definida:', formData)
+      // Lógica para redefinir a senha
+    } else {
+      console.log('Formulário contém erros. Por favor, corrija-os.')
+    }
+  }
+
+  const getFieldClassName = (fieldName: FieldName): string => {
+    const baseClass = 'pl-10 pr-10'
+    if (errors[fieldName]) {
+      return `${baseClass} border-red-500 focus:border-red-500`
+    }
+    if (validFields[fieldName]) {
+      return `${baseClass} border-green-500 focus:border-green-500`
+    }
+    return baseClass
+  }
+
+  const getFieldIcon = (fieldName: FieldName) => {
+    if (errors[fieldName]) {
+      return <AlertCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+    }
+    if (validFields[fieldName]) {
+      return <Check className="absolute right-3 top-3 h-4 w-4 text-green-500" />
+    }
+    return null
   }
 
   return (
@@ -52,13 +160,13 @@ export function RedefinirSenha() {
                   placeholder="Digite sua nova senha"
                   value={formData.novaSenha}
                   onChange={handleInputChange}
-                  className="pl-10 pr-10"
+                  className={getFieldClassName('novaSenha')}
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-10 top-3 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" />
@@ -66,6 +174,10 @@ export function RedefinirSenha() {
                     <Eye className="h-4 w-4" />
                   )}
                 </button>
+                <div className="absolute right-3 top-3">
+                  {getFieldIcon('novaSenha')}
+                </div>
+                {errors.novaSenha && <p className="text-red-500 text-xs mt-1">{errors.novaSenha}</p>}
               </div>
             </div>
 
@@ -83,13 +195,13 @@ export function RedefinirSenha() {
                   placeholder="Confirme sua nova senha"
                   value={formData.confirmarSenha}
                   onChange={handleInputChange}
-                  className="pl-10 pr-10"
+                  className={getFieldClassName('confirmarSenha')}
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-3 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-10 top-3 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {showConfirmPassword ? (
                     <EyeOff className="h-4 w-4" />
@@ -97,6 +209,10 @@ export function RedefinirSenha() {
                     <Eye className="h-4 w-4" />
                   )}
                 </button>
+                <div className="absolute right-3 top-3">
+                  {getFieldIcon('confirmarSenha')}
+                </div>
+                {errors.confirmarSenha && <p className="text-red-500 text-xs mt-1">{errors.confirmarSenha}</p>}
               </div>
             </div>
 
@@ -108,14 +224,14 @@ export function RedefinirSenha() {
                   <li>• Letras minúsculas (a, b, c, d, e...)</li>
                   <li>• Letras maiúsculas (A, B, C, D, E...)</li>
                   <li>• Números (1, 2, 3, 4, 5...)</li>
-                  <li>• Mais de dez caracteres</li>
+                  <li>• Mais de seis caracteres</li>
                   <li>• Caracteres especiais ou símbolos (!, @, #, $, %...)</li>
                 </ul>
               </div>
             </div>
 
             {/* Botão Submeter */}
-            <Button type="submit" className="w-full" size="lg">
+            <Button type="submit" className="w-full" size="lg" disabled={!Object.keys(validFields).length || Object.keys(errors).length > 0}>
               Redefinir Senha
             </Button>
 
