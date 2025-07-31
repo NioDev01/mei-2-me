@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Input } from '@/components/ui/input.jsx'
 import { Label } from '@/components/ui/label.jsx'
+import { Link } from 'react-router-dom'
 import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/components/ui/card.jsx'
 import { Eye, EyeOff, Lock, ArrowLeft, Check, AlertCircle } from 'lucide-react'
 
@@ -41,7 +42,7 @@ export function RedefinirSenha() {
         if (!/[a-z]/.test(value)) return 'A senha deve conter letras minúsculas.'
         if (!/[A-Z]/.test(value)) return 'A senha deve conter letras maiúsculas.'
         if (!/[0-9]/.test(value)) return 'A senha deve conter números.'
-        if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) return 'A senha deve conter caracteres especiais.'
+        if (!/[!@#$%^&*(),.?:{}|<>]/.test(value)) return 'A senha deve conter caracteres especiais.'
         return null
       case 'confirmarSenha':
         if (!value) return 'A confirmação da senha é obrigatória.'
@@ -241,8 +242,10 @@ export function RedefinirSenha() {
                 type="button"
                 className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar para o login
+                <Link to="/login" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <ArrowLeft className="h-4 w-4" />
+                    Voltar para o login
+                </Link>
               </button>
             </div>
           </form>
