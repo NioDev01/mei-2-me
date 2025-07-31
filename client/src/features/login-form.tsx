@@ -10,11 +10,12 @@ export function LoginForm() {
   const [cnpj, setCnpj] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [telefone, setTelefone] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (activeTab === "cnpj") {
-      console.log("Login com CNPJ:", cnpj, password);
+      console.log("Login com CNPJ:", cnpj, telefone, password);
     } else {
       console.log("Login com Email:", email, password);
     }
@@ -54,6 +55,18 @@ export function LoginForm() {
                     value={cnpj}
                     onChange={(e) => setCnpj(formatCnpj(e.target.value))}
                     maxLength={18}
+                  />
+                </div>
+
+                <div className="space-y-2 mt-4">
+                  <Label htmlFor="telefone">Telefone</Label>
+                  <Input
+                    id="telefone"
+                    type="tel"
+                    placeholder="(11) 91234-5678"
+                    value={telefone}
+                    onChange={(e) => setTelefone(e.target.value)}
+                    maxLength={15}
                   />
                 </div>
               </TabsContent>
@@ -105,3 +118,4 @@ export function LoginForm() {
     </div>
   );
 }
+
