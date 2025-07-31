@@ -5,7 +5,7 @@ export class DiagnosticoInicialService {
   private usuarios: Usuario[] = [];
 
   constructor() {
-    // Populando com dados de exemplo
+
     this.usuarios.push({
     id: "1",
     faturamentoAnual: 500000,
