@@ -9,7 +9,7 @@ export function LoginForm() {
   const [activeTab, setActiveTab] = useState("cnpj");
   const [cnpj, setCnpj] = useState("");
   const [email, setEmail] = useState("");
-  const [telefone, setTelefone] = useState(""); // novo estado para telefone
+  const [telefone, setTelefone] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -33,6 +33,24 @@ export function LoginForm() {
       .replace(/(-\d{2})\d+?$/, "$1");
   };
 
+  // Função para formatar telefone no padrão (XX) XXXXX-XXXX
+  const formatTelefone = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 11); // máximo 11 dígitos
+
+    if (digits.length <= 2) {
+      return `(${digits}`;
+    } else if (digits.length <= 7) {
+      return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    } else {
+      return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+    }
+  };
+
+  const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatTelefone(e.target.value);
+    setTelefone(formatted);
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="w-full max-w-md">
@@ -41,10 +59,10 @@ export function LoginForm() {
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3"> {/* Alterei para 3 colunas */}
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="cnpj">CNPJ</TabsTrigger>
               <TabsTrigger value="email">Email</TabsTrigger>
-              <TabsTrigger value="telefone">Telefone</TabsTrigger> {/* Nova aba */}
+              <TabsTrigger value="telefone">Telefone</TabsTrigger>
             </TabsList>
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -83,7 +101,7 @@ export function LoginForm() {
                     type="tel"
                     placeholder="(00) 00000-0000"
                     value={telefone}
-                    onChange={(e) => setTelefone(e.target.value)}
+                    onChange={handleTelefoneChange}
                     maxLength={15}
                   />
                 </div>
