@@ -12,6 +12,62 @@ export function DiaInicial() {
   const [funcionarios, setFuncionarios] = useState('');
   const [faturamentoMei, setFaturamentoMei] = useState('');
   const [gastoCompras, setGastoCompras] = useState('');
+const [formData, setFormData] = useState({
+  cnpj: '',
+  uf: 'SP',
+  municipio: 'São Paulo',
+  qtdFuncionarios: '',
+  faturamento: '',
+  gastos: ''
+});
+
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { name, value } = e.target;
+
+  if (['qtdFuncionarios', 'faturamento', 'gastos'].includes(name)) {
+    const onlyNums = value.replace(/\D/g, '');
+    setFormData(prev => ({ ...prev, [name]: onlyNums }));
+  } else {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  }
+};
+
+const validateForm = () => {
+  if (!formData.uf || formData.uf.length !== 2) {
+    alert('UF inválido.');
+    return false;
+  }
+
+  if (!formData.municipio) {
+    alert('Município não pode estar vazio.');
+    return false;
+  }
+
+  if (!/^\d+$/.test(formData.qtdFuncionarios)) {
+    alert('Quantidade de funcionários deve conter apenas números.');
+    return false;
+  }
+
+  if (!/^\d+$/.test(formData.faturamento)) {
+    alert('Faturamento deve conter apenas números.');
+    return false;
+  }
+
+  if (!/^\d+$/.test(formData.gastos)) {
+    alert('Gastos devem conter apenas números.');
+    return false;
+  }
+
+  return true;
+};
+
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  if (validateForm()) {
+    alert('Formulário válido!');
+    // continue com envio ou processamento
+  }
+};
 
   const formatCNPJ = (value: string) => {
     const digits = value.replace(/\D/g, '').slice(0, 14);
