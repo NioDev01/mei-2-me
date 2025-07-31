@@ -1,138 +1,80 @@
-import { useState } from 'react'
-import { Button } from '@/components/ui/button.jsx'
-import { Input } from '@/components/ui/input.jsx'
-import { Label } from '@/components/ui/label.jsx'
-import { Link } from 'react-router-dom'
-import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/components/ui/card.jsx'
-import { Eye, EyeOff, Lock, ArrowLeft, Check, AlertCircle } from 'lucide-react'
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Link } from "react-router-dom"
 
-interface FormData {
-  novaSenha: string
-  confirmarSenha: string
-}
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
-interface FormErrors {
-  novaSenha?: string
-  confirmarSenha?: string
-}
+import { Eye, EyeOff, Lock, ArrowLeft, Check, AlertCircle } from "lucide-react"
 
-interface ValidFields {
-  novaSenha?: boolean
-  confirmarSenha?: boolean
-}
+const passwordSchema = z
+  .string()
+  .min(6, "A senha deve ter mais de seis caracteres.")
+  .regex(/[a-z]/, "A senha deve conter letras minúsculas.")
+  .regex(/[A-Z]/, "A senha deve conter letras maiúsculas.")
+  .regex(/[0-9]/, "A senha deve conter números.")
+  .regex(/[!@#$%^&*(),.?:{}|<>]/, "A senha deve conter caracteres especiais.")
 
-type FieldName = keyof FormData
-
-export function RedefinirSenha() {
-  const [formData, setFormData] = useState<FormData>({
-    novaSenha: '',
-    confirmarSenha: ''
+const formSchema = z
+  .object({
+    novaSenha: passwordSchema,
+    confirmarSenha: z.string(),
+  })
+  .refine((data) => data.novaSenha === data.confirmarSenha, {
+    path: ["confirmarSenha"],
+    message: "As senhas não coincidem.",
   })
 
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [validFields, setValidFields] = useState<ValidFields>({})
+type FormValues = z.infer<typeof formSchema>
+
+export function RedefinirSenha() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-  const validateField = (name: FieldName, value: string): string | null => {
-    switch (name) {
-      case 'novaSenha':
-        if (!value) return 'A nova senha é obrigatória.'
-        if (value.length < 6) return 'A senha deve ter mais de seis caracteres.'
-        if (!/[a-z]/.test(value)) return 'A senha deve conter letras minúsculas.'
-        if (!/[A-Z]/.test(value)) return 'A senha deve conter letras maiúsculas.'
-        if (!/[0-9]/.test(value)) return 'A senha deve conter números.'
-        if (!/[!@#$%^&*(),.?:{}|<>]/.test(value)) return 'A senha deve conter caracteres especiais.'
-        return null
-      case 'confirmarSenha':
-        if (!value) return 'A confirmação da senha é obrigatória.'
-        if (value !== formData.novaSenha) return 'As senhas não coincidem.'
-        return null
-      default:
-        return null
-    }
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      novaSenha: "",
+      confirmarSenha: "",
+    },
+    mode: "onChange",
+  })
+
+  const onSubmit = (data: FormValues) => {
+    console.log("Nova senha definida:", data)
+    // Lógica para redefinir senha
   }
 
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {}
-    const newValidFields: ValidFields = {}
-    let formIsValid = true
-
-    Object.keys(formData).forEach((field) => {
-      const fieldName = field as FieldName
-      const error = validateField(fieldName, formData[fieldName])
-      if (error) {
-        newErrors[fieldName] = error
-        formIsValid = false
-      } else {
-        newValidFields[fieldName] = true
-      }
-    })
-
-    setErrors(newErrors)
-    setValidFields(newValidFields)
-    return formIsValid
+  const getFieldClassName = (name: keyof FormValues) => {
+    const error = form.formState.errors[name]
+    const value = form.watch(name)
+    if (error) return "pl-10 pr-10 border-red-500 focus-visible:ring-red-500"
+    if (!error && value) return "pl-10 pr-10 border-green-500 focus-visible:ring-green-500"
+    return "pl-10 pr-10"
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    const fieldName = name as FieldName
-
-    setFormData(prev => ({
-      ...prev,
-      [fieldName]: value
-    }))
-
-    const error = validateField(fieldName, value)
-    if (error) {
-      setErrors(prev => ({
-        ...prev,
-        [fieldName]: error
-      }))
-      setValidFields(prev => ({
-        ...prev,
-        [fieldName]: false
-      }))
-    } else {
-      setErrors(prev => ({
-        ...prev,
-        [fieldName]: undefined
-      }))
-      setValidFields(prev => ({
-        ...prev,
-        [fieldName]: true
-      }))
-    }
-  }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (validateForm()) {
-      console.log('Nova senha definida:', formData)
-      // Lógica para redefinir a senha
-    } else {
-      console.log('Formulário contém erros. Por favor, corrija-os.')
-    }
-  }
-
-  const getFieldClassName = (fieldName: FieldName): string => {
-    const baseClass = 'pl-10 pr-10'
-    if (errors[fieldName]) {
-      return `${baseClass} border-red-500 focus:border-red-500`
-    }
-    if (validFields[fieldName]) {
-      return `${baseClass} border-green-500 focus:border-green-500`
-    }
-    return baseClass
-  }
-
-  const getFieldIcon = (fieldName: FieldName) => {
-    if (errors[fieldName]) {
-      return <AlertCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
-    }
-    if (validFields[fieldName]) {
-      return <Check className="absolute right-3 top-3 h-4 w-4 text-green-500" />
-    }
+  const getFieldIcon = (name: keyof FormValues) => {
+    const error = form.formState.errors[name]
+    const value = form.watch(name)
+    if (error) return <AlertCircle className="absolute right-3 top-3 h-4 w-4 text-red-500" />
+    if (!error && value) return <Check className="absolute right-3 top-3 h-4 w-4 text-green-500" />
     return null
   }
 
@@ -146,109 +88,98 @@ export function RedefinirSenha() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Nova Senha */}
-            <div className="space-y-2">
-              <Label htmlFor="novaSenha" className="text-sm font-medium">
-                Nova Senha
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="novaSenha"
-                  name="novaSenha"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Digite sua nova senha"
-                  value={formData.novaSenha}
-                  onChange={handleInputChange}
-                  className={getFieldClassName('novaSenha')}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-10 top-3 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-                <div className="absolute right-3 top-3">
-                  {getFieldIcon('novaSenha')}
-                </div>
-                {errors.novaSenha && <p className="text-red-500 text-xs mt-1">{errors.novaSenha}</p>}
-              </div>
-            </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 
-            {/* Confirmar Senha */}
-            <div className="space-y-2">
-              <Label htmlFor="confirmarSenha" className="text-sm font-medium">
-                Confirmar Nova Senha
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="confirmarSenha"
-                  name="confirmarSenha"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Confirme sua nova senha"
-                  value={formData.confirmarSenha}
-                  onChange={handleInputChange}
-                  className={getFieldClassName('confirmarSenha')}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-10 top-3 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-                <div className="absolute right-3 top-3">
-                  {getFieldIcon('confirmarSenha')}
-                </div>
-                {errors.confirmarSenha && <p className="text-red-500 text-xs mt-1">{errors.confirmarSenha}</p>}
-              </div>
-            </div>
+              {/* Nova Senha */}
+              <FormField
+                control={form.control}
+                name="novaSenha"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nova Senha</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          {...field}
+                          type={showPassword ? "text" : "password"}
+                          className={getFieldClassName("novaSenha")}
+                          placeholder="Digite sua nova senha"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-10 top-3 h-4 w-4 text-muted-foreground hover:text-foreground"
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                        {getFieldIcon("novaSenha")}
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {/* Requisitos de Senha */}
-            <div className="space-y-2">
-              <div className="text-xs text-muted-foreground">
-                <p className="font-medium mb-2">Para sua segurança, a senha deve conter:</p>
-                <ul className="space-y-1">
-                  <li>• Letras minúsculas (a, b, c, d, e...)</li>
-                  <li>• Letras maiúsculas (A, B, C, D, E...)</li>
-                  <li>• Números (1, 2, 3, 4, 5...)</li>
-                  <li>• Mais de seis caracteres</li>
-                  <li>• Caracteres especiais ou símbolos (!, @, #, $, %...)</li>
+              {/* Confirmar Senha */}
+              <FormField
+                control={form.control}
+                name="confirmarSenha"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirmar Nova Senha</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          {...field}
+                          type={showConfirmPassword ? "text" : "password"}
+                          className={getFieldClassName("confirmarSenha")}
+                          placeholder="Confirme sua nova senha"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-10 top-3 h-4 w-4 text-muted-foreground hover:text-foreground"
+                        >
+                          {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                        {getFieldIcon("confirmarSenha")}
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Requisitos de senha */}
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p className="font-medium">Para sua segurança, a senha deve conter:</p>
+                <ul className="list-disc pl-4">
+                  <li>Letras minúsculas (a, b, c...)</li>
+                  <li>Letras maiúsculas (A, B, C...)</li>
+                  <li>Números (1, 2, 3...)</li>
+                  <li>Mais de seis caracteres</li>
+                  <li>Caracteres especiais (!, @, #...)</li>
                 </ul>
               </div>
-            </div>
 
-            {/* Botão Submeter */}
-            <Button type="submit" className="w-full" size="lg" disabled={!Object.keys(validFields).length || Object.keys(errors).length > 0}>
-              Redefinir Senha
-            </Button>
+              <Button type="submit" className="w-full" size="lg" disabled={!form.formState.isValid}>
+                Redefinir Senha
+              </Button>
 
-            {/* Voltar para login */}
-            <div className="text-center">
-              <button
-                type="button"
-                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Link to="/login" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <div className="text-center">
+                <Link
+                  to="/login"
+                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
                   <ArrowLeft className="h-4 w-4" />
-                    Voltar para o login
+                  Voltar para o login
                 </Link>
-              </button>
-            </div>
-          </form>
+              </div>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>
