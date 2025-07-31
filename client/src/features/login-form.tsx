@@ -84,5 +84,6 @@ export function LoginForm() {
                     placeholder="(00) 00000-0000"
                     value={telefone}
                     onChange={(e) => setTelefone(e.target.value
-
+ );
+}
 
