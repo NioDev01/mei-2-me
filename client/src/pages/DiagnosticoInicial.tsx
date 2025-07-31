@@ -16,7 +16,8 @@
     municipio: '',
     qtdFuncionarios: '',
     faturamento: '',
-    gastos: ''
+    gastos: '',
+    possibilidades: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
