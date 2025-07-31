@@ -83,7 +83,43 @@ export function LoginForm() {
                     type="tel"
                     placeholder="(00) 00000-0000"
                     value={telefone}
-                    onChange={(e) => setTelefone(e.target.value
- );
-}
+                    onChange={(e) => setTelefone(e.target.value)}
+                    maxLength={15}
+                  />
+                </div>
+              </TabsContent>
 
+              <div className="text-right text-sm">
+                <a href="#" className="text-blue-600 hover:underline">
+                  Esqueceu sua senha?
+                </a>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder=""
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="mt-4 text-right text-sm">
+                <a>Não possui uma conta? </a>
+                <a href="#" className="text-blue-600 hover:underline">
+                  Crie uma conta
+                </a>
+              </div>
+
+              <Button type="submit" className="w-full hover:bg-chart-2">
+                Entrar
+              </Button>
+            </form>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
