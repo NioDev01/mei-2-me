@@ -122,7 +122,7 @@ export function Home() {
             Pronto para transformar o seu negócio?
           </h2>
           <Button className="py-4 px-12 h-14 text-lg" asChild>
-            <Link to="/mensagens">Comece Agora Gratuitamente</Link>
+            <Link to="/diagnostico">Comece Agora Gratuitamente</Link>
           </Button>
         </div>
       </section>
