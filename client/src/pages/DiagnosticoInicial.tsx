@@ -148,12 +148,12 @@
               </div>
 
               <div>
-                <Label htmlFor="faturamento">Quanto foi o faturamento de MEI nos últimos 12 meses? *</Label>
+                <Label htmlFor="faturament" >Quanto foi o faturamento de MEI nos últimos 12 meses? *</Label>
                 <Input
                   id="faturamento"
                   name="faturamento"
                   placeholder="Ex: R$ 20.000,00"
-                  className="mt-2"
+                  className="mt-5.5"
                   value={formData.faturamento}
                   onChange={handleChange}
                 />
@@ -229,7 +229,7 @@
                     <RadioGroupItem value="sim4" id="sim4" />
                     <Label htmlFor="sim4">Sim</Label>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 ">
                     <RadioGroupItem value="nao4" id="nao4" />
                     <Label htmlFor="nao4">Não</Label>
                   </div>
@@ -237,11 +237,11 @@
               </div>
             </div>
 
-              <div>
+              <div className="mt-8">
                 <Label className="mb-4 block ">
                   Por quais motivos você considera fazer a migração?
                   </Label>
-                <div className="space-y-3">
+                <RadioGroup className="space-y-3">
                   <div className="flex items-center space-x-2">
                     <Checkbox id="faturamento-proximo" />
                     <Label htmlFor="faturamento-proximo" className="text-sm">Faturamento próximo ao limite</Label>
@@ -266,7 +266,7 @@
                     <Checkbox id="outros" />
                     <Label htmlFor="outros" className="text-sm">Outros (especificar)</Label>
                   </div>
-                </div>
+                </RadioGroup>
               </div>
 
 
