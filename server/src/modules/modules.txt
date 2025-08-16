@@ -1,1 +1,0 @@
-Os arquivos iniciais para auth e user foram gerados como exemplo.
