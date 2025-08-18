@@ -148,7 +148,7 @@ export function LoginForm() {
                 </TabsContent>
 
                 <div className="text-right text-sm">
-                  <a href="#" className="text-blue-600 hover:underline">
+                  <a href="/RecuperarSenha" className="text-blue-600 hover:underline">
                     Esqueceu sua senha?
                   </a>
                 </div>
@@ -173,7 +173,7 @@ export function LoginForm() {
 
                 <div className="mt-4 text-right text-sm">
                   <a>Não possui uma conta? </a>
-                  <a href="#" className="text-blue-600 hover:underline">
+                  <a href="/SignIn" className="text-blue-600 hover:underline">
                     Crie uma conta
                   </a>
                 </div>
