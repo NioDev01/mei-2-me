@@ -3,7 +3,7 @@ import { User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ToggleTemas} from './ToggleTemas';
 import mei2mew from '@/assets/mei2mew.png';
-import { ToggleTemas} from './ToggleTemas';
+
 
 export function NavBarMain() {
     
