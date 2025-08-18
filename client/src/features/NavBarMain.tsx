@@ -1,23 +1,57 @@
 import { Link } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { User } from "lucide-react"; 
-import mei2mew from '@/assets/mei2mew.png';
+import { User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { ToggleTemas} from './ToggleTemas';
+import mei2mew from '@/assets/mei2mew.png';
+
 
 export function NavBarMain() {
     
     return (
-        <div>
-            <nav className="fixed z-50 top-0 left-0 flex justify-between items-center space-x-4 mb-6 bg-sidebar-primary w-full h-1/10">
-                <Link to="/"><img className='mx-8 h-1/3 w-1/3' src={mei2mew} alt='Logo'></img></Link>
-                <Link to="/mensagens" className="text-background hover:underline">Mensagens</Link>
-                <div className="flex items-center gap-2 mx-8">
-                    <Button variant={'secondary'} className='hover:scale-110 transition-transform duration-300' asChild>
-                        <Link to="/login"><User className="text-secondary-foreground w-8 h-8"/>Login</Link>
-                    </Button>
-                    <ToggleTemas />
+        <nav 
+            className="fixed top-0 left-0 right-0 z-50 bg-sidebar-primary border-b border-border/40 backdrop-blur-sm"
+            role="navigation"
+            aria-label="Navegação principal"
+        >
+
+            <div className="container mx-auto px-6">
+                <div className="flex justify-between items-center h-16">
+                    {/* Logo */}
+                    <div className="flex-shrink-0">
+                        <Link 
+                            to="/" 
+                            className="flex items-center space-x-2 hover:opacity-80 transition-opacity duration-200"
+                            aria-label="Ir para página inicial"
+                        >
+                            <img 
+                                className="h-8 w-auto sm:h-10" 
+                                src={mei2mew} 
+                                alt="Logo Mei2Mew"
+                            />
+                        </Link>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center space-x-4">
+                        <ToggleTemas />
+                        <Button 
+                            variant="secondary" 
+                            className="hover:scale-105 transition-all duration-200 shadow-sm hover:shadow-md" 
+                            asChild
+                        >
+                            <Link 
+                                to="/login" 
+                                className="flex items-center space-x-2"
+                                aria-label="Fazer login"
+                            >
+                                <User className="w-4 h-4" />
+                                <span className="hidden sm:inline">Login</span>
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
-            </nav>
-        </div>
+            </div>
+        </nav>
     );
 }
+
