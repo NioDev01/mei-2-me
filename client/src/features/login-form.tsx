@@ -1,27 +1,49 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+
+// Schema de validação
+const loginSchema = z.object({
+  loginType: z.enum(["cnpj", "email", "telefone"]),
+  cnpj: z.string().refine(val => val.length === 0 || /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/.test(val), {
+    message: "CNPJ inválido",
+  }),
+  email: z.string().email("E-mail inválido").optional(),
+  telefone: z.string().refine(val => val.length === 0 || /^\(\d{2}\) \d{5}-\d{4}$/.test(val), {
+    message: "Telefone inválido",
+  }),
+  password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const [activeTab, setActiveTab] = useState("cnpj");
-  const [cnpj, setCnpj] = useState("");
-  const [email, setEmail] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [password, setPassword] = useState("");
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      loginType: "cnpj",
+      cnpj: "",
+      email: "",
+      telefone: "",
+      password: "",
+    },
+    mode: "onChange",
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (activeTab === "cnpj") {
-      console.log("Login com CNPJ:", cnpj, password);
-    } else if (activeTab === "email") {
-      console.log("Login com Email:", email, password);
-    } else if (activeTab === "telefone") {
-      console.log("Login com Telefone:", telefone, password);
-    }
-  };
+  const loginType = form.watch("loginType");
 
   const formatCnpj = (value: string) => {
     return value
@@ -33,22 +55,16 @@ export function LoginForm() {
       .replace(/(-\d{2})\d+?$/, "$1");
   };
 
-  // Função para formatar telefone no padrão (XX) XXXXX-XXXX
   const formatTelefone = (value: string) => {
-    const digits = value.replace(/\D/g, "").slice(0, 11); // máximo 11 dígitos
-
-    if (digits.length <= 2) {
-      return `(${digits}`;
-    } else if (digits.length <= 7) {
-      return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
-    } else {
-      return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
-    }
+    const digits = value.replace(/\D/g, "").slice(0, 11);
+    if (digits.length <= 2) return `(${digits}`;
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
   };
 
-  const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatTelefone(e.target.value);
-    setTelefone(formatted);
+  const onSubmit = (data: LoginFormValues) => {
+    console.log("Dados do login:", data);
+    // Lógica de autenticação aqui
   };
 
   return (
@@ -58,84 +74,117 @@ export function LoginForm() {
           <CardTitle className="text-2xl text-center">Login</CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="cnpj">CNPJ</TabsTrigger>
-              <TabsTrigger value="email">Email</TabsTrigger>
-              <TabsTrigger value="telefone">Telefone</TabsTrigger>
-            </TabsList>
+          <Form {...form}>
+            <Tabs 
+              value={loginType} 
+              onValueChange={(value) => form.setValue("loginType", value as "cnpj" | "email" | "telefone")} 
+              className="w-full"
+            >
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="cnpj">CNPJ</TabsTrigger>
+                <TabsTrigger value="email">Email</TabsTrigger>
+                <TabsTrigger value="telefone">Telefone</TabsTrigger>
+              </TabsList>
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-              <TabsContent value="cnpj">
-                <div className="space-y-2">
-                  <Label htmlFor="cnpj">CNPJ</Label>
-                  <Input
-                    id="cnpj"
-                    type="text"
-                    placeholder="00.000.000/0000-00"
-                    value={cnpj}
-                    onChange={(e) => setCnpj(formatCnpj(e.target.value))}
-                    maxLength={18}
+              <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 space-y-4">
+                <TabsContent value="cnpj">
+                  <FormField
+                    control={form.control}
+                    name="cnpj"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CNPJ</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="00.000.000/0000-00"
+                            value={field.value}
+                            onChange={(e) => field.onChange(formatCnpj(e.target.value))}
+                            maxLength={18}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-              </TabsContent>
+                </TabsContent>
 
-              <TabsContent value="email">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                <TabsContent value="email">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="seu@email.com"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-              </TabsContent>
+                </TabsContent>
 
-              <TabsContent value="telefone">
-                <div className="space-y-2">
-                  <Label htmlFor="telefone">Telefone</Label>
-                  <Input
-                    id="telefone"
-                    type="tel"
-                    placeholder="(00) 00000-0000"
-                    value={telefone}
-                    onChange={handleTelefoneChange}
-                    maxLength={15}
+                <TabsContent value="telefone">
+                  <FormField
+                    control={form.control}
+                    name="telefone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Telefone</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="(00) 00000-0000"
+                            value={field.value}
+                            onChange={(e) => field.onChange(formatTelefone(e.target.value))}
+                            maxLength={15}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
+                </TabsContent>
+
+                <div className="text-right text-sm">
+                  <a href="#" className="text-blue-600 hover:underline">
+                    Esqueceu sua senha?
+                  </a>
                 </div>
-              </TabsContent>
 
-              <div className="text-right text-sm">
-                <a href="#" className="text-blue-600 hover:underline">
-                  Esqueceu sua senha?
-                </a>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder=""
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Senha</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder=""
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <div className="mt-4 text-right text-sm">
-                <a>Não possui uma conta? </a>
-                <a href="#" className="text-blue-600 hover:underline">
-                  Crie uma conta
-                </a>
-              </div>
+                <div className="mt-4 text-right text-sm">
+                  <a>Não possui uma conta? </a>
+                  <a href="#" className="text-blue-600 hover:underline">
+                    Crie uma conta
+                  </a>
+                </div>
 
-              <Button type="submit" className="w-full hover:bg-chart-2">
-                Entrar
-              </Button>
-            </form>
-          </Tabs>
+                <Button type="submit" className="w-full hover:bg-chart-2">
+                  Entrar
+                </Button>
+              </form>
+            </Tabs>
+          </Form>
         </CardContent>
       </Card>
     </div>
