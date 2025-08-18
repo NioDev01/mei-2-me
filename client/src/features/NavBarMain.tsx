@@ -29,8 +29,8 @@ export function NavBarMain() {
                                 alt="Logo Mei2Mew"
                             />
                         </Link>
-                        <Link to="/app" className="text-background hover:underline">App</Link>
                     </div>
+                        <Link to="/app" className="text-background hover:underline">App</Link>
 
                     {/* Actions */}
                     <div className="flex items-center space-x-4">
