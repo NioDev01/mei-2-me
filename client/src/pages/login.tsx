@@ -1,29 +1,22 @@
-// import { useState } from "react";
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import { Input } from "@/components/ui/input";
-// import { Button } from "@/components/ui/button";
-// import { Label } from "@/components/ui/label";
-import { LoginForm } from "@/features/login-form"
+import { LoginForm } from "@/features/LoginForm"
 import mei2me from '@/assets/mei2me.png';
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 export function Login() {
-  const navigate = useNavigate(); // permite redirecionar para a página anterior
 
   return (
     <div className="grid min-h-svh lg:grid-cols-2 ">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         {/* Botão de voltar */}
-        <button
-          onClick={() => navigate(-1)}
+        <Link
+          to="/"
           className="flex items-center text-sm text-muted-foreground hover:text-primary"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Voltar
-        </button>
+        </Link>
 
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-lg">
