@@ -1,12 +1,12 @@
 import { Routes, Route } from 'react-router-dom';
 import { Home } from '@/pages/Home';
 import { Mensagens } from '@/pages/Mensagens';
-import { Login } from '@/pages/Login';
+import { Login} from '@/pages/login';
 import { DiagInicial } from '@/pages/DiagnosticoInicial';
 import { RedefinirSenha } from '@/pages/RedefinirSenha';
 import { RecuperarSenha } from '@/pages/RecuperarSenha';
 import { SignIn } from '@/pages/SignIn';
-import { AppHub } from '@/pages/AppHub';
+
 
 export function AppRoutes() {
   return (
@@ -18,7 +18,6 @@ export function AppRoutes() {
       <Route path="/redefinirsenha" element={<RedefinirSenha />} />
       <Route path="/recuperarsenha" element={<RecuperarSenha />} />
       <Route path="/signin" element={<SignIn />} />
-      <Route path="/app" element={<AppHub />} />
     </Routes>
   );
 }
