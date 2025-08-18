@@ -32,67 +32,67 @@ const documents: Document[] = [
   {
     id: '1',
     name: 'Comunicação de Desenquadramento do SIMEI',
-    description: 'Formulário oficial para cadastramento empresarial',
-    purpose: 'Registro inicial da empresa junto à JUCESP',
-    howToObtain: 'Disponível no site da JUCESP ou presencialmente nas unidades de atendimento',
+    description: 'Descrição do Documento',
+    purpose: 'Propósito do Documento',
+    howToObtain: 'Como obter o Documento',
     hasTemplate: false
   },
   {
     id: '2',
     name: 'Formulário Capa Marrom',
-    description: 'Documento constitutivo da empresa',
-    purpose: 'Define a estrutura jurídica, sócios, capital social e atividades da empresa',
-    howToObtain: 'Elaborado por advogado especializado em direito empresarial',
+    description: 'Descrição do Documento',
+    purpose: 'Propósito do Documento',
+    howToObtain: 'Como obter o Documento',
     hasTemplate: true,
     templateUrl: '#'
   },
   {
     id: '3',
     name: 'Requerimento do Empresário',
-    description: 'Declaração de que os sócios não possuem impedimentos legais',
-    purpose: 'Comprovar que os sócios podem exercer atividade empresarial',
-    howToObtain: 'Preenchida pelos próprios sócios com firma reconhecida',
+    description: 'Descrição do Documento',
+    purpose: 'Propósito do Documento',
+    howToObtain: 'Como obter o Documento',
     hasTemplate: true,
     templateUrl: '#'
   },
   {
     id: '4',
     name: 'Comprovante de pagamento da DARE',
-    description: 'Documento que comprova o endereço onde funcionará a empresa',
-    purpose: 'Validar o local de funcionamento da empresa',
-    howToObtain: 'Conta de luz, água, telefone ou contrato de locação em nome da empresa ou sócio',
+    description: 'Descrição do Documento',
+    purpose: 'Propósito do Documento',
+    howToObtain: 'Como obter o Documento',
     hasTemplate: false
   },
   {
     id: '5',
     name: 'Contrato Social',
-    description: 'Documento que verifica se o endereço é adequado para a atividade',
-    purpose: 'Garantir que o local está em conformidade com as normas municipais',
-    howToObtain: 'Solicitado na prefeitura do município onde será a sede',
+    description: 'Descrição do Documento',
+    purpose: 'Propósito do Documento',
+    howToObtain: 'Como obter o Documento',
     hasTemplate: false
   },
   {
     id: '6',
     name: 'Cópia dos Documentos dos Sócios',
-    description: 'RG, CPF e comprovante de residência dos sócios',
-    purpose: 'Identificação e qualificação dos sócios da empresa',
-    howToObtain: 'Cópias autenticadas dos documentos pessoais de cada sócio',
+    description: 'Descrição do Documento',
+    purpose: 'Propósito do Documento',
+    howToObtain: 'Como obter o Documento',
     hasTemplate: false
   },
   {
     id: '7',
     name: 'DARF de Taxa de Fiscalização',
-    description: 'Comprovante de pagamento da taxa devida à JUCESP',
-    purpose: 'Quitação das taxas para processamento do registro',
-    howToObtain: 'Gerado no site da JUCESP após preenchimento do requerimento',
+    description: 'Descrição do Documento',
+    purpose: 'Propósito do Documento',
+    howToObtain: 'Como obter o Documento',
     hasTemplate: false
   },
   {
     id: '8',
     name: 'Procuração (se aplicável)',
-    description: 'Documento para representação por terceiros',
-    purpose: 'Autorizar advogado ou contador a representar a empresa no processo',
-    howToObtain: 'Elaborada por advogado com firma reconhecida dos outorgantes',
+    description: 'Descrição do Documento',
+    purpose: 'Propósito do Documento',
+    howToObtain: 'Como obter o Documento',
     hasTemplate: true,
     templateUrl: '#'
   },
@@ -115,10 +115,10 @@ export function Checklist() {
     <div className="w-full space-y-8 pt-3">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Checklist de Documentos</h1>
-        <p className="text-muted-foreground">
+        {/* <h1 className="text-3xl font-bold">Checklist de Documentos</h1> */}
+        <h2 className="text-1xl text-muted-foreground">
           Veja os documentos necessários e marque os que você já possui.
-        </p>
+        </h2>
       </div>
 
       {/* Barra de Progresso */}

@@ -10,11 +10,30 @@ import {
   SidebarFooter
 } from "@/components/ui/sidebar"
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
-import { PanelsLeftBottom, Route, Calculator, ListChecks } from "lucide-react"
+import { 
+  PanelsLeftBottom, 
+  Route, 
+  Calculator, 
+  ListChecks, 
+  BotMessageSquare,
+  User,
+  Settings,
+  LogOut,
+} from "lucide-react"
 
 import { useEffect, useState } from "react"
 
@@ -42,16 +61,29 @@ export function AppSidebar() {
   }, [])
 
   return (
-    <Sidebar>
+    <Sidebar variant="sidebar">
       <SidebarHeader>
         <div className="flex items-center space-x-2 p-4">
-          <Avatar>
-            <AvatarImage src="mei2me.png" alt="Logo MEI2ME" />
-            <AvatarFallback>M2</AvatarFallback>
-          </Avatar>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="cursor-pointer">
+                <AvatarImage src="mei2me.png" alt="Logo MEI2ME" />
+                <AvatarFallback>M2</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="start">
+              <DropdownMenuGroup>
+                <DropdownMenuItem><User/>Dados da Conta</DropdownMenuItem>
+                <DropdownMenuItem><Settings/>Configurações</DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem><LogOut/>Sair</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <p className="text-lg font-semibold pl-2">MEI2ME</p>
         </div>
       </SidebarHeader>
+      <Separator />
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
@@ -80,7 +112,11 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <Separator />
       <SidebarFooter>
+        <div className="flex items-center">
+          <Button><BotMessageSquare/>ContAI</Button>
+        </div>
         © {new Date().getFullYear()} MEI2ME
       </SidebarFooter>
     </Sidebar>

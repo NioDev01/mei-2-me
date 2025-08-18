@@ -34,13 +34,15 @@ export function AppHub() {
 
   const renderModulo = () => {
     switch (moduloAtivo) {
-      case "painel": return <Painel />;
-      case "jornada": return <Jornada />;
-      case "simulador": return <Simulador />;
-      case "checklist": return <Checklist />;
-      default: return <Painel />;
+      case "painel": return [<Painel />, "Painel MEI"];
+      case "jornada": return [<Jornada />, "Jornada"];
+      case "simulador": return [<Simulador />, "Simulador de Regime"];
+      case "checklist": return [<Checklist />, "Checklist de Documentos"];
+      default: return [<Painel />, "Painel MEI"];
     }
   };
+
+  const moduloInfos = renderModulo();
 
   return (
     <SidebarProvider>
@@ -48,13 +50,17 @@ export function AppHub() {
       <AppSidebar />
       <main className="w-full p-4">
         <div className="flex justify-between items-center mb-4">
-            <SidebarTrigger />
+            <div className="flex items-center gap-4">
+              <SidebarTrigger />
+                <p className="select-none">|</p>
+              <h1 className="text-1xl font-bold pl-2">{moduloInfos[1]}</h1>
+            </div>
             <div className="flex items-center gap-4">
                 <Link to="/" className="h-8 w-8 hover:scale-110 transition-transform duration-300"><img className='h-full w-full' src='mei2me.png' alt='Logo'></img></Link>
                 <ToggleTemas />
             </div>
         </div>
-        {renderModulo()}
+        {moduloInfos[0]}
       </main>
       {/* Trigger do ShadCN segue funcionando no mobile */}
     </SidebarProvider>
