@@ -1,4 +1,4 @@
-import { LoginForm } from "@/features/login-form"
+import { LoginForm } from "@/features/LoginForm"
 import mei2me from '@/assets/mei2me.png';
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";

@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { Home } from '@/pages/Home';
 import { Mensagens } from '@/pages/Mensagens';
-import { Login} from '@/pages/login';
+import { Login } from '@/pages/Login';
 import { DiagInicial } from '@/pages/DiagnosticoInicial';
 import { RedefinirSenha } from '@/pages/RedefinirSenha';
 import { RecuperarSenha } from '@/pages/RecuperarSenha';
