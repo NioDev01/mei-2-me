@@ -3,8 +3,10 @@ import { User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ToggleTemas} from './ToggleTemas';
 import mei2mew from '@/assets/mei2mew.png';
+import { ToggleTemas} from './ToggleTemas';
 
 export function NavBarMain() {
+    
     return (
         <nav 
             className="fixed top-0 left-0 right-0 z-50 bg-sidebar-primary border-b border-border/40 backdrop-blur-sm"
