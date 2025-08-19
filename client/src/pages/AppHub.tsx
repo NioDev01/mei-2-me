@@ -56,7 +56,7 @@ export function AppHub() {
               <h1 className="text-1xl font-bold pl-2">{moduloInfos[1]}</h1>
             </div>
             <div className="flex items-center gap-4">
-                <Link to="/" className="h-8 w-8 hover:scale-110 transition-transform duration-300"><img className='h-full w-full' src='mei2me.png' alt='Logo'></img></Link>
+                <Link to="/" className="h-8 w-8 hover:scale-110 transition-transform duration-300"><img className='h-full w-full' src='/public/mei2me.svg' alt='Logo'></img></Link>
                 <ToggleTemas />
             </div>
         </div>
