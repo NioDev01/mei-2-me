@@ -1,7 +1,11 @@
-export function regraFilial(possuiFiliais: boolean): string {
-  if (possuiFiliais == true) {
-    return "Desenquadramento imediato. Motivo: tem filiais ativas";
-  } else {
-    return "Elegível para migração de MEI para ME";
+import { Diagnostico } from '../analise-migracao.service';
+
+export function validaPossuiFilial(
+  user: any,
+  resultados: Diagnostico[],
+  adicionar: (rule: string) => void,
+) {
+  if (user.possui_filial) {
+    adicionar('Abertura de filial');
   }
 }

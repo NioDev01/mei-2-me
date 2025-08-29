@@ -1,11 +1,11 @@
 import { Diagnostico } from '../analise-migracao.service';
 
-export function validaParticipacaoSocietaria(
+export function validaSalarioAcimaPiso(
   user: any,
   resultados: Diagnostico[],
   adicionar: (rule: string) => void,
 ) {
-  if (user.participa_outra_empresa) {
-    adicionar('Participação Societária');
+  if (user.paga_acima_piso) {
+    adicionar('Salário acima do permitido');
   }
 }

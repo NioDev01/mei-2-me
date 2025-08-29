@@ -1,11 +1,11 @@
 import { Diagnostico } from '../analise-migracao.service';
 
-export function validaParticipacaoSocietaria(
+export function validaExportacaoAcimaLimite(
   user: any,
   resultados: Diagnostico[],
   adicionar: (rule: string) => void,
 ) {
-  if (user.participa_outra_empresa) {
-    adicionar('Participação Societária');
+  if (user.exporta_acima_limite) {
+    adicionar('Exportações acima do limite permitido');
   }
 }
