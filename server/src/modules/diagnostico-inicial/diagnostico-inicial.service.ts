@@ -7,6 +7,7 @@ import { CreateDiagnosticoInicialDto } from './dto/create-diagnostico-inicial.dt
 import { UpdateDiagnosticoInicialDto } from './dto/update-diagnostico-inicial.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { ReceitawsApiService } from 'src/integrations/receitaws-api/receitaws-api.service';
+import { AnaliseMigracaoService } from '../analise-migracao/analise-migracao.service';
 
 interface AtividadeDto {
   code: string;
@@ -32,6 +33,7 @@ export class DiagnosticoInicialService {
   constructor(
     private prisma: PrismaService,
     private readonly receitawsAPIService: ReceitawsApiService,
+    private readonly analiseService: AnaliseMigracaoService,
   ) {}
 
   async create(createDiagnosticoInicialDto: CreateDiagnosticoInicialDto) {
@@ -85,10 +87,28 @@ export class DiagnosticoInicialService {
     };
 
     try {
-      console.log('Dados salvos com suceso!');
-      return this.prisma.mei.create({
+      const diagnostico = this.prisma.mei.create({
         data: data,
       });
+
+      const resultadoAnalise = await this.analiseService.analisarMigracao(
+        (await diagnostico).cnpj_mei,
+      );
+
+      await this.prisma.diagnostico.create({
+        data: {
+          id_mei: (await diagnostico).id_mei,
+          resultado_diag: resultadoAnalise.analise,
+          motivos_resultado: resultadoAnalise.motivos || [],
+          atualizado_em: new Date(),
+        },
+      });
+
+      return {
+        mesage: 'Diagnóstico salvo com sucesso!',
+        dados: diagnostico,
+        analise: resultadoAnalise,
+      };
     } catch (error: unknown) {
       console.error(
         `Erro ao salvar os dados no banco de dados ${cnpj_mei}: `,
