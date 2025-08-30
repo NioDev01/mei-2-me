@@ -14,66 +14,66 @@ model Mensagem {
 }
 
 model Mei {
-  id_mei               Int      @id @default(autoincrement())
-  cnpj_mei             String   @unique @db.VarChar(18)
-  data_abertura        DateTime @db.Date
-  uf_mei               String   @db.Char(2)
-  razao_social         String   @db.VarChar(255)
-  nome_fantasia        String   @db.VarChar(255)
-  municipio_mei        String   @db.VarChar(255)
-  cnae_principal       Json
-  cnae_secundario      Json?   
-  natureza_juridica    String   @db.VarChar(255)
-  possui_filial        Boolean
-  qtd_funcionario      Int
-  paga_acima_piso      Boolean
+  id_mei                  Int          @id @default(autoincrement())
+  cnpj_mei                String       @unique @db.VarChar(18)
+  data_abertura           DateTime     @db.Date
+  uf_mei                  String       @db.Char(2)
+  razao_social            String       @db.VarChar(255)
+  nome_fantasia           String       @db.VarChar(255)
+  municipio_mei           String       @db.VarChar(255)
+  cnae_principal          Json
+  cnae_secundario         Json?
+  natureza_juridica       String       @db.VarChar(255)
+  possui_filial           Boolean
+  qtd_funcionario         Int
+  paga_acima_piso         Boolean
   participa_outra_empresa Boolean
-  faturamento_12m      Decimal  @db.Decimal(8, 2)
-  compras_12m          Decimal  @db.Decimal(8, 2)
-  exporta_acima_limite Boolean
-
-  diagnostico          Diagnostico?
-  usuarios             Usuario?
+  faturamento_12m         Decimal      @db.Decimal(8, 2)
+  compras_12m             Decimal      @db.Decimal(8, 2)
+  exporta_acima_limite    Boolean
+  diagnostico             Diagnostico?
+  usuarios                Usuario?
 
   @@map("Mei")
 }
 
 model Diagnostico {
-  id_mei           Int      @id
-  resultado_diag   String   @db.VarChar(255)
-  atualizado_em    DateTime @db.Timestamp(0)
+  id_mei            Int      @id
+  resultado_diag    String   @db.VarChar(255)
+  atualizado_em     DateTime @db.Timestamp(0)
   motivos_resultado Json
-
-  mei              Mei      @relation(fields: [id_mei], references: [id_mei])
+  mei               Mei      @relation(fields: [id_mei], references: [id_mei])
 
   @@map("Diagnostico")
 }
 
 model Cnae {
-  id_cnae            Int      @id @default(autoincrement())
-  cnae               String   @db.Char(9)
-  ocupacao_cnae      String   @db.Text
-  descricao_subclasse String  @db.Text
-  iss_cnae           String   @db.Char(1)
-  icms_cnae          String   @db.Char(1)
+  cnae                String   @db.Char(9)
+  ocupacao_cnae       String
+  descricao_subclasse String
+  iss_cnae            String   @db.Char(1)
+  icms_cnae           String   @db.Char(1)
+  id_cnae             Int      @id @default(autoincrement())
+  simples_anexo       String?  @db.VarChar(40)
+  simples_fatorr      String?  @db.Char(1)
+  setor_cnae          String?  @db.VarChar(30)
+  lucrop_aliquota     Decimal? @db.Decimal(5, 2)
 
-  @@index([cnae], name: "cnae_cnae_index")
-  @@index([cnae, ocupacao_cnae], name: "cnae_cnae_ocupacao_cnae_index")
-  @@index([cnae, descricao_subclasse], name: "cnae_cnae_descricao_subclasse_index")
-
+  @@index([cnae], map: "cnae_cnae_index")
+  @@index([cnae, ocupacao_cnae], map: "cnae_cnae_ocupacao_cnae_index")
+  @@index([cnae, descricao_subclasse], map: "cnae_cnae_descricao_subclasse_index")
   @@map("Cnae")
 }
 
 model Usuario {
-  id_user        Int     @id @default(autoincrement())
-  id_mei         Int     @unique
-  nome_user      String  @db.Text
-  email_user     String  @unique @db.Text
-  cnpj_user      String  @unique @db.VarChar(18)
-  senha_user     String  @db.Text
-  celular_user   String  @db.VarChar(14)
-
-  mei            Mei     @relation(fields: [id_mei], references: [id_mei])
+  id_user      Int    @id @default(autoincrement())
+  id_mei       Int    @unique
+  nome_user    String
+  email_user   String @unique
+  cnpj_user    String @unique @db.VarChar(18)
+  senha_user   String
+  celular_user String @db.VarChar(14)
+  mei          Mei    @relation(fields: [id_mei], references: [id_mei])
 
   @@map("Usuario")
 }
