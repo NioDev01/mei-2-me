@@ -14,7 +14,7 @@ export class AnaliseMigracaoController {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new Error('Erro ao buscar análise de migracão');
+      throw new Error('Erro ao buscar análise de migração');
     }
   }
 }
