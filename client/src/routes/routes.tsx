@@ -7,6 +7,7 @@ import { RedefinirSenha } from '@/pages/RedefinirSenha';
 import { RecuperarSenha } from '@/pages/RecuperarSenha';
 import { SignIn } from '@/pages/SignIn';
 import { AppHub } from '@/pages/AppHub';
+import { TelaApto } from '@/pages/NaoApto';
 
 export function AppRoutes() {
   return (
@@ -19,6 +20,7 @@ export function AppRoutes() {
       <Route path="/recuperarsenha" element={<RecuperarSenha />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/app" element={<AppHub />} />
+      <Route path="/naoapto" element={<TelaApto />} />
     </Routes>
   );
 }
