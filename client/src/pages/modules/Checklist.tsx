@@ -44,7 +44,7 @@ const documents: Document[] = [
     purpose: 'O propósito principal do Formulário Capa Marrom é padronizar a coleta de informações para os processos de registro e alteração de empresas na JUCESP, garantindo que todos os dados necessários sejam fornecidos de forma organizada e completa para a análise e deferimento dos pedidos.',
     howToObtain: 'O Formulário Capa Marrom pode ser obtido no site da JUCESP, geralmente na seção de formulários ou downloads. Em alguns casos, ele pode ser gerado através do sistema "Cadastro Web" (Via Rápida Empresa - VRE) da JUCESP, dependendo do tipo de processo a ser realizado.',
     hasTemplate: true,
-    templateUrl: '#'
+    templateUrl: '/templates/Formulario-Capa-Marron.pdf'
   },
   {
     id: '3',
@@ -53,7 +53,7 @@ const documents: Document[] = [
     purpose: 'O principal propósito do Requerimento do Empresário é formalizar a criação de uma empresa individual e solicitar o seu registro junto aos órgãos competentes, como a Junta Comercial. É um documento obrigatório para legalizar a atuação do empresário individual e permitir a obtenção do CNPJ junto à Receita Federal.',
     howToObtain: 'O Requerimento do Empresário é emitido pela Junta Comercial do estado onde a empresa será registrada. Geralmente, o preenchimento e a emissão podem ser feitos online, através dos sistemas integrados das Juntas Comerciais (como o Via Rápida Empresa - VRE em São Paulo) ou módulos integradores, que visam simplificar o processo e eliminar a digitação manual. Após o preenchimento, o documento deve ser protocolado na Junta Comercial, juntamente com a documentação pessoal do titular e o comprovante de pagamento das taxas.',
     hasTemplate: true,
-    templateUrl: '#'
+    templateUrl: '/templates/Requerimento-de-Eempresario.pdf'
   },
   {
     id: '4',
@@ -107,6 +107,14 @@ export function Checklist() {
     if (newChecked.has(id)) newChecked.delete(id)
     else newChecked.add(id)
     setCheckedDocuments(newChecked)
+  }
+    const handleDownload = (templateUrl: string, filename: string) => {
+    const link = document.createElement('a')
+    link.href = templateUrl
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   const progress = (checkedDocuments.size / documents.length) * 100
@@ -169,7 +177,13 @@ export function Checklist() {
                 Info
               </Button>
               {doc.hasTemplate && (
-                <Button size="sm" onClick={() => console.log("Download:", doc.templateUrl)}>
+                <Button 
+                  size="sm" 
+                  onClick={() => handleDownload(
+                    doc.templateUrl!, 
+                    `${doc.name.toLowerCase().replace(/\s+/g, '-')}.${doc.templateUrl?.split('.').pop()}`
+                  )}
+                >
                   <Download className="h-4 w-4 mr-1" />
                   Modelo
                 </Button>
@@ -205,7 +219,12 @@ export function Checklist() {
 
               <div className="flex gap-2 pt-4">
                 {selectedDocument.hasTemplate && (
-                  <Button onClick={() => console.log("Download:", selectedDocument.templateUrl)}>
+                  <Button 
+                    onClick={() => handleDownload(
+                      selectedDocument.templateUrl!, 
+                      `${selectedDocument.name.toLowerCase().replace(/\s+/g, '-')}.${selectedDocument.templateUrl?.split('.').pop()}`
+                    )}
+                  >
                     <Download className="h-4 w-4 mr-1" />
                     Baixar Modelo
                   </Button>
