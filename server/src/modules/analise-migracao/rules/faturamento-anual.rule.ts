@@ -5,7 +5,16 @@ export function validaFaturamentoAnual(
   resultados: Diagnostico[],
   adicionar: (rule: string) => void,
 ) {
-  if (Number(user.faturamento_12m) > 81000) {
-    adicionar('Faturamento Anual');
+  const faturamentoUsuario = Number(user.faturamento_12m);
+  const faturamentoPermitido = 81000;
+  const faturamentoLimite = faturamentoPermitido + faturamentoPermitido * 0.2;
+
+  if (
+    faturamentoUsuario > faturamentoPermitido &&
+    faturamentoUsuario <= faturamentoLimite
+  ) {
+    adicionar('Faturamento anual até 20% acima do limite');
+  } else if (faturamentoUsuario > faturamentoLimite) {
+    adicionar('Faturamento anual superior à 20% do limite');
   }
 }
