@@ -19,14 +19,7 @@ export class DiagnosticoInicialController {
 
   @Post()
   create(@Body() createDiagnosticoInicialDto: CreateDiagnosticoInicialDto) {
-    console.log(`Dados validados com sucesso!`, createDiagnosticoInicialDto);
-
     return this.diagnosticoInicialService.create(createDiagnosticoInicialDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.diagnosticoInicialService.findAll();
   }
 
   @Get(':cnpj')
@@ -45,10 +38,5 @@ export class DiagnosticoInicialController {
       +id,
       updateDiagnosticoInicialDto,
     );
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.diagnosticoInicialService.remove(+id);
   }
 }

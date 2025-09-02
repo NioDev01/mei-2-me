@@ -1,6 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateDiagnosticoInicialDto } from './dto/create-diagnostico-inicial.dto';
@@ -44,7 +45,7 @@ export class DiagnosticoInicialService {
     try {
       apiData = await this.receitawsAPIService.findOne(cnpj_mei);
     } catch (error) {
-      console.error(
+      Logger.error(
         `Erro ao consultar a API da ReceitaWs para CNPJ ${cnpj_mei}: `,
         error,
       );
@@ -110,7 +111,7 @@ export class DiagnosticoInicialService {
         analise: resultadoAnalise,
       };
     } catch (error: unknown) {
-      console.error(
+      Logger.error(
         `Erro ao salvar os dados no banco de dados ${cnpj_mei}: `,
         error,
       );
@@ -118,10 +119,6 @@ export class DiagnosticoInicialService {
         `Erro ao salvar os dados do usuário no banco de dados.`,
       );
     }
-  }
-
-  findAll() {
-    return this.prisma.mei.findMany();
   }
 
   findOne(cnpj: string) {
@@ -132,11 +129,5 @@ export class DiagnosticoInicialService {
 
   update(id: number, updateDiagnosticoInicialDto: UpdateDiagnosticoInicialDto) {
     return `This action updates a #${id} diagnosticoInicial`;
-  }
-
-  remove(id: number) {
-    return this.prisma.mei.delete({
-      where: { id_mei: id },
-    });
   }
 }
