@@ -47,7 +47,7 @@ export function Home() {
                   Em poucos minutos, tenha clareza sobre as oportunidades e o melhor caminho para sua empresa.
                 </p>
                 <Button variant={"secondary"} className="w-full h-full font-bold py-4 px-8 text-xl" asChild>
-                  <Link to="/mensagens">Faça o Diagnóstico Gratuito</Link>
+                  <Link to="/Diagnostico">Faça o Diagnóstico Gratuito</Link>
                 </Button>
               </div>
             </div>
@@ -122,7 +122,7 @@ export function Home() {
             Pronto para transformar o seu negócio?
           </h2>
           <Button className="py-4 px-12 h-14 text-lg" asChild>
-            <Link to="/mensagens">Comece Agora Gratuitamente</Link>
+            <Link to="/Diagnostico">Comece Agora Gratuitamente</Link>
           </Button>
         </div>
       </section>
