@@ -121,7 +121,7 @@ export class DiagnosticoInicialService {
       });
 
       return {
-        mesage: 'Diagnóstico salvo com sucesso!',
+        message: 'Diagnóstico salvo com sucesso!',
         dados: diagnostico,
         analise: resultadoAnalise,
       };
