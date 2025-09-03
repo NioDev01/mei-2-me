@@ -28,15 +28,4 @@ export class DiagnosticoInicialController {
 
     return data;
   }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateDiagnosticoInicialDto: UpdateDiagnosticoInicialDto,
-  ) {
-    return this.diagnosticoInicialService.update(
-      +id,
-      updateDiagnosticoInicialDto,
-    );
-  }
 }

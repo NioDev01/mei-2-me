@@ -87,18 +87,33 @@ export class DiagnosticoInicialService {
       ),
     };
 
+    // Verifica se já existe MEI cadastrado
     try {
-      const diagnostico = this.prisma.mei.create({
-        data: data,
+      let mei = await this.prisma.mei.findUnique({
+        where: { cnpj_mei: data.cnpj_mei },
       });
 
-      const resultadoAnalise = await this.analiseService.analisarMigracao(
-        (await diagnostico).cnpj_mei,
-      );
+      if (mei) {
+        await this.prisma.mei.update({
+          where: { cnpj_mei: data.cnpj_mei },
+          data: dadosManuais,
+        });
+      } else {
+        mei = await this.prisma.mei.create({ data: data });
+      }
 
-      await this.prisma.diagnostico.create({
-        data: {
-          id_mei: (await diagnostico).id_mei,
+      const resultadoAnalise =
+        await this.analiseService.analisarMigracao(cnpj_mei);
+
+      const diagnostico = await this.prisma.diagnostico.upsert({
+        where: { id_mei: mei.id_mei },
+        update: {
+          resultado_diag: resultadoAnalise.analise,
+          motivos_resultado: resultadoAnalise.motivos || [],
+          atualizado_em: new Date(),
+        },
+        create: {
+          id_mei: mei.id_mei,
           resultado_diag: resultadoAnalise.analise,
           motivos_resultado: resultadoAnalise.motivos || [],
           atualizado_em: new Date(),
@@ -125,9 +140,5 @@ export class DiagnosticoInicialService {
     return this.prisma.mei.findUnique({
       where: { cnpj_mei: cnpj },
     });
-  }
-
-  update(id: number, updateDiagnosticoInicialDto: UpdateDiagnosticoInicialDto) {
-    return `This action updates a #${id} diagnosticoInicial`;
   }
 }
