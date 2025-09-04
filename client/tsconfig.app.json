@@ -20,6 +20,7 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    
 
     /* Linting */
     "strict": true,
@@ -27,7 +28,10 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "types": ["vitest/globals"],
   },
-  "include": ["src"]
+  "include": ["src", "test"],
+  "exclude": ["node_modules", "dist"]
 }
+
