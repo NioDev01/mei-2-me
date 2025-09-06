@@ -53,7 +53,7 @@ const documents: Document[] = [
     purpose: 'O principal propósito do Requerimento do Empresário é formalizar a criação de uma empresa individual e solicitar o seu registro junto aos órgãos competentes, como a Junta Comercial. É um documento obrigatório para legalizar a atuação do empresário individual e permitir a obtenção do CNPJ junto à Receita Federal.',
     howToObtain: 'O Requerimento do Empresário é emitido pela Junta Comercial do estado onde a empresa será registrada. Geralmente, o preenchimento e a emissão podem ser feitos online, através dos sistemas integrados das Juntas Comerciais (como o Via Rápida Empresa - VRE em São Paulo) ou módulos integradores, que visam simplificar o processo e eliminar a digitação manual. Após o preenchimento, o documento deve ser protocolado na Junta Comercial, juntamente com a documentação pessoal do titular e o comprovante de pagamento das taxas.',
     hasTemplate: true,
-    templateUrl: '/templates/Requerimento-de-Eempresario.pdf'
+    templateUrl: '/templates/Requerimento-de-Empresario.pdf'
   },
   {
     id: '4',
