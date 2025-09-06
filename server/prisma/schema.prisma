@@ -33,7 +33,8 @@ model Mei {
   exporta_acima_limite    Boolean
   diagnostico             Diagnostico?
   usuarios                Usuario?
-
+  importacao_direta       Boolean
+  
   @@map("Mei")
 }
 
@@ -54,11 +55,11 @@ model Cnae {
   iss_cnae            String   @db.Char(1)
   icms_cnae           String   @db.Char(1)
   id_cnae             Int      @id @default(autoincrement())
+  lucrop_aliq_csll    Decimal? @db.Decimal(5, 2)
+  lucrop_aliq_irpj    Decimal? @db.Decimal(5, 2)
+  setor_cnae          String?  @db.VarChar(30)
   simples_anexo       String?  @db.VarChar(40)
   simples_fatorr      String?  @db.Char(1)
-  setor_cnae          String?  @db.VarChar(30)
-  lucrop_aliq_irpj    Decimal? @db.Decimal(5, 2)
-  lucrop_aliq_csll    Decimal? @db.Decimal(5, 2)
 
   @@index([cnae], map: "cnae_cnae_index")
   @@index([cnae, ocupacao_cnae], map: "cnae_cnae_ocupacao_cnae_index")
