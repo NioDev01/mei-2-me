@@ -17,18 +17,4 @@ export default defineConfig({
     assetsDir: 'assets',
     sourcemap: process.env.NODE_ENV !== 'production',
   },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./test/setup.ts'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-    },
-    resolve: {
-      alias: {
-        "@": path.resolve(__dirname, "./src"),
-      },
-    },
-  }
 })
