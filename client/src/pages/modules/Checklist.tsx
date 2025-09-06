@@ -44,7 +44,7 @@ const documents: Document[] = [
     purpose: 'O propósito principal do Formulário Capa Marrom é padronizar a coleta de informações para os processos de registro e alteração de empresas na JUCESP, garantindo que todos os dados necessários sejam fornecidos de forma organizada e completa para a análise e deferimento dos pedidos.',
     howToObtain: 'O Formulário Capa Marrom pode ser obtido no site da JUCESP, geralmente na seção de formulários ou downloads. Em alguns casos, ele pode ser gerado através do sistema "Cadastro Web" (Via Rápida Empresa - VRE) da JUCESP, dependendo do tipo de processo a ser realizado.',
     hasTemplate: true,
-    templateUrl: '/templates/Formulario-Capa-Marron.pdf'
+    templateUrl: '/templates/formulario-capa-marrom.pdf'
   },
   {
     id: '3',
@@ -53,7 +53,7 @@ const documents: Document[] = [
     purpose: 'O principal propósito do Requerimento do Empresário é formalizar a criação de uma empresa individual e solicitar o seu registro junto aos órgãos competentes, como a Junta Comercial. É um documento obrigatório para legalizar a atuação do empresário individual e permitir a obtenção do CNPJ junto à Receita Federal.',
     howToObtain: 'O Requerimento do Empresário é emitido pela Junta Comercial do estado onde a empresa será registrada. Geralmente, o preenchimento e a emissão podem ser feitos online, através dos sistemas integrados das Juntas Comerciais (como o Via Rápida Empresa - VRE em São Paulo) ou módulos integradores, que visam simplificar o processo e eliminar a digitação manual. Após o preenchimento, o documento deve ser protocolado na Junta Comercial, juntamente com a documentação pessoal do titular e o comprovante de pagamento das taxas.',
     hasTemplate: true,
-    templateUrl: '/templates/Requerimento-de-Empresario.pdf'
+    templateUrl: '/templates/requerimento-de-empresario.pdf'
   },
   {
     id: '4',
