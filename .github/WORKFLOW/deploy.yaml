@@ -1,0 +1,60 @@
+name: Deploy no Render
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  deploy-render:
+    runs-on: ubuntu-latest 
+    
+    steps: 
+      - name: Checkout do código completo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  #checkout completo
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Instalar todas as dependências
+        run: npm ci --audit
+
+      - name: Executar testes unitários e de integração
+        run: npm test -- --watchAll=false --coverage --passWithNoTests
+
+      - name: Análise estática de código (ESLint)
+        run: npx eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0
+
+      - name: Verificar vulnerabilidades críticas
+        run: npm audit --audit-level=moderate
+
+      - name: Validar schema do Prisma
+        run: npx prisma validate
+
+      - name: Gerar cliente Prisma
+        run: npx prisma generate
+
+      - name: Verificar build da aplicação
+        run: npm run build --if-present
+
+  deploy:
+    name: Deploy para Produção
+    needs: deploy-render 
+    runs-on: ubuntu-latest 
+    if: success()
+    
+    steps:
+      - name: Verificar se pode deployar
+        run: echo "Todas as validações passaram! Iniciando deploy..."
+        
+      - name: Deploy no Render
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
