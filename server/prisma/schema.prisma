@@ -77,5 +77,8 @@ model Usuario {
   celular_user String @db.VarChar(14)
   mei          Mei    @relation(fields: [id_mei], references: [id_mei])
 
+  @@index([email_user])
+  @@index([celular_user])
+  @@index([cnpj_user])
   @@map("Usuario")
 }
