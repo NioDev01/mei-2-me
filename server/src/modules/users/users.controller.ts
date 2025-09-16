@@ -8,11 +8,13 @@ import {
   Put,
   UseInterceptors,
   ClassSerializerInterceptor,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOperation,
   ApiResponse,
@@ -20,6 +22,7 @@ import {
 } from '@nestjs/swagger';
 import { UserEntity } from './entities/users.entity';
 import { Usuario } from '@prisma/client';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -41,6 +44,8 @@ export class UsersController {
   }
 
   @Get(':cnpj')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Busca dados de um usuário',
     description:
@@ -54,6 +59,8 @@ export class UsersController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Atualiza dados do usuário',
     description:
@@ -67,6 +74,8 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Deleta usuário',
     description: 'Endpoint responsável por deletar usuário do sistema.',
