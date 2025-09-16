@@ -8,5 +8,6 @@ import { ReceitawsApiService } from 'src/integrations/receitaws-api/receitaws-ap
   imports: [HttpModule],
   controllers: [UsersController],
   providers: [UsersService, ReceitawsApiService],
+  exports: [UsersService],
 })
 export class UsersModule {}
