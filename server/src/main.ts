@@ -13,9 +13,13 @@ async function bootstrap() {
     .setTitle('MEI-2-ME')
     .setDescription('Documentação da API da aplicação MEI-2-ME.')
     .setVersion('0.1')
+    .addBearerAuth()
+    .addServer('http://localhost:3000/api')
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config, {
+    ignoreGlobalPrefix: false,
+  });
   SwaggerModule.setup('api/document', app, document);
 
   // Configuração de validação global
