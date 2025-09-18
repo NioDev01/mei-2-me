@@ -4,17 +4,20 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'prisma/prisma.service';
 import { AuthEntity } from './entity/auth.entity';
 import { LoginDto } from './dto/login.dto';
+import { EmailService } from 'src/integrations/email/email.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private emailService: EmailService,
   ) {}
 
   async login(data: LoginDto): Promise<AuthEntity> {
@@ -51,5 +54,24 @@ export class AuthService {
     return {
       accessToken,
     };
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await this.prisma.usuario.findUnique({
+      where: { email_user: email },
+    });
+
+    if (!user) {
+      throw new NotFoundException('E-mail de usuário inválido.');
+    }
+
+    const token = this.jwtService.sign(
+      { sub: user.id_user, email: user.email_user },
+      { expiresIn: '15m' },
+    );
+
+    await this.emailService.sendResetPassword(email, token);
+
+    Logger.log('E-mail enviado com sucesso!');
   }
 }

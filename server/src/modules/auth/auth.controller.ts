@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthEntity } from './entity/auth.entity';
 import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/email.dto';
 
 @Controller('auth')
 @ApiTags('Autenticação')
@@ -13,5 +14,10 @@ export class AuthController {
   @ApiResponse({ type: AuthEntity })
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() email: ForgotPasswordDto): Promise<void> {
+    return this.authService.forgotPassword(email.email);
   }
 }
