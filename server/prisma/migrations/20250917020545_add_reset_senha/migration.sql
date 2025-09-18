@@ -4,7 +4,7 @@ CREATE TABLE "public"."ResetSenha" (
     "id_user" INTEGER NOT NULL,
     "token" TEXT NOT NULL,
     "expira_em" TIMESTAMP(3) NOT NULL,
-    "used" BOOLEAN NOT NULL DEFAULT false,
+    "usado" BOOLEAN NOT NULL DEFAULT false,
     "criado_em" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "atualizado_em" TIMESTAMP(3) NOT NULL,
 
