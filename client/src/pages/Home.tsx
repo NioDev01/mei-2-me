@@ -2,7 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { NavBarMain } from "@/features/NavBarMain";
 import { Link } from 'react-router-dom';
-import { Users, Cog, ArrowRight, Headphones } from "lucide-react";
+import { FileText, BadgeDollarSign, Route, BotMessageSquare } from "lucide-react"
+
+  
+  
+  
 
 export function Home() {
   return (
@@ -71,7 +75,7 @@ export function Home() {
             {/* Feature 1 */}
             <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group"> 
               <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Users className="text-primary-foreground w-8 h-8" />
+                <FileText className="text-primary-foreground w-8 h-8" />
               </div>
               <h3 className="text-xl font-bold mb-4">Checklist de documentos</h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -82,7 +86,7 @@ export function Home() {
             {/* Feature 2 */}
             <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group"> 
               <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Cog className="text-primary-foreground w-8 h-8" />
+                <Route className="text-primary-foreground w-8 h-8" />
               </div>
               <h3 className="text-xl font-bold mb-4">Jornada</h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -93,7 +97,7 @@ export function Home() {
             {/* Feature 3 */}
             <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group"> 
               <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <ArrowRight className="text-primary-foreground w-8 h-8" />
+                <BadgeDollarSign className="text-primary-foreground w-8 h-8" />
               </div>
               <h3 className="text-xl font-bold mb-4">Simulador de Regime</h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -104,9 +108,9 @@ export function Home() {
             {/* Feature 4 */}
             <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group"> 
               <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Headphones className="text-primary-foreground w-8 h-8" />
+                <BotMessageSquare className="text-primary-foreground w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold mb-4">CONTA AI</h3>
+              <h3 className="text-xl font-bold mb-4">ContAI</h3>
               <p className="text-muted-foreground leading-relaxed">
                 Deixe a burocracia com a tecnologia! O módulo ajuda você a organizar e automatizar cálculos, simulações e obrigações da sua empresa durante a transição de MEI para ME. Mais facilidade, menos erros.
               </p>
