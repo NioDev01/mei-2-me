@@ -68,14 +68,14 @@ model Cnae {
 }
 
 model Usuario {
-  id_user      Int          @id @default(autoincrement())
-  id_mei       Int          @unique
+  id_user      Int    @id @default(autoincrement())
+  id_mei       Int    @unique
   nome_user    String
-  email_user   String       @unique
-  cnpj_user    String       @unique @db.VarChar(18)
+  email_user   String @unique
+  cnpj_user    String @unique @db.VarChar(18)
   senha_user   String
-  celular_user String       @db.VarChar(14)
-  mei          Mei          @relation(fields: [id_mei], references: [id_mei])
+  celular_user String @db.VarChar(14)
+  mei          Mei    @relation(fields: [id_mei], references: [id_mei])
   resetSenhas  ResetSenha[]
 
   @@map("Usuario")
@@ -83,13 +83,13 @@ model Usuario {
 
 model ResetSenha {
   id        Int      @id @default(autoincrement())
-  userId    Int
+  id_user    Int
   token     String   @unique
-  expiresAt DateTime
+  expira_em DateTime
   used      Boolean  @default(false)
 
-  usuario Usuario @relation(fields: [userId], references: [id_user])
+  usuario Usuario @relation(fields: [id_user], references: [id_user])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  criado_em DateTime @default(now())
+  atualizado_em DateTime @updatedAt
 }
