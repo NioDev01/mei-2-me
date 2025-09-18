@@ -83,10 +83,10 @@ model Usuario {
 
 model ResetSenha {
   id        Int      @id @default(autoincrement())
-  id_user    Int
+  id_user   Int
   token     String   @unique
   expira_em DateTime
-  used      Boolean  @default(false)
+  usado     Boolean  @default(false)
 
   usuario Usuario @relation(fields: [id_user], references: [id_user])
 
