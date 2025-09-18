@@ -73,9 +73,9 @@ export function Home() {
               <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Users className="text-primary-foreground w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Acesso à informações</h3>
+              <h3 className="text-xl font-bold mb-4">Checklist de documentos</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Facilitar o acesso à informações e descomplicar a comunicação com os clientes.
+                Organize e acompanhe todos os documentos importantes em um só lugar. Nosso módulo de checklist mostra exatamente o que falta e o que já foi entregue, trazendo mais agilidade e segurança para o seu processo. Cadastre-se agora e tenha acesso completo aos nossos módulos exclusivos!
               </p>
             </Card>
 
@@ -84,9 +84,9 @@ export function Home() {
               <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Cog className="text-primary-foreground w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Processo Automatizado</h3>
+              <h3 className="text-xl font-bold mb-4">Jornada</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Facilitar o acesso à informações e descomplicar a comunicação com os clientes.
+                Acompanhe cada etapa do seu processo de forma simples e visual. O módulo mostra seu progresso, o que já foi concluído e o que ainda está por vir, garantindo clareza e organização.
               </p>
             </Card>
 
@@ -95,9 +95,9 @@ export function Home() {
               <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <ArrowRight className="text-primary-foreground w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Facilidade na Migração</h3>
+              <h3 className="text-xl font-bold mb-4">Simulador de Regime</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Facilitar o acesso à informações e descomplicar a comunicação com os clientes.
+                Descubra qual regime tributário é mais vantajoso para o seu negócio na transição de MEI para ME. Nosso simulador mostra cenários personalizados e ajuda você a tomar decisões mais seguras.
               </p>
             </Card>
 
@@ -106,9 +106,9 @@ export function Home() {
               <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Headphones className="text-primary-foreground w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Acompanhamento Personalizado</h3>
+              <h3 className="text-xl font-bold mb-4">CONTA AI</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Facilitar o acesso à informações e descomplicar a comunicação com os clientes.
+                Deixe a burocracia com a tecnologia! O módulo ajuda você a organizar e automatizar cálculos, simulações e obrigações da sua empresa durante a transição de MEI para ME. Mais facilidade, menos erros.
               </p>
             </Card>
           </div>
