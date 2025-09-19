@@ -70,11 +70,11 @@ model Cnae {
 model Usuario {
   id_user      Int    @id @default(autoincrement())
   id_mei       Int    @unique
-  nome_user    String @unique
+  nome_user    String 
   email_user   String @unique
   cnpj_user    String @unique @db.VarChar(18)
   senha_user   String
-  celular_user String @db.VarChar(14)
+  celular_user String @db.VarChar(14) @unique
   mei          Mei    @relation(fields: [id_mei], references: [id_mei])
 
   @@index([email_user])
