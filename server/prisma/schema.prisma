@@ -70,7 +70,7 @@ model Cnae {
 model Usuario {
   id_user      Int    @id @default(autoincrement())
   id_mei       Int    @unique
-  nome_user    String
+  nome_user    String @unique
   email_user   String @unique
   cnpj_user    String @unique @db.VarChar(18)
   senha_user   String
