@@ -310,7 +310,7 @@ export function Simulador() {
         <CardContent className="grid md:grid-cols-3 gap-6">
           
           <div className="text-center transform hover:scale-102 transition-all duration-300">
-            <div className="bg-card-foreground w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-secondary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <HandCoins className="w-8 h-8 text-blue-600" />
             </div>
             <h4 className="font-semibold mb-2">Faturamento</h4>
@@ -320,7 +320,7 @@ export function Simulador() {
           </div>
 
           <div className="text-center transform hover:scale-102 transition-all duration-300">
-            <div className="bg-card-foreground w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-secondary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <Building2 className="w-8 h-8 text-green-600" />
             </div>
             <h4 className="font-semibold mb-2">Atividade</h4>
@@ -330,7 +330,7 @@ export function Simulador() {
           </div>
 
           <div className="text-center transform hover:scale-102 transition-all duration-300">
-            <div className="bg-card-foreground w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-secondary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <ChartNoAxesCombined className="w-8 h-8 text-purple-600" />
             </div>
             <h4 className="font-semibold mb-2">Margem de Lucro</h4>
