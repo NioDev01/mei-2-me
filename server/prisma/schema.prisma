@@ -34,7 +34,7 @@ model Mei {
   diagnostico             Diagnostico?
   usuarios                Usuario?
   importacao_direta       Boolean
-  
+
   @@map("Mei")
 }
 
@@ -76,6 +76,20 @@ model Usuario {
   senha_user   String
   celular_user String @db.VarChar(14)
   mei          Mei    @relation(fields: [id_mei], references: [id_mei])
+  resetSenhas  ResetSenha[]
 
   @@map("Usuario")
+}
+
+model ResetSenha {
+  id        Int      @id @default(autoincrement())
+  id_user   Int
+  token     String   @unique
+  expira_em DateTime
+  usado     Boolean  @default(false)
+
+  usuario Usuario @relation(fields: [id_user], references: [id_user])
+
+  criado_em DateTime @default(now())
+  atualizado_em DateTime @updatedAt
 }
