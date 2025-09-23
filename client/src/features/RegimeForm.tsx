@@ -22,7 +22,7 @@ const formSchema = z.object({
   receitasNaoOperacionais: z.coerce.number().nonnegative({
     message: "Receitas não podem ser negativas.",
   }),
-  despesasFinanceitas: z.coerce.number().nonpositive({
+  despesasFinanceiras: z.coerce.number().nonnegative({
     message: "Despesas não podem ser positivas.",
   }),
 });
@@ -36,7 +36,7 @@ export function RegimeForm() {
     defaultValues: {
         receitasFinanceiras: 0,
         receitasNaoOperacionais: 0,
-        despesasFinanceitas: 0
+        despesasFinanceiras: 0
     },
     mode: "onChange",
     reValidateMode: "onChange",
@@ -132,7 +132,7 @@ export function RegimeForm() {
               />
               <FormField
                 control={form.control}
-                name='despesasFinanceitas'
+                name='despesasFinanceiras'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Despesas Financeiras (R$)</FormLabel>
@@ -148,8 +148,8 @@ export function RegimeForm() {
                           onChange={(e) => {
                             let value = parseFloat(e.target.value);
                             if (!isNaN(value)) {
-                              // 🔹 garante que o valor fique sempre negativo
-                              value = Math.abs(value) * -1;
+                              // 🔹 garante que o valor fique sempre positivo
+                              value = Math.abs(value) * 1;
                               field.onChange(value);
                             } else {
                               field.onChange(0);

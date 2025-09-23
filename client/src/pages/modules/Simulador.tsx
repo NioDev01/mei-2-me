@@ -44,7 +44,6 @@ export function Simulador() {
     <div className="w-full space-y-8 pt-3">
       {/* Cabeçalho */}
       <div>
-        {/* <h1 className="text-3xl font-bold">Checklist de Documentos</h1> */}
         <h2 className="text-1xl text-muted-foreground">
           Compare Simples Nacional e Lucro Presumido para tomar a melhor decisão
         </h2>
@@ -75,11 +74,11 @@ export function Simulador() {
                   <Users className="w-5 h-5 mr-2 text-green-600" />
                   Perfil Recomendado
                 </h4>
-                <ul className="text-sm text-card-foreground space-y-1">
-                  <li>• Faturamento até R$ 4,8 milhões/ano</li>
-                  <li>• Empresas com baixa margem de lucro</li>
-                  <li>• Negócios em crescimento inicial</li>
-                  <li>• Prestadores de serviços com poucos funcionários</li>
+                <ul className="list-disc list-inside text-sm text-card-foreground space-y-1">
+                  <li>Faturamento até R$ 4,8 milhões/ano</li>
+                  <li>Empresas com baixa margem de lucro</li>
+                  <li>Negócios em crescimento inicial</li>
+                  <li>Prestadores de serviços com poucos funcionários</li>
                 </ul>
               </div>
 
@@ -89,11 +88,11 @@ export function Simulador() {
                     <CheckCircle className="w-4 h-4 mr-1" />
                     Vantagens
                   </h5>
-                  <ul className="text-sm text-card-foreground space-y-1">
-                    <li>• Tributação simplificada</li>
-                    <li>• Menor burocracia</li>
-                    <li>• Alíquotas menores para baixo faturamento</li>
-                    <li>• Facilidade de cálculo</li>
+                  <ul className="list-disc list-inside text-sm text-card-foreground space-y-1">
+                    <li>Tributação simplificada</li>
+                    <li>Menor burocracia</li>
+                    <li>Alíquotas menores para baixo faturamento</li>
+                    <li>Facilidade de cálculo</li>
                   </ul>
                 </div>
                 
@@ -102,11 +101,11 @@ export function Simulador() {
                     <XCircle className="w-4 h-4 mr-1" />
                     Desvantagens
                   </h5>
-                  <ul className="text-sm text-card-foreground space-y-1">
-                    <li>• Limite de faturamento</li>
-                    <li>• Não deduz despesas</li>
-                    <li>• Restrições de atividades</li>
-                    <li>• Alíquotas crescentes</li>
+                  <ul className="list-disc list-inside text-sm text-card-foreground space-y-1">
+                    <li>Limite de faturamento</li>
+                    <li>Não deduz despesas</li>
+                    <li>Restrições de atividades</li>
+                    <li>Alíquotas crescentes</li>
                   </ul>
                 </div>
               </div>
@@ -134,11 +133,11 @@ export function Simulador() {
                   <Users className="w-5 h-5 mr-2 text-blue-600" />
                   Perfil Recomendado
                 </h4>
-                <ul className="text-sm text-card-foreground space-y-1">
-                  <li>• Faturamento acima de R$ 4,8 milhões/ano</li>
-                  <li>• Empresas com alta margem de lucro</li>
-                  <li>• Negócios com poucos custos dedutíveis</li>
-                  <li>• Atividades não permitidas no Simples</li>
+                <ul className="list-disc list-inside text-sm text-card-foreground space-y-1">
+                  <li>Faturamento acima de R$ 4,8 milhões/ano</li>
+                  <li>Empresas com alta margem de lucro</li>
+                  <li>Negócios com poucos custos dedutíveis</li>
+                  <li>Atividades não permitidas no Simples</li>
                 </ul>
               </div>
 
@@ -148,11 +147,11 @@ export function Simulador() {
                     <CheckCircle className="w-4 h-4 mr-1" />
                     Vantagens
                   </h5>
-                  <ul className="text-sm text-card-foreground space-y-1">
-                    <li>• Sem limite de faturamento</li>
-                    <li>• Tributação fixa previsível</li>
-                    <li>• Permite todas as atividades</li>
-                    <li>• Planejamento facilitado</li>
+                  <ul className="list-disc list-inside text-sm text-card-foreground space-y-1">
+                    <li>Sem limite de faturamento</li>
+                    <li>Tributação fixa previsível</li>
+                    <li>Permite todas as atividades</li>
+                    <li>Planejamento facilitado</li>
                   </ul>
                 </div>
                 
@@ -161,11 +160,11 @@ export function Simulador() {
                     <XCircle className="w-4 h-4 mr-1" />
                     Desvantagens
                   </h5>
-                  <ul className="text-sm text-card-foreground space-y-1">
-                    <li>• Maior complexidade</li>
-                    <li>• Mais obrigações acessórias</li>
-                    <li>• Tributos sobre presunção</li>
-                    <li>• Múltiplas guias de pagamento</li>
+                  <ul className="list-disc list-inside text-sm text-card-foreground space-y-1">
+                    <li>Maior complexidade</li>
+                    <li>Mais obrigações acessórias</li>
+                    <li>Tributos sobre presunção</li>
+                    <li>Múltiplas guias de pagamento</li>
                   </ul>
                 </div>
               </div>
