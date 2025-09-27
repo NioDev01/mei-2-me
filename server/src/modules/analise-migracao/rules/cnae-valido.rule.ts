@@ -18,6 +18,6 @@ export function validaCNAE(
       adicionar('Atividades Permitidas');
     }
   } catch (err) {
-    Logger.error(`Erro ao tentar válidar CNAE: ${err}`);
+    Logger.error(`Erro ao tentar validar CNAE: ${err}`);
   }
 }
