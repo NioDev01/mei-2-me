@@ -1,4 +1,4 @@
-import { Diagnostico } from '../analise-migracao.service';
+import { Diagnostico } from './index';
 
 export function validaExportacaoAcimaLimite(
   user: any,
