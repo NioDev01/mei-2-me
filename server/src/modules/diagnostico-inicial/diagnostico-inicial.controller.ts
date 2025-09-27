@@ -32,7 +32,7 @@ export class DiagnosticoInicialController {
   @ApiOperation({
     summary: 'Retorna diagnóstico inicial do usuário.',
     description:
-      'Endpoint reponsável por retornar os dados do diagnóstico inicial feito pelo usuário.',
+      'Endpoint responsável por retornar os dados do diagnóstico inicial feito pelo usuário.',
   })
   @ApiResponse({ status: 200, description: 'Dados retornados com sucesso!' })
   @ApiResponse({
