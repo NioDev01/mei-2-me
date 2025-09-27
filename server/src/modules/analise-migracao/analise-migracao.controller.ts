@@ -11,7 +11,7 @@ export class AnaliseMigracaoController {
   @ApiOperation({
     summary: 'Retorna resultado da análise.',
     description:
-      'Endpoint reponsável por retornar o resultado da análise de migração.',
+      'Endpoint responsável por retornar o resultado da análise de migração.',
   })
   @ApiResponse({ status: 200, description: 'Dados retornados com sucesso!' })
   @ApiResponse({
