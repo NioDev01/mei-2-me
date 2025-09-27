@@ -30,7 +30,7 @@ export class DiagnosticoInicialController {
 
   @Get(':cnpj')
   @ApiOperation({
-    summary: 'Retorna diagnóstico incial do usuário.',
+    summary: 'Retorna diagnóstico inicial do usuário.',
     description:
       'Endpoint reponsável por retornar os dados do diagnóstico inicial feito pelo usuário.',
   })
