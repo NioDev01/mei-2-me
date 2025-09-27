@@ -12,7 +12,7 @@ export class DiagnosticoInicialController {
 
   @Post()
   @ApiOperation({
-    summary: 'Cria diagnóstico incial.',
+    summary: 'Cria diagnóstico inicial.',
     description:
       'Endpoint responsável por criar o diagnóstico inicial do usuário.',
   })
