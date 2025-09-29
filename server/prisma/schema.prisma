@@ -34,7 +34,7 @@ model Mei {
   diagnostico             Diagnostico?
   usuarios                Usuario?
   importacao_direta       Boolean
-
+  documentos              DocumentosMei?
   @@map("Mei")
 }
 
@@ -95,4 +95,23 @@ model ResetSenha {
 
   criado_em DateTime @default(now())
   atualizado_em DateTime @updatedAt
+}
+
+model DocumentosMei {
+  id_mei                 Int       @id
+  mei                    Mei       @relation(fields: [id_mei], references: [id_mei])
+
+  possui_rg              Boolean   @default(false)
+  possui_cpf             Boolean   @default(false)
+  possui_cnh             Boolean   @default(false)
+
+  possui_ccmei           Boolean   @default(false)
+  possui_cartao_cnpj     Boolean   @default(false)
+  possui_insc_estadual   Boolean   @default(false)
+  possui_insc_municipal  Boolean   @default(false)
+
+  criado_em              DateTime  @default(now())
+  atualizado_em          DateTime  @updatedAt
+
+  @@map("DocumentosMei")
 }
