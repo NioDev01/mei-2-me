@@ -96,3 +96,17 @@ model ResetSenha {
   criado_em DateTime @default(now())
   atualizado_em DateTime @updatedAt
 }
+model DocumentosMei {
+  id        String   @id @default(cuid())
+
+  possuiCCMEI               Boolean  @default(false)
+  possuiCNPJ                Boolean  @default(false)
+  possuiCPF                 Boolean  @default(false)
+  possuiRG                  Boolean  @default(false)
+  possuiComprovanteEndereco Boolean  @default(false)
+  
+  criado_em       DateTime @default(now())
+  atualizado_em   DateTime @updatedAt
+
+  @@map("documentos_mei")
+}
