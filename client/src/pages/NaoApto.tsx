@@ -3,20 +3,20 @@ import { NavBarMain } from "@/features/NavBarMain"
 import { ArrowLeft, Smile, Frown } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card.jsx"
 
-export function DiagnosticoInicial() {
-  const [isEligible, setIsEligible] = useState<boolean | null>(null) // null = carregando
+export function NaoApto() {
+  const [isEligible, setIsEligible] = useState<boolean | null>(null) 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // 🔥 Busca a elegibilidade na API
+
   async function fetchElegibilidade() {
     try {
       setLoading(true)
       setError(null)
 
-      // Simulação de API (troque pela sua chamada real)
+
       await new Promise(resolve => setTimeout(resolve, 1000))
-      const fakeResponse = { elegivel: true } // altere para false p/ testar
+      const fakeResponse = { elegivel: false } 
 
       setIsEligible(fakeResponse.elegivel)
     } catch (err: any) {
@@ -122,7 +122,7 @@ export function DiagnosticoInicial() {
           <p>Entenda se é viável fazer ou não a transição e porquê.</p>
         </div>
 
-        {/* Resultado único (apto ou não) */}
+ 
         {renderResultado()}
       </main>
     </div>
