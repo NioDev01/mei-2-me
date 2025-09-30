@@ -186,8 +186,6 @@ export function Simulador() {
         </CardContent>
       </Card>      
 
-      
-
       {/* Sessão de Resultados */}
       <RegimeResultado />
       
