@@ -2,12 +2,12 @@ import { Routes, Route } from 'react-router-dom';
 import { Home } from '@/pages/Home';
 import { Mensagens } from '@/pages/Mensagens';
 import { Login } from '@/pages/Login';
-import { DiagInicial } from '@/pages/DiagnosticoInicial'; // ✅ Correto
+import { DiagInicial } from '@/pages/DiagnosticoInicial'; 
 import { RedefinirSenha } from '@/pages/RedefinirSenha';
 import { RecuperarSenha } from '@/pages/RecuperarSenha';
 import { SignIn } from '@/pages/SignIn';
 import { AppHub } from '@/pages/AppHub';
-import { NaoApto } from '@/pages/NaoApto'; // ✅ Importa NaoApto corretamente
+import { NaoApto } from '@/pages/NaoApto'; 
 
 
 export function AppRoutes() {
@@ -16,12 +16,12 @@ export function AppRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="/mensagens" element={<Mensagens />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/diagnostico" element={<DiagInicial />} /> {/* ✅ corrigido */}
+      <Route path="/diagnostico" element={<DiagInicial />} /> 
       <Route path="/redefinirsenha" element={<RedefinirSenha />} />
       <Route path="/recuperarsenha" element={<RecuperarSenha />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/app" element={<AppHub />} />
-      <Route path="/naoapto" element={<NaoApto />} /> {/* ✅ corrigido */}
+      <Route path="/naoapto" element={<NaoApto />} /> 
     </Routes>
   );
 }
