@@ -18,7 +18,7 @@ export default defineConfig({
     sourcemap: process.env.NODE_ENV !== "production",
   },
   server: {
-    origin: "http://localhost:3000/api/",
+    origin: "http://localhost:3000/api",
     open: true,
   },
 });
