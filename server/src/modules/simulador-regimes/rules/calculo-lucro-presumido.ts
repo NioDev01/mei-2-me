@@ -1,3 +1,3 @@
-export default function calcularSimplesNacional() {
+export function calcularLucroPresumido() {
   return 'Simples Nacional Calculation';
 }

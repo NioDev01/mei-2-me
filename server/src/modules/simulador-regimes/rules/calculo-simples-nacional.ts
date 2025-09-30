@@ -6,7 +6,7 @@ interface ResultadoSimplesNacional {
   lucroLiquido: number;
 }
 
-export default function calcularSimplesNacional(
+export function calcularSimplesNacional(
   rbt12: number = 0,
   anexoParam: string = 'I',
 ): ResultadoSimplesNacional {

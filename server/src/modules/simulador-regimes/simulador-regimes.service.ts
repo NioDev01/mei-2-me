@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateSimuladorRegimeDto } from './dto/create-simulador-regime.dto';
 import { UpdateSimuladorRegimeDto } from './dto/update-simulador-regime.dto';
+import { calcularSimplesNacional, calcularLucroPresumido } from './rules';
 
 @Injectable()
 export class SimuladorRegimesService {
