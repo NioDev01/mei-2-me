@@ -34,6 +34,7 @@ model Mei {
   importacao_direta       Boolean
   CalculoRegime           CalculoRegime?
   diagnostico             Diagnostico?
+  DocumentosMei           DocumentosMei?
   usuarios                Usuario?
 
   @@map("Mei")
@@ -105,4 +106,18 @@ model CalculoRegime {
   tributos_lucrop           Decimal  @db.Decimal(10, 2)
   atualizado_em             DateTime @db.Timestamp(0)
   Mei                       Mei      @relation(fields: [id_mei], references: [id_mei])
+}
+
+model DocumentosMei {
+  id_mei                Int      @id
+  possui_rg             Boolean  @default(false)
+  possui_cpf            Boolean  @default(false)
+  possui_cnh            Boolean  @default(false)
+  possui_ccmei          Boolean  @default(false)
+  possui_cartao_cnpj    Boolean  @default(false)
+  possui_insc_estadual  Boolean  @default(false)
+  possui_insc_municipal Boolean  @default(false)
+  criado_em             DateTime @default(now())
+  atualizado_em         DateTime
+  Mei                   Mei      @relation(fields: [id_mei], references: [id_mei])
 }
