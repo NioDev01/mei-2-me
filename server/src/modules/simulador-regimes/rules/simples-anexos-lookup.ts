@@ -162,3 +162,5 @@ const anexosSimplesLookup = {
 };
 
 export default anexosSimplesLookup;
+
+export type AnexosSimples = keyof typeof anexosSimplesLookup;

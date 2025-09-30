@@ -1,4 +1,4 @@
-import anexosSimplesLookup from './simples-anexos-lookup';
+import anexosSimplesLookup, { AnexosSimples } from './simples-anexos-lookup';
 
 interface ResultadoSimplesNacional {
   tributos: number;
@@ -11,10 +11,7 @@ export default function calcularSimplesNacional(
   anexoParam: string = 'I',
 ): ResultadoSimplesNacional {
   // Pegar apenas o primeiro anexo, em casos de entradas como "II ou III ou IV"
-  const anexo = anexoParam
-    .trim()
-    .split(' ')[0]
-    .toUpperCase() as keyof typeof anexosSimplesLookup;
+  const anexo = anexoParam.trim().split(' ')[0].toUpperCase() as AnexosSimples;
 
   const faixaEnquadrada = Object.values(anexosSimplesLookup[anexo]).find(
     (faixa) => rbt12 >= faixa.rbt12.min && rbt12 <= faixa.rbt12.max,
