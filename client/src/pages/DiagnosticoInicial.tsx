@@ -4,9 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from "@/components/ui/textarea";
 import { NavBarMain } from "@/features/NavBarMain";
 import {
   Form,
@@ -33,6 +31,7 @@ const formSchema = z.object({
     .string()
     .min(1, "Município é obrigatório")
     .regex(/^[a-zA-Z\s]+$/, "Município deve conter apenas letras"),
+  naturezaJuridica: z.string(),
   qtdFuncionarios: z
     .string()
     .min(1, "Quantidade de funcionários é obrigatória")
@@ -46,11 +45,10 @@ const formSchema = z.object({
     .min(1, "Gastos são obrigatórios")
     .regex(/^\d+$/, "Deve conter apenas números"),
   salarioMaior: z.enum(["sim1", "nao1"]),
-  possuiSocios: z.enum(["sim2", "nao2"]),
-  importouMercadorias: z.enum(["sim3", "nao3"]),
-  precisaNotasFiscais: z.enum(["sim4", "nao4"]),
-  motivosMigracao: z.array(z.string()).optional(),
-  possibilidades: z.string().optional(),
+  possuiFilial: z.enum(["sim2", "nao2"]),
+  possuiSocios: z.enum(["sim3", "nao3"]),
+  importouMercadorias: z.enum(["sim4", "nao4"]),
+  exportaAcimaLimite: z.enum(["sim5", "nao5"]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -62,15 +60,15 @@ export function DiagInicial() {
       cnpj: "",
       uf: "",
       municipio: "",
+      naturezaJuridica: "",
       qtdFuncionarios: "",
       faturamento: "",
       gastos: "",
       salarioMaior: "nao1",
-      possuiSocios: "nao2",
-      importouMercadorias: "nao3",
-      precisaNotasFiscais: "nao4",
-      motivosMigracao: [],
-      possibilidades: "",
+      possuiFilial: "nao2",
+      possuiSocios: "nao3",
+      importouMercadorias: "nao4",
+      exportaAcimaLimite: "nao5",
     },
     mode: "onChange",
   });
@@ -83,6 +81,7 @@ export function DiagInicial() {
       .replace(/\.(\d{3})(\d)/, ".$1/$2")
       .replace(/(\d{4})(\d)/, "$1-$2");
   };
+
   const formatUF = (value: string) => {
     const lettersOnly = value.replace(/[^a-zA-Z]/g, "").toUpperCase();
     return lettersOnly.slice(0, 2);
@@ -106,6 +105,7 @@ export function DiagInicial() {
 
         form.setValue("uf", data.uf || "");
         form.setValue("municipio", data.municipio || "");
+        form.setValue("naturezaJuridica", data.natureza_juridica);
       } catch (error) {
         console.error(`Ocorreu um erro com a chamada da API: ${error}`);
       }
@@ -160,28 +160,6 @@ export function DiagInicial() {
 
               <FormField
                 control={form.control}
-                name='qtdFuncionarios'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Quantidade de funcionários na empresa *
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder='Ex: 10'
-                        onChange={(e) =>
-                          field.onChange(formatOnlyNumbers(e.target.value))
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name='uf'
                 render={({ field }) => (
                   <FormItem>
@@ -214,6 +192,48 @@ export function DiagInicial() {
                         placeholder='Campinas'
                         onChange={(e) =>
                           field.onChange(formatOnlyLetters(e.target.value))
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='naturezaJuridica'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Natureza Jurídica *</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder='Ex: 213-5 - Empresário (Individual)'
+                        onChange={(e) =>
+                          field.onChange(formatOnlyLetters(e.target.value))
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='qtdFuncionarios'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Quantidade de funcionários na empresa *
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder='Ex: 10'
+                        onChange={(e) =>
+                          field.onChange(formatOnlyNumbers(e.target.value))
                         }
                       />
                     </FormControl>
@@ -266,6 +286,35 @@ export function DiagInicial() {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name='possuiFilial'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='mb-4 block'>
+                      Você possui uma ou mais filiais?
+                    </FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className='space-y-2'
+                      >
+                        <div className='flex items-center space-x-2'>
+                          <RadioGroupItem value='sim1' id='sim1' />
+                          <Label htmlFor='sim1'>Sim</Label>
+                        </div>
+                        <div className='flex items-center space-x-2'>
+                          <RadioGroupItem value='nao1' id='nao1' />
+                          <Label htmlFor='nao1'>Não</Label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mt-8'>
@@ -305,8 +354,8 @@ export function DiagInicial() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className='mb-4 block'>
-                      Você possui um sócio de sócios, administrador ou titular
-                      em uma empresa?
+                      Você possui participação como sócio, administrador ou
+                      titular em outra empresa?
                     </FormLabel>
                     <FormControl>
                       <RadioGroup
@@ -360,12 +409,11 @@ export function DiagInicial() {
 
               <FormField
                 control={form.control}
-                name='precisaNotasFiscais'
+                name='exportaAcimaLimite'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className='mb-4 block'>
-                      Você precisa entrar fiscais para pessoas jurídicas (outras
-                      empresas)?
+                      Faz exportações acima do limite permitido?
                     </FormLabel>
                     <FormControl>
                       <RadioGroup
@@ -388,102 +436,6 @@ export function DiagInicial() {
                 )}
               />
             </div>
-
-            <div className='mt-8'>
-              <FormField
-                control={form.control}
-                name='motivosMigracao'
-                render={() => (
-                  <FormItem>
-                    <FormLabel className='mb-4 block'>
-                      Por quais motivos você considera fazer a migração?
-                    </FormLabel>
-                    <div className='space-y-3'>
-                      {[
-                        {
-                          id: "faturamento-proximo",
-                          label: "Faturamento próximo ao limite",
-                          value: "faturamento",
-                        },
-                        {
-                          id: "necessidade-contratar",
-                          label: "Necessidade de contratar mais funcionários",
-                          value: "funcionarios",
-                        },
-                        {
-                          id: "expansao-atividades",
-                          label: "Expansão de atividades",
-                          value: "expansao",
-                        },
-                        {
-                          id: "experiencia-clientes",
-                          label: "Experiência de clientes / fornecedores",
-                          value: "clientes",
-                        },
-                        {
-                          id: "acesso-credito",
-                          label: "Acesso a crédito",
-                          value: "credito",
-                        },
-                        {
-                          id: "outros",
-                          label: "Outros (especificar)",
-                          value: "outros",
-                        },
-                      ].map((item) => (
-                        <FormField
-                          key={item.id}
-                          control={form.control}
-                          name='motivosMigracao'
-                          render={({ field }) => (
-                            <FormItem className='flex items-center space-x-2'>
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value?.includes(item.value)}
-                                  onCheckedChange={(checked) => {
-                                    const newValue = checked
-                                      ? [...(field.value || []), item.value]
-                                      : field.value?.filter(
-                                          (v) => v !== item.value
-                                        );
-                                    field.onChange(newValue);
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className='text-sm font-normal'>
-                                {item.label}
-                              </FormLabel>
-                            </FormItem>
-                          )}
-                        />
-                      ))}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className='mt-8'>
-              <FormField
-                control={form.control}
-                name='possibilidades'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ex: Possibilidades de ter sócios</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        className='min-h-[100px]'
-                        placeholder=''
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
             <div className='mt-8'>
               <Button type='submit' className='w-full py-3 text-lg'>
                 Enviar
