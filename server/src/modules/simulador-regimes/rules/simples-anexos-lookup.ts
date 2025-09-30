@@ -1,4 +1,4 @@
-export const anexosSimplesLookup = {
+const anexosSimplesLookup = {
   I: {
     faixa1: {
       rbt12: { min: 0, max: 180000 },
@@ -160,3 +160,5 @@ export const anexosSimplesLookup = {
     },
   },
 };
+
+export default anexosSimplesLookup;
