@@ -14,7 +14,7 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { api } from "@/api";
 
 const formSchema = z.object({
@@ -44,14 +44,25 @@ const formSchema = z.object({
     .string()
     .min(1, "Gastos são obrigatórios")
     .regex(/^\d+$/, "Deve conter apenas números"),
-  salarioMaior: z.enum(["sim1", "nao1"]),
-  possuiFilial: z.enum(["sim2", "nao2"]),
+  possuiFilial: z.enum(["sim1", "nao1"]),
+  salarioMaior: z.enum(["sim2", "nao2"]),
   possuiSocios: z.enum(["sim3", "nao3"]),
   importouMercadorias: z.enum(["sim4", "nao4"]),
   exportaAcimaLimite: z.enum(["sim5", "nao5"]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+type CnpjApiData = {
+  razao_social?: string;
+  nome_fantasia?: string;
+  data_abertura?: string;
+  natureza_juridica?: string;
+  cnae_principal?: string;
+  cnae_secundario?: string;
+  uf?: string;
+  municipio?: string;
+};
 
 export function DiagInicial() {
   const form = useForm<FormValues>({
@@ -64,14 +75,16 @@ export function DiagInicial() {
       qtdFuncionarios: "",
       faturamento: "",
       gastos: "",
-      salarioMaior: "nao1",
-      possuiFilial: "nao2",
+      possuiFilial: "nao1",
+      salarioMaior: "nao2",
       possuiSocios: "nao3",
       importouMercadorias: "nao4",
       exportaAcimaLimite: "nao5",
     },
     mode: "onChange",
   });
+
+  const [cnpjApiData, setCnpjApiData] = useState<CnpjApiData>({});
 
   const formatCNPJ = (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 14);
@@ -98,7 +111,10 @@ export function DiagInicial() {
     const getData = async () => {
       try {
         const cnpjDigits = cnpjValue?.replace(/\D/g, "");
-        if (!cnpjDigits || cnpjDigits.length !== 14) return;
+        if (!cnpjDigits || cnpjDigits.length !== 14) {
+          setCnpjApiData({});
+          return;
+        }
 
         const res = await api.get(`diagnostico-inicial/${cnpjDigits}`);
         const data = res.data;
@@ -106,6 +122,8 @@ export function DiagInicial() {
         form.setValue("uf", data.uf || "");
         form.setValue("municipio", data.municipio || "");
         form.setValue("naturezaJuridica", data.natureza_juridica);
+
+        setCnpjApiData(data);
       } catch (error) {
         console.error(`Ocorreu um erro com a chamada da API: ${error}`);
       }
@@ -115,8 +133,24 @@ export function DiagInicial() {
   }, [cnpjValue, form]);
 
   const onSubmit = async (data: FormValues) => {
-    console.log("Dados do formulário:", data);
-    alert("Formulário válido!");
+    const payload = {
+      cnpj_mei: data.cnpj?.replace(/\D/g, ""),
+      qtd_funcionario: Number(data.qtdFuncionarios),
+      faturamento_12m: Number(data.faturamento),
+      compras_12m: Number(data.gastos),
+      possui_filial: data.possuiFilial === "sim1",
+      paga_acima_piso: data.salarioMaior === "sim2",
+      participa_outra_empresa: data.possuiSocios === "sim3",
+      importacao_direta: data.importouMercadorias === "sim4",
+      exporta_acima_limite: data.exportaAcimaLimite === "sim5",
+    };
+
+    try {
+      await api.post("diagnostico-inicial", payload);
+      console.log("Dados enviados com sucesso!");
+    } catch (error) {
+      console.error(`Erro ao tentar enviar formulário: ${error}`);
+    }
   };
 
   return (
@@ -334,12 +368,12 @@ export function DiagInicial() {
                         className='space-y-2'
                       >
                         <div className='flex items-center space-x-2'>
-                          <RadioGroupItem value='sim1' id='sim1' />
-                          <Label htmlFor='sim1'>Sim</Label>
+                          <RadioGroupItem value='sim2' id='sim2' />
+                          <Label htmlFor='sim2'>Sim</Label>
                         </div>
                         <div className='flex items-center space-x-2'>
-                          <RadioGroupItem value='nao1' id='nao1' />
-                          <Label htmlFor='nao1'>Não</Label>
+                          <RadioGroupItem value='nao2' id='nao2' />
+                          <Label htmlFor='nao2'>Não</Label>
                         </div>
                       </RadioGroup>
                     </FormControl>
@@ -364,12 +398,12 @@ export function DiagInicial() {
                         className='space-y-2'
                       >
                         <div className='flex items-center space-x-2'>
-                          <RadioGroupItem value='sim2' id='sim2' />
-                          <Label htmlFor='sim2'>Sim</Label>
+                          <RadioGroupItem value='sim3' id='sim3' />
+                          <Label htmlFor='sim3'>Sim</Label>
                         </div>
                         <div className='flex items-center space-x-2'>
-                          <RadioGroupItem value='nao2' id='nao2' />
-                          <Label htmlFor='nao2'>Não</Label>
+                          <RadioGroupItem value='nao3' id='nao3' />
+                          <Label htmlFor='nao3'>Não</Label>
                         </div>
                       </RadioGroup>
                     </FormControl>
@@ -393,12 +427,12 @@ export function DiagInicial() {
                         className='space-y-2'
                       >
                         <div className='flex items-center space-x-2'>
-                          <RadioGroupItem value='sim3' id='sim3' />
-                          <Label htmlFor='sim3'>Sim</Label>
+                          <RadioGroupItem value='sim4' id='sim4' />
+                          <Label htmlFor='sim4'>Sim</Label>
                         </div>
                         <div className='flex items-center space-x-2'>
-                          <RadioGroupItem value='nao3' id='nao3' />
-                          <Label htmlFor='nao3'>Não</Label>
+                          <RadioGroupItem value='nao4' id='nao4' />
+                          <Label htmlFor='nao4'>Não</Label>
                         </div>
                       </RadioGroup>
                     </FormControl>
@@ -422,12 +456,12 @@ export function DiagInicial() {
                         className='space-y-2'
                       >
                         <div className='flex items-center space-x-2'>
-                          <RadioGroupItem value='sim4' id='sim4' />
-                          <Label htmlFor='sim4'>Sim</Label>
+                          <RadioGroupItem value='sim5' id='sim5' />
+                          <Label htmlFor='sim5'>Sim</Label>
                         </div>
                         <div className='flex items-center space-x-2'>
-                          <RadioGroupItem value='nao4' id='nao4' />
-                          <Label htmlFor='nao4'>Não</Label>
+                          <RadioGroupItem value='nao5' id='nao5' />
+                          <Label htmlFor='nao5'>Não</Label>
                         </div>
                       </RadioGroup>
                     </FormControl>
