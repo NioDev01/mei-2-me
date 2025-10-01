@@ -85,7 +85,8 @@ const documents: Document[] = [
     description: 'Documento para solicitar o desenquadramento do MEI na JUCESP.',
     purpose: 'Formalizar o desenquadramento do MEI.',
     howToObtain: 'JUCESP - Preenchimento MEI',
-    hasTemplate: false
+    hasTemplate: true,
+    templateUrl: '/templates/requerimento-desenquadramento.docx'
   },
   {
     id: '8',
