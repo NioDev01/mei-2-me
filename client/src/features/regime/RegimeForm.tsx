@@ -18,13 +18,13 @@ import axios from "axios";
 import { toast, Toaster } from "sonner";
 
 const formSchema = z.object({
-  receitasFinanceiras: z.coerce.number().nonnegative({
+  receitas_financeiras: z.coerce.number().nonnegative({
     message: "Receitas não podem ser negativas.",
   }),
-  receitasNaoOperacionais: z.coerce.number().nonnegative({
+  receitas_nao_operacionais: z.coerce.number().nonnegative({
     message: "Receitas não podem ser negativas.",
   }),
-  despesasFinanceiras: z.coerce.number().nonnegative({
+  despesas_financeiras: z.coerce.number().nonnegative({
     message: "Despesas não podem ser positivas.",
   }),
 });
@@ -44,15 +44,17 @@ export function RegimeForm() {
       console.error(error)
     });
 
+    alert('Formulário enviado! Verifique o console para os dados.');
+
     console.log(data)
   }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-        receitasFinanceiras: 0,
-        receitasNaoOperacionais: 0,
-        despesasFinanceiras: 0
+        receitas_financeiras: 0,
+        receitas_nao_operacionais: 0,
+        despesas_financeiras: 0
     },
     mode: "onChange",
     reValidateMode: "onChange",
@@ -67,7 +69,7 @@ export function RegimeForm() {
             <div className="grid md:grid-cols-3 gap-4 mb-4">
               <FormField
                 control={form.control}
-                name='receitasFinanceiras'
+                name='receitas_financeiras'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Receitas Financeiras (R$)</FormLabel>
@@ -108,7 +110,7 @@ export function RegimeForm() {
               />
               <FormField
                 control={form.control}
-                name='receitasNaoOperacionais'
+                name='receitas_nao_operacionais'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Receitas Não Operacionais (R$)</FormLabel>
@@ -149,7 +151,7 @@ export function RegimeForm() {
               />
               <FormField
                 control={form.control}
-                name='despesasFinanceiras'
+                name='despesas_financeiras'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Despesas Financeiras (R$)</FormLabel>
