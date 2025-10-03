@@ -25,7 +25,7 @@ const formSchema = z.object({
     message: "Receitas não podem ser negativas.",
   }),
   despesas_financeiras: z.coerce.number().nonnegative({
-    message: "Despesas não podem ser positivas.",
+    message: "Despesas não podem ser negativas.",
   }),
 });
 
@@ -43,10 +43,6 @@ export function RegimeForm() {
       toast.error('Erro ao realizar simulação. Tente novamente.')
       console.error(error)
     });
-
-    alert('Formulário enviado! Verifique o console para os dados.');
-
-    console.log(data)
   }
 
   const form = useForm<z.infer<typeof formSchema>>({
