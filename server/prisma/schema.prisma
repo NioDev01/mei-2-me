@@ -32,10 +32,10 @@ model Mei {
   compras_12m             Decimal        @db.Decimal(8, 2)
   exporta_acima_limite    Boolean
   importacao_direta       Boolean
-  calculoregime           CalculoRegime?
+  CalculoRegime           CalculoRegime?
   diagnostico             Diagnostico?
+  DocumentosMei           DocumentosMei?
   usuarios                Usuario?
-  documentosmei           DocumentosMei?   
 
   @@map("Mei")
 }
@@ -103,7 +103,11 @@ model CalculoRegime {
   receitas_nao_operacionais Decimal  @db.Decimal(10, 2)
   despesas_financeiras      Decimal  @db.Decimal(10, 2)
   tributos_simples          Decimal  @db.Decimal(10, 2)
+  aliq_efetiva_simples      Decimal  @db.Decimal(3, 2)
+  lucro_liq_simples         Decimal  @db.Decimal(10, 2)
   tributos_lucrop           Decimal  @db.Decimal(10, 2)
+  aliq_efetiva_lucrop       Decimal  @db.Decimal(3, 2)
+  lucro_liq_lucrop          Decimal  @db.Decimal(10, 2)
   atualizado_em             DateTime @db.Timestamp(0)
   Mei                       Mei      @relation(fields: [id_mei], references: [id_mei])
 }
