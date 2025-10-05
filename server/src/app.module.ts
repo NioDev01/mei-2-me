@@ -14,7 +14,7 @@ import { SimuladorRegimesModule } from './modules/simulador-regimes/simulador-re
     HttpModule,
     AnaliseMigracaoModule,
     DiagnosticoInicialModule,
-    SimuladorRegimesModule,
+    // SimuladorRegimesModule,
   ],
   providers: [ReceitawsApiService],
 })

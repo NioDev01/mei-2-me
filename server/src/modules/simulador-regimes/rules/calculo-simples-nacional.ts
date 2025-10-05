@@ -8,6 +8,7 @@ interface ResultadoSimplesNacional {
 
 export function calcularSimplesNacional(
   rendaBrutaAnual: number = 0,
+  despesasFinanceirasAnual: number = 0,
   anexoParam: string = 'I',
 ): ResultadoSimplesNacional {
   // Pegar apenas o primeiro anexo, em casos de entradas como "II ou III ou IV"
@@ -32,7 +33,8 @@ export function calcularSimplesNacional(
 
   const aliquotaEfetiva = (tributos / (rendaBrutaAnual / 12)) * 100;
 
-  const lucroLiquido = rendaBrutaAnual / 12 - tributos;
+  const lucroLiquido =
+    rendaBrutaAnual / 12 - tributos - despesasFinanceirasAnual / 12;
 
   return { tributos, aliquotaEfetiva, lucroLiquido };
 }

@@ -31,6 +31,8 @@ const formSchema = z.object({
 
 const faturamento = 81000; // Exemplo de faturamento anual
 
+const primeiraSimulacao = true
+
 export function RegimeForm() {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
