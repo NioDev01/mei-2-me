@@ -20,17 +20,21 @@ export class CreateSimuladorRegimeDto {
   id_mei!: number;
 
   @ApiProperty({
-    description: 'Receita bruta anual do MEI',
-    example: 81000.0,
+    description:
+      'Receita financeira anual do MEI (Rendimentos de aplicações, juros recebidos)',
+    example: 10000.0,
     required: false,
   })
   @IsOptional()
-  @IsNumber({}, { message: 'A receita bruta anual deve ser um número.' })
-  @IsPositive({ message: 'A receita bruta anual deve ser um número positivo.' })
+  @IsNumber({}, { message: 'A receita financeira anual deve ser um número.' })
+  @IsPositive({
+    message: 'A receita financeira anual deve ser um número positivo.',
+  })
   receitas_financeiras!: number;
 
   @ApiProperty({
-    description: 'Receita não operacional anual do MEI',
+    description:
+      'Receita não operacional anual do MEI (Vendas de ativos, ganhos eventuais)',
     example: 10000.0,
     required: false,
   })
@@ -42,7 +46,8 @@ export class CreateSimuladorRegimeDto {
   receitas_nao_operacionais!: number;
 
   @ApiProperty({
-    description: 'Despesa financeira anual do MEI',
+    description:
+      'Despesa financeira anual do MEI (Juros pagos, multas, despesas bancárias)',
     example: 20000.0,
     required: false,
   })

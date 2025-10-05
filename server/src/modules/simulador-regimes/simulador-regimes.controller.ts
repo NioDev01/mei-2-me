@@ -13,7 +13,7 @@ import { UpdateSimuladorRegimeDto } from './dto/update-simulador-regime.dto';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @Controller('simulador-regimes')
-@ApiTags('Simulador de Regimes')
+@ApiTags('SimuladorRegimes')
 export class SimuladorRegimesController {
   constructor(
     private readonly simuladorRegimesService: SimuladorRegimesService,
@@ -40,7 +40,7 @@ export class SimuladorRegimesController {
     description:
       'Recupera os detalhes de uma simulação com base no ID do MEI fornecido.',
   })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id_mei') id: string) {
     return this.simuladorRegimesService.findOne(+id);
   }
 
