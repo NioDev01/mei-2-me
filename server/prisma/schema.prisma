@@ -109,6 +109,7 @@ model CalculoRegime {
   aliq_efetiva_simples      Decimal  @db.Decimal(5, 4)
   lucro_liq_lucrop          Decimal  @db.Decimal(12, 2)
   lucro_liq_simples         Decimal  @db.Decimal(12, 2)
+  recomendacao              String   @db.Char(2)
   Mei                       Mei      @relation(fields: [id_mei], references: [id_mei])
 }
 
