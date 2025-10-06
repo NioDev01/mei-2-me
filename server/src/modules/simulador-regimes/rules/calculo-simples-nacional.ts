@@ -1,8 +1,9 @@
 import anexosSimplesLookup, { AnexosSimples } from './simples-anexos-lookup';
+// import { Logger } from '@nestjs/common';
 
 interface ResultadoSimplesNacional {
   tributos: number;
-  aliquotaEfetiva: number;
+  aliquotaEfetiva: number; // fração (ex: 0.1342 = 13.42%)
   lucroLiquido: number;
 }
 
@@ -11,7 +12,7 @@ export function calcularSimplesNacional(
   despesasFinanceirasAnual: number = 0,
   anexoParam: string = 'I',
 ): ResultadoSimplesNacional {
-  // Pegar apenas o primeiro anexo, em casos de entradas como "II ou III ou IV"
+  // Pega apenas o primeiro anexo, em casos como "II ou III ou IV"
   const anexo = anexoParam.trim().split(' ')[0].toUpperCase() as AnexosSimples;
 
   const faixaEnquadrada = Object.values(anexosSimplesLookup[anexo]).find(
@@ -31,7 +32,8 @@ export function calcularSimplesNacional(
       faixaEnquadrada.deducao) /
     12;
 
-  const aliquotaEfetiva = (tributos / (rendaBrutaAnual / 12)) * 100;
+  // Alíquota efetiva agora em fração (ex: 0.1342 em vez de 13.42)
+  const aliquotaEfetiva = tributos / (rendaBrutaAnual / 12);
 
   const lucroLiquido =
     rendaBrutaAnual / 12 - tributos - despesasFinanceirasAnual / 12;
