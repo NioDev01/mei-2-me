@@ -99,9 +99,9 @@ model ResetSenha {
 
 model CalculoRegime {
   id_mei                    Int      @id
-  receitas_financeiras      Decimal  @db.Decimal(12, 2)
-  receitas_nao_operacionais Decimal  @db.Decimal(12, 2)
-  despesas_financeiras      Decimal  @db.Decimal(12, 2)
+  receitas_financeiras      Decimal?  @db.Decimal(12, 2) @default(0.00)
+  receitas_nao_operacionais Decimal?  @db.Decimal(12, 2) @default(0.00)
+  despesas_financeiras      Decimal?  @db.Decimal(12, 2) @default(0.00)
   tributos_simples          Decimal  @db.Decimal(12, 2)
   aliq_efetiva_simples      Decimal  @db.Decimal(5, 4)
   lucro_liq_simples         Decimal  @db.Decimal(12, 2)
