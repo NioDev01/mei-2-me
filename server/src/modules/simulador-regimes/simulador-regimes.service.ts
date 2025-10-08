@@ -29,6 +29,20 @@ export class SimuladorRegimesService {
     return cnae;
   }
 
+  // Função para comparar e recomedar o melhor regime com base nas alíquotas efetivas
+  recomendarRegime(
+    aliqEfetivaSimples: number,
+    aliqEfetivaLucrop: number,
+  ): 'SN' | 'LP' | 'ID' {
+    if (aliqEfetivaSimples < aliqEfetivaLucrop) {
+      return 'SN';
+    } else if (aliqEfetivaLucrop < aliqEfetivaSimples) {
+      return 'LP';
+    } else {
+      return 'ID';
+    }
+  }
+
   async create(createSimuladorRegimeDto: CreateSimuladorRegimeDto) {
     // Extrai os dados do DTO vindos da requisição
     const {
@@ -122,6 +136,13 @@ export class SimuladorRegimesService {
       consideraIss,
     );
 
+    // Define a recomendação de regime
+    const recomendacao = this.recomendarRegime(
+      aliq_efetiva_simples,
+      aliq_efetiva_lucrop,
+    );
+
+    // Data e hora atual para o campo atualizado_em
     const atualizado_em = new Date();
 
     // Salva ou atualiza o registro na tabela CalculaRegime
@@ -138,6 +159,7 @@ export class SimuladorRegimesService {
         tributos_lucrop,
         aliq_efetiva_lucrop,
         lucro_liq_lucrop,
+        recomendacao,
       },
       create: {
         id_mei,
@@ -151,6 +173,7 @@ export class SimuladorRegimesService {
         tributos_lucrop,
         aliq_efetiva_lucrop,
         lucro_liq_lucrop,
+        recomendacao,
       },
       select: {
         tributos_simples: true,
@@ -159,25 +182,43 @@ export class SimuladorRegimesService {
         tributos_lucrop: true,
         aliq_efetiva_lucrop: true,
         lucro_liq_lucrop: true,
+        recomendacao: true,
       },
     });
 
     return registroCalculo;
   }
 
-  findAll() {
-    return `This action returns all simuladorRegimes`;
+  // findAll() {
+  //   return `This action returns all simuladorRegimes`;
+  // }
+
+  async findOne(id_mei: number) {
+    const registroCalculo = await this.prisma.calculoRegime.findUnique({
+      where: { id_mei },
+      select: {
+        tributos_simples: true,
+        aliq_efetiva_simples: true,
+        lucro_liq_simples: true,
+        tributos_lucrop: true,
+        aliq_efetiva_lucrop: true,
+        lucro_liq_lucrop: true,
+        recomendacao: true,
+      },
+    });
+
+    if (!registroCalculo) {
+      throw new NotFoundException(`Cálculo para MEI não encontrado.`);
+    }
+
+    return registroCalculo;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} simuladorRegime`;
-  }
+  // update(id: number, updateSimuladorRegimeDto: UpdateSimuladorRegimeDto) {
+  //   return `This action updates a #${id} simuladorRegime`;
+  // }
 
-  update(id: number, updateSimuladorRegimeDto: UpdateSimuladorRegimeDto) {
-    return `This action updates a #${id} simuladorRegime`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} simuladorRegime`;
-  }
+  // remove(id: number) {
+  //   return `This action removes a #${id} simuladorRegime`;
+  // }
 }

@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsOptional,
-  IsNotEmpty,
-  IsNumber,
-  IsInt,
-  IsPositive,
-} from 'class-validator';
+import { IsOptional, IsNotEmpty, IsNumber, IsInt, Min } from 'class-validator';
 
 export class CreateSimuladorRegimeDto {
   @ApiProperty({
@@ -13,10 +7,9 @@ export class CreateSimuladorRegimeDto {
     example: 1,
     required: true,
   })
-  @IsNotEmpty({ message: 'O campo id é obrigatório.' })
-  @IsNumber({}, { message: 'O campo id deve ser um número.' })
-  @IsInt({ message: 'O campo id deve ser um número inteiro.' })
-  @IsPositive({ message: 'O campo id deve ser um número positivo.' })
+  @IsNotEmpty({ message: 'O campo id_mei é obrigatório.' })
+  @IsInt({ message: 'O campo id_mei deve ser um número inteiro.' })
+  @Min(1, { message: 'O campo id_mei deve ser maior que zero.' })
   id_mei!: number;
 
   @ApiProperty({
@@ -27,9 +20,7 @@ export class CreateSimuladorRegimeDto {
   })
   @IsOptional()
   @IsNumber({}, { message: 'A receita financeira anual deve ser um número.' })
-  @IsPositive({
-    message: 'A receita financeira anual deve ser um número positivo.',
-  })
+  @Min(0, { message: 'A receita financeira anual não pode ser negativa.' })
   receitas_financeiras!: number;
 
   @ApiProperty({
@@ -40,9 +31,7 @@ export class CreateSimuladorRegimeDto {
   })
   @IsOptional()
   @IsNumber({}, { message: 'A receita não operacional deve ser um número.' })
-  @IsPositive({
-    message: 'A receita não operacional deve ser um número positivo.',
-  })
+  @Min(0, { message: 'A receita não operacional não pode ser negativa.' })
   receitas_nao_operacionais!: number;
 
   @ApiProperty({
@@ -53,6 +42,6 @@ export class CreateSimuladorRegimeDto {
   })
   @IsOptional()
   @IsNumber({}, { message: 'A despesa financeira deve ser um número.' })
-  @IsPositive({ message: 'A despesa financeira deve ser um número positivo.' })
+  @Min(0, { message: 'A despesa financeira não pode ser negativa.' })
   despesas_financeiras!: number;
 }

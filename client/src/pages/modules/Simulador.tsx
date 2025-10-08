@@ -18,8 +18,7 @@ import {
   ChartNoAxesCombined
 } from 'lucide-react';
 
-import { RegimeForm } from "@/features/RegimeForm";
-import { RegimeResultado } from "@/features/regime/RegimeResultado";
+import { RegimeForm, RegimeResultado } from '@/features/regime';
 
 // interface CalculationResult {
 //   simplesNacional: {

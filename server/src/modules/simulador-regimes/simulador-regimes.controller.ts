@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { SimuladorRegimesService } from './simulador-regimes.service';
 import { CreateSimuladorRegimeDto } from './dto/create-simulador-regime.dto';
-import { UpdateSimuladorRegimeDto } from './dto/update-simulador-regime.dto';
+// import { UpdateSimuladorRegimeDto } from './dto/update-simulador-regime.dto';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @Controller('simulador-regimes')
@@ -40,8 +40,8 @@ export class SimuladorRegimesController {
     description:
       'Recupera os detalhes de uma simulação com base no ID do MEI fornecido.',
   })
-  findOne(@Param('id_mei') id: string) {
-    return this.simuladorRegimesService.findOne(+id);
+  findOne(@Param('id_mei') id_mei: number) {
+    return this.simuladorRegimesService.findOne(+id_mei);
   }
 
   // @Patch(':id_mei')
