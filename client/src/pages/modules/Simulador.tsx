@@ -36,7 +36,6 @@ export function Simulador() {
           setRetorno(null);
         }
       } catch (error) {
-        console.error("Erro ao buscar dados:", error);
         setRetorno(null);
       } finally {
         setIsLoading(false);
