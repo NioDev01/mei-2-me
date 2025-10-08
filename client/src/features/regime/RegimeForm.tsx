@@ -84,7 +84,6 @@ export function RegimeForm({ id_mei, dadosIniciais, onResultadoChange }: RegimeF
       );
 
       toast.success("Simulação realizada com sucesso!");
-      console.log("📊 Resposta da API:", response.data);
 
       // avisa o pai (Simulador) que há um novo resultado para atualizar tela
       onResultadoChange?.(response.data);
@@ -102,7 +101,6 @@ export function RegimeForm({ id_mei, dadosIniciais, onResultadoChange }: RegimeF
         });
       }
     } catch (error) {
-      console.error("❌ Erro ao enviar dados:", error);
       toast.error("Erro ao realizar simulação. Tente novamente.");
     }
   }
