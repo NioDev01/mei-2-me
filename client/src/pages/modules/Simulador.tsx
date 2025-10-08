@@ -1,11 +1,8 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent
-} from "@/components/ui/card"
-// import React, { useState, useEffect } from 'react';
-import { 
   Calculator,
   CheckCircle,
   XCircle,
@@ -15,27 +12,47 @@ import {
   Lightbulb,
   HandCoins,
   Building2,
-  ChartNoAxesCombined
-} from 'lucide-react';
-
-import { RegimeForm, RegimeResultado } from '@/features/regime';
-
-// interface CalculationResult {
-//   simplesNacional: {
-//     tax: number;
-//     netIncome: number;
-//     taxRate: number;
-//   };
-//   lucroPresumido: {
-//     tax: number;
-//     netIncome: number;
-//     taxRate: number;
-//   };
-//   difference: number;
-//   recommendation: string;
-// }
+  ChartNoAxesCombined,
+} from "lucide-react";
+import { RegimeForm, RegimeResultado } from "@/features/regime";
 
 export function Simulador() {
+
+  const id_mei = 3; // 🔹 temporário
+  const [isLoading, setIsLoading] = useState(true);
+  const [retorno, setRetorno] = useState<any | null>(null);
+
+  // 🟦 Buscar dados existentes ao montar o componente
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/simulador-regimes/${id_mei}`
+        );
+
+        if (response.data) {
+          setRetorno(response.data);
+        } else {
+          setRetorno(null);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+        setRetorno(null);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  // 🧩 Função para atualizar resultados após novo cálculo
+  const handleUpdateResultado = (novoResultado: any) => {
+    setRetorno((prev) => ({
+      ...(prev ?? {}),
+      ...(novoResultado ?? {}),
+    }));
+  };
 
   return (
     <div className="w-full space-y-8 pt-3">
@@ -170,23 +187,45 @@ export function Simulador() {
 
       </div>
 
-      {/* Sessão da Calculadora */}
+       {/* Sessão da Calculadora */}
       <Card className="gap-0">
         <CardHeader className="mb-0">
           <CardTitle>
             <h3 className="text-2xl font-bold mb-6 flex items-center">
-              <Calculator className="w-6 h-6 mr-3 text-blue-600"/>
+              <Calculator className="w-6 h-6 mr-3 text-blue-600" />
               Simulação de Tributos
             </h3>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <RegimeForm />
+          {isLoading ? (
+            <Skeleton className="w-full h-[200px] rounded-lg" />
+          ) : (
+            <RegimeForm
+              id_mei={id_mei}
+              dadosIniciais={retorno}
+              onResultadoChange={handleUpdateResultado}
+            />
+          )}
         </CardContent>
-      </Card>      
+      </Card>
 
       {/* Sessão de Resultados */}
-      <RegimeResultado />
+      {isLoading ? (
+        <Skeleton className="w-full h-[250px] rounded-lg" />
+      ) : (
+        retorno && (
+          <RegimeResultado
+            tributosSimples={Number(retorno.tributos_simples)}
+            aliquotaSimples={Number(retorno.aliq_efetiva_simples)}
+            lucroLiquidoSimples={Number(retorno.lucro_liq_simples)}
+            tributosLucrop={Number(retorno.tributos_lucrop)}
+            aliquotaLucrop={Number(retorno.aliq_efetiva_lucrop)}
+            lucroLiquidoLucrop={Number(retorno.lucro_liq_lucrop)}
+            recomendacao={retorno.recomendacao}
+          />
+        )
+      )}
       
       {/* INformação Adicional */}
       <Card className="gap-0">

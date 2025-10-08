@@ -3,10 +3,9 @@ import {
   CardHeader,
   CardTitle,
   CardContent
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-// import React, { useState, useEffect } from 'react';
-import { 
+import {
   CheckCircle,
   TrendingUp,
   Building,
@@ -14,114 +13,180 @@ import {
   TriangleAlert,
 } from 'lucide-react';
 
-export function RegimeResultado() {
-    return (
-      <div>
-        {/* Sessão de Resultados */}
-        <div className="space-y-6">
-          <h3 className="text-2xl font-bold mb-6 flex items-center justify-center">
-                Resultado da Simulação
-          </h3>
-  
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Simples Nacional Resultado */}
-            <Card className="bg-gradient-to-r from-green-500 to-green-600 pt-6 pb-0 transform hover:scale-102 transition-all duration-300">
-              <CardHeader className="flex justify-between items-center font-bold text-white text-xl">
-                <CardTitle>
-                  <h2 className="flex">
-                    <Building className="mr-2"/>
-                    Simples Nacional
-                  </h2>
-                </CardTitle>
-                <Banknote/>
-              </CardHeader>
-              <CardContent className="bg-card p-6 rounded-b-xl h-full space-y-3">
-                <div className="flex justify-between">
-                  <span>Tributos:</span>
-                  <span className="font-semibold">
-                    R$ 0,00
-                  </span>
-                </div>
-  
-                <div className="flex justify-between">
-                  <span>Alíquota Efetiva:</span>
-                  <span className="font-semibold">
-                    0%
-                  </span>
-                </div>
-  
-                <Separator />
-  
-                <div className="flex justify-between">
-                  <span className="font-medium">Lucro Líquido:</span>
-                  <span className="font-bold text-green-600 text-lg">
-                    R$ 0,00
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-  
-            {/* Lucro Presumido Resultado */}
-            <Card className="bg-gradient-to-r from-blue-500 to-blue-600 pt-6 pb-0 transform hover:scale-102 transition-all duration-300">
-              <CardHeader className="flex justify-between items-center font-bold text-white text-xl">
-                <CardTitle>
-                  <h2 className="flex">
-                    <TrendingUp className="mr-2"/>
-                    Lucro Presumido
-                  </h2>
-                </CardTitle>
-                <Banknote/>
-              </CardHeader>
-              <CardContent className="bg-card p-6 rounded-b-xl h-full space-y-3">
-                <div className="flex justify-between">
-                  <span>Tributos:</span>
-                  <span className="font-semibold">
-                    R$ 0,00
-                  </span>
-                </div>
-  
-                <div className="flex justify-between">
-                  <span>Alíquota Efetiva:</span>
-                  <span className="font-semibold">
-                    0%
-                  </span>
-                </div>
-  
-                <Separator />
-  
-                <div className="flex justify-between">
-                  <span className="font-medium">Lucro Líquido:</span>
-                  <span className="font-bold text-blue-600 text-lg">
-                    R$ 0,00
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
+interface RegimeResultadoProps {
+  tributosSimples?: number;
+  aliquotaSimples?: number; // ex: 0.04 => 4%
+  lucroLiquidoSimples?: number;
+
+  tributosLucrop?: number;
+  aliquotaLucrop?: number; // ex: 0.2443 => 24.43%
+  lucroLiquidoLucrop?: number;
+
+  recomendacao?: string; // ex: 'SN' ou 'LP'
+}
+
+function formatCurrency(value?: number) {
+  const v = Number(value ?? 0);
+  return v.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function formatPercent(value?: number) {
+  const v = Number(value ?? 0) * 100;
+  return `${v.toFixed(2)}%`;
+}
+
+function mapRecomendacaoLabel(code?: string) {
+  if (!code) return "—";
+  const c = String(code).toUpperCase();
+  if (c === "SN" || c.includes("SIMPL")) return "Simples Nacional";
+  if (c === "LP" || c.includes("LUCRO") || c.includes("PRES")) return "Lucro Presumido";
+  return code;
+}
+
+export function RegimeResultado({
+  tributosSimples = 0,
+  aliquotaSimples = 0,
+  lucroLiquidoSimples = 0,
+  tributosLucrop = 0,
+  aliquotaLucrop = 0,
+  lucroLiquidoLucrop = 0,
+  recomendacao = "—",
+}: RegimeResultadoProps) {
+  const recCode = String(recomendacao ?? "").toUpperCase();
+
+  // Economia direcional: quanto se economiza escolhendo o regime recomendado
+  let economia = 0;
+  const tSim = Number(tributosSimples ?? 0);
+  const tLp = Number(tributosLucrop ?? 0);
+
+  if (recCode === "SN") {
+    // recomendou Simples Nacional → economia = tributos(LP) - tributos(SN)
+    economia = tLp - tSim;
+  } else if (recCode === "LP") {
+    // recomendou Lucro Presumido → economia = tributos(SN) - tributos(LP)
+    economia = tSim - tLp;
+  } else {
+    economia = Math.abs(tLp - tSim);
+  }
+  economia = Math.max(0, economia); // não mostrar negativo
+
+  const recomendacaoLabel = mapRecomendacaoLabel(recomendacao);
+
+  // cor baseada na recomendação
+  const bgClass =
+    recCode === "SN" ? "bg-green-600 hover:bg-green-700" :
+    recCode === "LP" ? "bg-blue-600 hover:bg-blue-700" :
+    "bg-gray-600";
+
+  return (
+    <div>
+      {/* Sessão de Resultados */}
+      <div className="space-y-6">
+        <h3 className="text-2xl font-bold mb-6 flex items-center justify-center">
+          Resultado da Simulação
+        </h3>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Simples Nacional Resultado */}
+          <Card className="bg-gradient-to-r from-green-500 to-green-600 pt-6 pb-0 transform hover:scale-102 transition-all duration-300">
+            <CardHeader className="flex justify-between items-center font-bold text-white text-xl">
+              <CardTitle>
+                <h2 className="flex">
+                  <Building className="mr-2" />
+                  Simples Nacional
+                </h2>
+              </CardTitle>
+              <Banknote />
+            </CardHeader>
+            <CardContent className="bg-card p-6 rounded-b-xl h-full space-y-3">
+              <div className="flex justify-between">
+                <span>Tributos:</span>
+                <span className="font-semibold">
+                  R$ {formatCurrency(tributosSimples)}
+                </span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>Alíquota Efetiva:</span>
+                <span className="font-semibold">
+                  {formatPercent(aliquotaSimples)}
+                </span>
+              </div>
+
+              <Separator />
+
+              <div className="flex justify-between">
+                <span className="font-medium">Lucro Líquido:</span>
+                <span className="font-bold text-green-600 text-lg">
+                  R$ {formatCurrency(lucroLiquidoSimples)}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Lucro Presumido Resultado */}
+          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 pt-6 pb-0 transform hover:scale-102 transition-all duration-300">
+            <CardHeader className="flex justify-between items-center font-bold text-white text-xl">
+              <CardTitle>
+                <h2 className="flex">
+                  <TrendingUp className="mr-2" />
+                  Lucro Presumido
+                </h2>
+              </CardTitle>
+              <Banknote />
+            </CardHeader>
+            <CardContent className="bg-card p-6 rounded-b-xl h-full space-y-3">
+              <div className="flex justify-between">
+                <span>Tributos:</span>
+                <span className="font-semibold">
+                  R$ {formatCurrency(tributosLucrop)}
+                </span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>Alíquota Efetiva:</span>
+                <span className="font-semibold">
+                  {formatPercent(aliquotaLucrop)}
+                </span>
+              </div>
+
+              <Separator />
+
+              <div className="flex justify-between">
+                <span className="font-medium">Lucro Líquido:</span>
+                <span className="font-bold text-blue-600 text-lg">
+                  R$ {formatCurrency(lucroLiquidoLucrop)}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Recomendação */}
+        <div className="text-center text-lg">
+          <div className={`inline-flex items-center px-6 py-3 rounded-lg transform hover:scale-102 transition-all duration-300 font-semibold text-white ${bgClass}`}>
+            <CheckCircle className="mr-2" />
+            Recomendação: {recomendacaoLabel}
           </div>
-  
-          {/* Recomendação */}
-          <div className="text-center text-lg">
-            <div className="inline-flex items-center px-6 py-3 rounded-lg transform hover:scale-102 transition-all duration-300 font-semibold bg-blue-600 text-white">
-                <CheckCircle className="mr-2" />
-                Recomendação: Lucro Presumido
-            </div  >
-        
-            <p className="mt-6">
-                Economia mensal de <span className="font-bold"> R$ {'0,00'} </span> com o regime recomendado
-            </p>
-          </div>
-  
-          {/* Aviso */}
-          <div className="flex shake bg-red-500 text-white text-sm rounded-lg p-4">
-            <TriangleAlert className="mr-2" />
-            <p>
-              <strong>Importante:</strong> Esta é uma simulação simplificada para fins orientativos. 
-              Para uma análise precisa, consulte um contador qualificado, pois existem diversos fatores 
-              específicos que podem influenciar a escolha do regime tributário ideal.
-            </p>
-          </div>
-  
+
+          <p className="mt-6">
+            Economia mensal de <span className="font-bold"> R$ {formatCurrency(economia)} </span> com o regime recomendado
+          </p>
+        </div>
+
+        {/* Aviso */}
+        <div className="flex shake bg-red-500 text-white text-sm rounded-lg p-4">
+          <TriangleAlert className="mr-2" />
+          <p>
+            <strong>Importante:</strong> Esta é uma simulação simplificada para fins orientativos.
+            Para uma análise precisa, consulte um contador qualificado, pois existem diversos fatores
+            específicos que podem influenciar a escolha do regime tributário ideal.
+          </p>
         </div>
       </div>
-    )
+    </div>
+  );
 }

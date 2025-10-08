@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,10 +30,21 @@ const formSchema = z.object({
   }),
 });
 
-const faturamento = 81000; // Exemplo de faturamento anual
-const id_mei = 3; // 🔹 Envio fixo temporário
+const FALLBACK_FATURAMENTO = 81000; // fallback caso backend não envie faturamento_12m
 
-export function RegimeForm() {
+interface RegimeFormProps {
+  id_mei: number;
+  dadosIniciais?: Partial<{
+    faturamento_12m: number | string;
+    receitas_financeiras: number | string;
+    receitas_nao_operacionais: number | string;
+    despesas_financeiras: number | string;
+    [key: string]: any;
+  }>;
+  onResultadoChange?: (resultado: any) => void;
+}
+
+export function RegimeForm({ id_mei, dadosIniciais, onResultadoChange }: RegimeFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,6 +54,20 @@ export function RegimeForm() {
     },
     mode: "onChange",
   });
+
+  // Preenche o form quando o pai passar dados iniciais (ex.: retorno do GET)
+  useEffect(() => {
+    if (!dadosIniciais) return;
+
+    const mapped = {
+      receitas_financeiras: Number(dadosIniciais.receitas_financeiras ?? 0),
+      receitas_nao_operacionais: Number(dadosIniciais.receitas_nao_operacionais ?? 0),
+      despesas_financeiras: Number(dadosIniciais.despesas_financeiras ?? 0),
+    };
+
+    form.reset(mapped);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dadosIniciais]);
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
@@ -59,11 +85,30 @@ export function RegimeForm() {
 
       toast.success("Simulação realizada com sucesso!");
       console.log("📊 Resposta da API:", response.data);
+
+      // avisa o pai (Simulador) que há um novo resultado para atualizar tela
+      onResultadoChange?.(response.data);
+
+      // se o backend retornou inputs (por ex. para confirmar), atualiza o form com esses valores
+      if (
+        response.data?.receitas_financeiras !== undefined ||
+        response.data?.receitas_nao_operacionais !== undefined ||
+        response.data?.despesas_financeiras !== undefined
+      ) {
+        form.reset({
+          receitas_financeiras: Number(response.data.receitas_financeiras ?? 0),
+          receitas_nao_operacionais: Number(response.data.receitas_nao_operacionais ?? 0),
+          despesas_financeiras: Number(response.data.despesas_financeiras ?? 0),
+        });
+      }
     } catch (error) {
       console.error("❌ Erro ao enviar dados:", error);
       toast.error("Erro ao realizar simulação. Tente novamente.");
     }
   }
+
+  // usa faturamento vindo do backend quando houver, senão fallback
+  const faturamentoDisplay = Number(dadosIniciais?.faturamento_12m ?? FALLBACK_FATURAMENTO);
 
   return (
     <div>
@@ -72,7 +117,7 @@ export function RegimeForm() {
         Faturamento:{" "}
         <b>
           R$
-          {faturamento.toLocaleString("pt-BR", {
+          {faturamentoDisplay.toLocaleString("pt-BR", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}{" "}
@@ -106,8 +151,7 @@ export function RegimeForm() {
                         }}
                         onBlur={(e) => {
                           const value = parseFloat(e.target.value);
-                          if (!isNaN(value))
-                            e.target.value = value.toFixed(2);
+                          if (!isNaN(value)) e.target.value = value.toFixed(2);
                         }}
                       />
                     </div>
@@ -143,8 +187,7 @@ export function RegimeForm() {
                         }}
                         onBlur={(e) => {
                           const value = parseFloat(e.target.value);
-                          if (!isNaN(value))
-                            e.target.value = value.toFixed(2);
+                          if (!isNaN(value)) e.target.value = value.toFixed(2);
                         }}
                       />
                     </div>
@@ -180,8 +223,7 @@ export function RegimeForm() {
                         }}
                         onBlur={(e) => {
                           const value = parseFloat(e.target.value);
-                          if (!isNaN(value))
-                            e.target.value = value.toFixed(2);
+                          if (!isNaN(value)) e.target.value = value.toFixed(2);
                         }}
                       />
                     </div>

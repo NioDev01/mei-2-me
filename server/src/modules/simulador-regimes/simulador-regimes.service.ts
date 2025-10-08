@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateSimuladorRegimeDto } from './dto/create-simulador-regime.dto';
-import { UpdateSimuladorRegimeDto } from './dto/update-simulador-regime.dto';
+// import { UpdateSimuladorRegimeDto } from './dto/update-simulador-regime.dto';
 import { calcularSimplesNacional, calcularLucroPresumido } from './rules';
 
 interface InfosCnae {
@@ -176,6 +176,9 @@ export class SimuladorRegimesService {
         recomendacao,
       },
       select: {
+        receitas_financeiras: true,
+        receitas_nao_operacionais: true,
+        despesas_financeiras: true,
         tributos_simples: true,
         aliq_efetiva_simples: true,
         lucro_liq_simples: true,
@@ -186,7 +189,8 @@ export class SimuladorRegimesService {
       },
     });
 
-    return registroCalculo;
+    // Retorna o registro do Calculo e o faturamento do MEI
+    return { faturamento_12m: rendaBrutaAnual, ...registroCalculo };
   }
 
   // findAll() {
@@ -194,9 +198,19 @@ export class SimuladorRegimesService {
   // }
 
   async findOne(id_mei: number) {
+    // Busca o faturamento do MEI
+    const infosMei = await this.prisma.mei.findUnique({
+      where: { id_mei },
+      select: { faturamento_12m: true },
+    });
+
+    // Busca o registro de cálculo do MEI
     const registroCalculo = await this.prisma.calculoRegime.findUnique({
       where: { id_mei },
       select: {
+        receitas_financeiras: true,
+        receitas_nao_operacionais: true,
+        despesas_financeiras: true,
         tributos_simples: true,
         aliq_efetiva_simples: true,
         lucro_liq_simples: true,
@@ -211,7 +225,10 @@ export class SimuladorRegimesService {
       throw new NotFoundException(`Cálculo para MEI não encontrado.`);
     }
 
-    return registroCalculo;
+    // Adiciona o faturamento ao resultado, se encontrado
+    if (infosMei) {
+      return { faturamento_12m: infosMei.faturamento_12m, ...registroCalculo };
+    }
   }
 
   // update(id: number, updateSimuladorRegimeDto: UpdateSimuladorRegimeDto) {
