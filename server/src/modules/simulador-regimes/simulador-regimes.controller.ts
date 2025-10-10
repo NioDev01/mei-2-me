@@ -1,15 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { SimuladorRegimesService } from './simulador-regimes.service';
 import { CreateSimuladorRegimeDto } from './dto/create-simulador-regime.dto';
-// import { UpdateSimuladorRegimeDto } from './dto/update-simulador-regime.dto';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @Controller('simulador-regimes')
@@ -29,11 +20,6 @@ export class SimuladorRegimesController {
     return this.simuladorRegimesService.create(createSimuladorRegimeDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.simuladorRegimesService.findAll();
-  // }
-
   @Get(':id_mei')
   @ApiOperation({
     summary: 'Obtém os detalhes de uma simulação específica.',
@@ -43,17 +29,4 @@ export class SimuladorRegimesController {
   findOne(@Param('id_mei') id_mei: number) {
     return this.simuladorRegimesService.findOne(+id_mei);
   }
-
-  // @Patch(':id_mei')
-  // update(
-  //   @Param('id_mei') id: string,
-  //   @Body() updateSimuladorRegimeDto: UpdateSimuladorRegimeDto,
-  // ) {
-  //   return this.simuladorRegimesService.update(+id, updateSimuladorRegimeDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.simuladorRegimesService.remove(+id);
-  // }
 }

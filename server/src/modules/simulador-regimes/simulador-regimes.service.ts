@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateSimuladorRegimeDto } from './dto/create-simulador-regime.dto';
-// import { UpdateSimuladorRegimeDto } from './dto/update-simulador-regime.dto';
 import { calcularSimplesNacional, calcularLucroPresumido } from './rules';
 
 interface InfosCnae {
@@ -118,7 +117,7 @@ export class SimuladorRegimesService {
     } = calcularSimplesNacional(
       rendaBrutaAnual.toNumber() ?? 0,
       despesas_financeiras ?? 0,
-      anexoSimples ?? undefined,
+      anexoSimples,
     );
 
     const {
@@ -193,10 +192,6 @@ export class SimuladorRegimesService {
     return { faturamento_12m: rendaBrutaAnual, ...registroCalculo };
   }
 
-  // findAll() {
-  //   return `This action returns all simuladorRegimes`;
-  // }
-
   async findOne(id_mei: number) {
     // Busca o faturamento do MEI
     const infosMei = await this.prisma.mei.findUnique({
@@ -230,12 +225,4 @@ export class SimuladorRegimesService {
       return { faturamento_12m: infosMei.faturamento_12m, ...registroCalculo };
     }
   }
-
-  // update(id: number, updateSimuladorRegimeDto: UpdateSimuladorRegimeDto) {
-  //   return `This action updates a #${id} simuladorRegime`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} simuladorRegime`;
-  // }
 }

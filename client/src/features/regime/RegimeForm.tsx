@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
 import { toast, Toaster } from "sonner";
+import type { ResultadoSimulador } from "./types/ResultadoSimulador";
 
 const formSchema = z.object({
   receitas_financeiras: z.coerce.number().nonnegative({
@@ -39,9 +40,9 @@ interface RegimeFormProps {
     receitas_financeiras: number | string;
     receitas_nao_operacionais: number | string;
     despesas_financeiras: number | string;
-    [key: string]: any;
-  }>;
-  onResultadoChange?: (resultado: any) => void;
+    [key: string]: number | string | undefined;
+  }> | null;
+  onResultadoChange?: (resultado: ResultadoSimulador) => void;
 }
 
 export function RegimeForm({ id_mei, dadosIniciais, onResultadoChange }: RegimeFormProps) {
