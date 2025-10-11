@@ -3,7 +3,6 @@ import mei2me from '@/assets/mei2me.png';
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-
 export function Login() {
   const navigate = useNavigate(); // permite redirecionar para a página anterior
 
