@@ -5,7 +5,7 @@ import { UpdateChecklistDocumentoDto } from './dto/update-checklist-documento.dt
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('checklist-documentos')
-@ApiTags('Checklist de Documentos', 'Rota do checklist de documentos')
+@ApiTags('Checklist de Documentos')
 export class ChecklistDocumentosController {
   constructor(
     private readonly checklistDocumentosService: ChecklistDocumentosService,
@@ -45,7 +45,7 @@ export class ChecklistDocumentosController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Erro ao tentar encontrar diagnóstico.',
+    description: 'Erro ao tentar encontrar checklist de documentos.',
   })
   findOne(@Param('id') id: string) {
     return this.checklistDocumentosService.findOne(+id);
@@ -53,17 +53,18 @@ export class ChecklistDocumentosController {
 
   @Patch(':id')
   @ApiOperation({
-    summary: 'Atualiza dados de checklist de documentos',
+    summary: 'Atualiza dados do checklist de documentos',
     description:
-      'Endpoint responsável por atualizar dados de checklist de documento do usuário.',
+      'Endpoint responsável por atualizar dados do checklist de documento do usuário.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Dados atualizados com sucesso.',
+    description: 'Dados do checklist de documentos atualizados com sucesso.',
   })
   @ApiResponse({
     status: 400,
-    description: 'Ocorreu um erro ao tentar atualizar dados do usuário.',
+    description:
+      'Ocorreu um erro ao tentar atualizar dados do checklist de documentos do usuário.',
   })
   update(
     @Param('id') id: number,
