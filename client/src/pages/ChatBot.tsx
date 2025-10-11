@@ -6,7 +6,16 @@ import { Button } from '@/components/ui/button.jsx'
 import { NavBarMain } from '@/features/NavBarMain.jsx'
 import { Send, Bot, User, Sparkles, AlertCircle } from 'lucide-react'
 
+interface Message {
+  id: number
+  type: 'user' | 'bot'
+  content: string
+  timestamp: string
+}
 
+interface FormData {
+  message: string
+}
 
 // Schema de validação com Zod
 const messageSchema = z.object({
@@ -18,87 +27,90 @@ const messageSchema = z.object({
 })
 
 export function ChatBot() {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
+  const [messages, setMessages] = useState<Message[]>([
+  {
+    id: 1,
+    type: 'bot',
+    content: 'Olá! Eu sou seu assistente virtual. Como posso ajudá-lo hoje?',
+    timestamp: new Date().toLocaleTimeString()
+  }
+])
+
+// Tipando o useForm
+const {
+  register,
+  handleSubmit,
+  reset,
+  formState: { errors, isSubmitting }
+} = useForm<FormData>({
+  resolver: zodResolver(messageSchema),
+  defaultValues: {
+    message: ''
+  }
+})
+
+// Tipando 'data' e 'text'
+const onSubmit = async (data: FormData) => {
+  const newMessage: Message = {
+    id: messages.length + 1,
+    type: 'user',
+    content: data.message,
+    timestamp: new Date().toLocaleTimeString()
+  }
+
+  setMessages(prev => [...prev, newMessage])
+  reset()
+
+  setTimeout(() => {
+    const botResponse: Message = {
+      id: messages.length + 2,
       type: 'bot',
-      content: 'Olá! Eu sou seu assistente virtual. Como posso ajudá-lo hoje?',
+      content:
+        'Obrigado pela sua mensagem! Esta é uma interface de demonstração com validação Zod e React Hook Form.',
       timestamp: new Date().toLocaleTimeString()
     }
-  ])
+    setMessages(prev => [...prev, botResponse])
+  }, 1000)
+}
 
-  // Configuração do React Hook Form com Zod
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting }
-  } = useForm({
-    resolver: zodResolver(messageSchema),
-    defaultValues: {
-      message: ''
-    }
-  })
-
-  const onSubmit = async (data) => {
-    const newMessage = {
-      id: messages.length + 1,
-      type: 'user',
-      content: data.message,
-      timestamp: new Date().toLocaleTimeString()
-    }
-
-    setMessages(prev => [...prev, newMessage])
-    reset() // Limpa o formulário
-
-    // Simular resposta do bot após 1 segundo
-    setTimeout(() => {
-      const botResponse = {
-        id: messages.length + 2,
-        type: 'bot',
-        content: 'Obrigado pela sua mensagem! Esta é uma interface de demonstração com validação Zod e React Hook Form.',
-        timestamp: new Date().toLocaleTimeString()
-      }
-      setMessages(prev => [...prev, botResponse])
-    }, 1000)
+const handleQuickAction = (text: string) => {
+  const quickMessage: Message = {
+    id: messages.length + 1,
+    type: 'user',
+    content: text,
+    timestamp: new Date().toLocaleTimeString()
   }
 
-  const handleQuickAction = (text) => {
-    const quickMessage = {
-      id: messages.length + 1,
-      type: 'user',
-      content: text,
-      timestamp: new Date().toLocaleTimeString()
+  setMessages(prev => [...prev, quickMessage])
+
+  setTimeout(() => {
+    let response = ''
+    switch (text) {
+      case 'Como você funciona?':
+        response =
+          'Eu sou uma interface de demonstração criada com React, Tailwind CSS, Zod para validação e React Hook Form para gerenciamento de formulários!'
+        break
+      case 'Preciso de ajuda':
+        response =
+          'Claro! Esta é uma interface de chatbot moderna com validação de formulários. Você pode digitar mensagens de até 500 caracteres.'
+        break
+      case 'Configurações':
+        response =
+          'As configurações incluem validação automática de mensagens, limite de caracteres e interface responsiva!'
+        break
+      default:
+        response = 'Obrigado pela sua interação!'
     }
 
-    setMessages(prev => [...prev, quickMessage])
-
-    // Resposta automática para ações rápidas
-    setTimeout(() => {
-      let response = ''
-      switch (text) {
-        case 'Como você funciona?':
-          response = 'Eu sou uma interface de demonstração criada com React, Tailwind CSS, Zod para validação e React Hook Form para gerenciamento de formulários!'
-          break
-        case 'Preciso de ajuda':
-          response = 'Claro! Esta é uma interface de chatbot moderna com validação de formulários. Você pode digitar mensagens de até 500 caracteres.'
-          break
-        case 'Configurações':
-          response = 'As configurações incluem validação automática de mensagens, limite de caracteres e interface responsiva!'
-          break
-        default:
-          response = 'Obrigado pela sua interação!'
-      }
-
-      const botResponse = {
-        id: messages.length + 2,
-        type: 'bot',
-        content: response,
-        timestamp: new Date().toLocaleTimeString()
-      }
-      setMessages(prev => [...prev, botResponse])
-    }, 1000)
-  }
+    const botResponse: Message = {
+      id: messages.length + 2,
+      type: 'bot',
+      content: response,
+      timestamp: new Date().toLocaleTimeString()
+    }
+    setMessages(prev => [...prev, botResponse])
+  }, 1000)
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
