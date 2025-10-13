@@ -31,7 +31,8 @@ export class ChecklistDocumentosService {
       });
 
       return meiDocumentos;
-    } catch {
+    } catch (error) {
+      console.error(error);
       throw new NotFoundException(`Usuário não encontrado.`);
     }
   }
