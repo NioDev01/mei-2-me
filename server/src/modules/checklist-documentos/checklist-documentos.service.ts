@@ -12,7 +12,6 @@ export class ChecklistDocumentosService {
     return await this.prisma.documentosMei.create({
       data: {
         ...createChecklistDocumentoDto,
-        atualizado_em: new Date(),
       },
     });
   }
