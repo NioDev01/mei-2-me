@@ -67,7 +67,7 @@ export class ChecklistDocumentosController {
       'Ocorreu um erro ao tentar atualizar dados do checklist de documentos do usuário.',
   })
   update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateChecklistDocumentoDto: UpdateChecklistDocumentoDto,
   ) {
     return this.checklistDocumentosService.update(
