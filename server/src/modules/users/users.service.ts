@@ -92,7 +92,7 @@ export class UsersService {
         },
       });
     } else {
-      // Se não existir registro na base de dados, todos os dados são cadatrados, incluindo dados de MEI
+      // Se não existir registro na base de dados, todos os dados são cadastrados, incluindo dados de MEI
       return this.prisma.usuario.create({
         data: {
           nome_user: createUserDto.nome_user,
