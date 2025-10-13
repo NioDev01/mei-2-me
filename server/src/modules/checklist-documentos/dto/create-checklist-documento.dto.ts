@@ -19,12 +19,7 @@ export class CreateChecklistDocumentoDto {
   @IsBoolean()
   @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
   @ApiProperty()
-  possui_cnh!: boolean;
-
-  @IsBoolean()
-  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
-  @ApiProperty()
-  possui_ccmei!: boolean;
+  possui_comprovante_residencia!: boolean;
 
   @IsBoolean()
   @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
@@ -34,10 +29,40 @@ export class CreateChecklistDocumentoDto {
   @IsBoolean()
   @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
   @ApiProperty()
-  possui_insc_estadual!: boolean;
+  comunicacao_desenquadramento_simei!: boolean;
 
   @IsBoolean()
   @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
   @ApiProperty()
-  possui_insc_municipal!: boolean;
+  formulario_capa_marrom!: boolean;
+
+  @IsBoolean()
+  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
+  @ApiProperty()
+  requerimento_desenquadramento!: boolean;
+
+  @IsBoolean()
+  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
+  @ApiProperty()
+  comprovante_pagamento_dare!: boolean;
+
+  @IsBoolean()
+  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
+  @ApiProperty()
+  contrato_social!: boolean;
+
+  @IsBoolean()
+  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
+  @ApiProperty()
+  possui_ccmei!: boolean;
+
+  @IsBoolean()
+  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
+  @ApiProperty()
+  possui_cadesp!: boolean;
+
+  @IsBoolean()
+  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
+  @ApiProperty()
+  comprovante_situacao_simples_nacional!: boolean;
 }
