@@ -6,6 +6,8 @@ import { HttpModule } from '@nestjs/axios';
 import { AnaliseMigracaoModule } from './modules/analise-migracao/analise-migracao.module';
 import { DiagnosticoInicialModule } from './modules/diagnostico-inicial/diagnostico-inicial.module';
 import { SimuladorRegimesModule } from './modules/simulador-regimes/simulador-regimes.module';
+import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { SimuladorRegimesModule } from './modules/simulador-regimes/simulador-re
     AnaliseMigracaoModule,
     DiagnosticoInicialModule,
     SimuladorRegimesModule,
+    UsersModule,
+    AuthModule,
   ],
   providers: [ReceitawsApiService],
 })
