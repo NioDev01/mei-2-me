@@ -121,7 +121,7 @@ export function DiagInicial() {
 
         form.setValue("uf", data.uf || "");
         form.setValue("municipio", data.municipio || "");
-        form.setValue("naturezaJuridica", data.natureza_juridica);
+        form.setValue("naturezaJuridica", data.natureza_juridica || "");
 
         setCnpjApiData(data);
       } catch (error) {
