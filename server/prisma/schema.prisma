@@ -114,15 +114,20 @@ model CalculoRegime {
 }
 
 model DocumentosMei {
-  id_mei                Int      @id
-  possui_rg             Boolean  @default(false)
-  possui_cpf            Boolean  @default(false)
-  possui_cnh            Boolean  @default(false)
-  possui_ccmei          Boolean  @default(false)
-  possui_cartao_cnpj    Boolean  @default(false)
-  possui_insc_estadual  Boolean  @default(false)
-  possui_insc_municipal Boolean  @default(false)
-  criado_em             DateTime @default(now())
-  atualizado_em         DateTime
-  Mei                   Mei      @relation(fields: [id_mei], references: [id_mei])
+  id_mei                                Int      @id
+  possui_rg                             Boolean  @default(false)
+  possui_cpf                            Boolean  @default(false)
+  possui_comprovante_residencia         Boolean  @default(false)
+  possui_cartao_cnpj                    Boolean  @default(false)
+  comunicacao_desenquadramento_simei    Boolean  @default(false)
+  formulario_capa_marrom                Boolean  @default(false)
+  requerimento_desenquadramento         Boolean  @default(false)
+  comprovante_pagamento_dare            Boolean  @default(false)
+  contrato_social                       Boolean  @default(false)
+  possui_ccmei                          Boolean  @default(false)
+  possui_cadesp                         Boolean  @default(false)
+  comprovante_situacao_simples_nacional Boolean  @default(false)
+  criado_em                             DateTime @default(now())
+  atualizado_em                         DateTime @updatedAt
+  Mei                                   Mei      @relation(fields: [id_mei], references: [id_mei])
 }
