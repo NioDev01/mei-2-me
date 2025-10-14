@@ -18,7 +18,14 @@ export default defineConfig({
     sourcemap: process.env.NODE_ENV !== "production",
   },
   server: {
-    origin: "http://localhost:3000/api",
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        // Optionally, rewrite the path if needed:
+        // rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
     open: true,
   },
 });
