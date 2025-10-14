@@ -34,7 +34,7 @@ async function bootstrap() {
   ].filter((origin) => origin); // Remove valores falsy (undefined, '', etc.)
 
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: allowedOrigins.length > 0 ? allowedOrigins : true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
     allowedHeaders: 'Content-Type,Authorization',
