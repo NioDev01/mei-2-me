@@ -225,9 +225,9 @@ export function Checklist() {
         const data = res.data;
 
         if (data) {
-          Object.entries(data).forEach(([key, value]) => {
-            if (key in documentIDToFieldName) {
-              setValue(key as keyof ChecklistFormData, !!value);
+          (Object.keys(data) as (keyof ChecklistFormData)[]).forEach((key) => {
+            if (key !== "id_mei") {
+              setValue(key, data[key] as boolean);
             }
           });
         }
@@ -362,13 +362,6 @@ export function Checklist() {
               </Card>
             );
           })}
-        </div>
-
-        {/* Botão para salvar formulário */}
-        <div className='flex'>
-          <Button type='submit' className='flex-1 p-6'>
-            Salvar checklist
-          </Button>
         </div>
       </form>
 
