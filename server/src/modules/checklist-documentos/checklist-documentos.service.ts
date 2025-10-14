@@ -9,31 +9,13 @@ export class ChecklistDocumentosService {
 
   // Cria dados de checklist do usuário
   async create(createChecklistDocumentoDto: CreateChecklistDocumentoDto) {
-    return await this.prisma.documentosMei.create({
-      data: {
+    return await this.prisma.documentosMei.upsert({
+      where: { id_mei: createChecklistDocumentoDto.id_mei },
+      create: {
         ...createChecklistDocumentoDto,
       },
+      update: { ...createChecklistDocumentoDto },
     });
-  }
-
-  // Atualiza dados do usuário
-  async update(
-    id: number,
-    updateChecklistDocumentoDto: UpdateChecklistDocumentoDto,
-  ) {
-    try {
-      const meiDocumentos = await this.prisma.documentosMei.update({
-        where: { id_mei: id },
-        data: {
-          ...updateChecklistDocumentoDto,
-          atualizado_em: new Date(),
-        },
-      });
-
-      return meiDocumentos;
-    } catch {
-      throw new NotFoundException(`Usuário não encontrado.`);
-    }
   }
 
   // Busca dados do usuário
@@ -43,7 +25,21 @@ export class ChecklistDocumentosService {
     });
 
     if (!meiDocumentos) {
-      throw new NotFoundException('Usuário não encontrado.');
+      return {
+        id_mei: id,
+        possui_rg: false,
+        possui_cpf: false,
+        possui_comprovante_residencia: false,
+        possui_cartao_cnpj: false,
+        comunicacao_desenquadramento_simei: false,
+        formulario_capa_marrom: false,
+        requerimento_desenquadramento: false,
+        comprovante_pagamento_dare: false,
+        contrato_social: false,
+        possui_ccmei: false,
+        possui_cadesp: false,
+        comprovante_situacao_simples_nacional: false,
+      };
     }
 
     return meiDocumentos;

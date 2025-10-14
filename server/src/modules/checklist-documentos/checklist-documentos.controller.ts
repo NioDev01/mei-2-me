@@ -50,29 +50,4 @@ export class ChecklistDocumentosController {
   findOne(@Param('id') id: string) {
     return this.checklistDocumentosService.findOne(+id);
   }
-
-  @Patch(':id')
-  @ApiOperation({
-    summary: 'Atualiza dados do checklist de documentos',
-    description:
-      'Endpoint responsável por atualizar dados do checklist de documento do usuário.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Dados do checklist de documentos atualizados com sucesso.',
-  })
-  @ApiResponse({
-    status: 400,
-    description:
-      'Ocorreu um erro ao tentar atualizar dados do checklist de documentos do usuário.',
-  })
-  update(
-    @Param('id') id: number,
-    @Body() updateChecklistDocumentoDto: UpdateChecklistDocumentoDto,
-  ) {
-    return this.checklistDocumentosService.update(
-      +id,
-      updateChecklistDocumentoDto,
-    );
-  }
 }
