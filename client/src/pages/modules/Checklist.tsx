@@ -1,264 +1,423 @@
-
-import { useState } from "react"
-import { Circle, CheckCircle, Info, Download, FileText} from "lucide-react"
+import { useEffect, useState } from "react";
+import { Circle, CheckCircle, Info, Download, FileText } from "lucide-react";
 
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
-  CardContent
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+  CardContent,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription
-} from "@/components/ui/dialog"
-import { Progress } from "@/components/ui/progress"
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
+import { api } from "@/api";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { useDisclosure } from "@/hooks/use-disclosure";
+
+const checklistSchema = z.object({
+  id_mei: z.number(),
+  possui_rg: z.boolean(),
+  possui_cpf: z.boolean(),
+  possui_comprovante_residencia: z.boolean(),
+  possui_cartao_cnpj: z.boolean(),
+  comunicacao_desenquadramento_simei: z.boolean(),
+  formulario_capa_marrom: z.boolean(),
+  requerimento_desenquadramento: z.boolean(),
+  comprovante_pagamento_dare: z.boolean(),
+  contrato_social: z.boolean(),
+  possui_ccmei: z.boolean(),
+  possui_cadesp: z.boolean(),
+  comprovante_situacao_simples_nacional: z.boolean(),
+});
+
+type ChecklistFormData = z.infer<typeof checklistSchema>;
+
+const documentIDToFieldName: Record<
+  string,
+  keyof Omit<ChecklistFormData, "id_mei">
+> = {
+  "1": "possui_rg",
+  "2": "possui_cpf",
+  "3": "possui_comprovante_residencia",
+  "4": "possui_cartao_cnpj",
+  "5": "comunicacao_desenquadramento_simei",
+  "6": "formulario_capa_marrom",
+  "7": "requerimento_desenquadramento",
+  "8": "comprovante_pagamento_dare",
+  "9": "contrato_social",
+  "10": "possui_ccmei",
+  "11": "possui_cadesp",
+  "12": "comprovante_situacao_simples_nacional",
+};
 
 interface Document {
-  id: string
-  name: string
-  description: string
-  purpose: string
-  howToObtain: string
-  hasTemplate: boolean
-  templateUrl?: string
+  id: string;
+  name: string;
+  description: string;
+  purpose: string;
+  howToObtain: string;
+  hasTemplate: boolean;
+  templateUrl?: string;
 }
 
 const documents: Document[] = [
   {
-    id: '1',
-    name: 'RG',
-    description: 'Documento de identificação emitido pelo Governo do Estado de São Paulo SSP.',
-    purpose: 'Identificação pessoal do cidadão.',
-    howToObtain: 'Governo do Estado de São Paulo SSP',
-    hasTemplate: false
+    id: "1",
+    name: "RG",
+    description:
+      "Documento de identificação emitido pelo Governo do Estado de São Paulo SSP.",
+    purpose: "Identificação pessoal do cidadão.",
+    howToObtain: "Governo do Estado de São Paulo SSP",
+    hasTemplate: false,
   },
   {
-    id: '2',
-    name: 'CPF',
-    description: 'Cadastro de Pessoa Física, emitido pela Receita Federal.',
-    purpose: 'Identificação do contribuinte perante a Receita Federal.',
-    howToObtain: 'Receita Federal',
-    hasTemplate: false
+    id: "2",
+    name: "CPF",
+    description: "Cadastro de Pessoa Física, emitido pela Receita Federal.",
+    purpose: "Identificação do contribuinte perante a Receita Federal.",
+    howToObtain: "Receita Federal",
+    hasTemplate: false,
   },
   {
-    id: '3',
-    name: 'Comprovante de Residência',
-    description: 'Documento que comprova o endereço residencial.',
-    purpose: 'Comprovação de endereço para diversos fins cadastrais.',
-    howToObtain: 'Variados',
-    hasTemplate: false
+    id: "3",
+    name: "Comprovante de Residência",
+    description: "Documento que comprova o endereço residencial.",
+    purpose: "Comprovação de endereço para diversos fins cadastrais.",
+    howToObtain: "Variados",
+    hasTemplate: false,
   },
   {
-    id: '4',
-    name: 'Cartão CNPJ',
-    description: 'Comprovante de Inscrição e de Situação Cadastral de Pessoa Jurídica.',
-    purpose: 'Identificação da empresa perante a Receita Federal.',
-    howToObtain: 'Receita Federal',
-    hasTemplate: false
+    id: "4",
+    name: "Cartão CNPJ",
+    description:
+      "Comprovante de Inscrição e de Situação Cadastral de Pessoa Jurídica.",
+    purpose: "Identificação da empresa perante a Receita Federal.",
+    howToObtain: "Receita Federal",
+    hasTemplate: false,
   },
   {
-    id: '5',
-    name: 'Comunicação de Desenquadramento do SIMEI',
-    description: "É o procedimento pelo qual o Microempreendedor Individual (MEI) informa à Receita Federal que não se enquadra mais nas condições do Sistema de Recolhimento em Valores Fixos Mensais dos Tributos abrangidos pelo Simples Nacional (SIMEI).",
-    purpose: 'Formalizar a saída do regime MEI.',
-    howToObtain: 'Simples Nacional',
-    hasTemplate: false
+    id: "5",
+    name: "Comunicação de Desenquadramento do SIMEI",
+    description:
+      "É o procedimento pelo qual o Microempreendedor Individual (MEI) informa à Receita Federal que não se enquadra mais nas condições do Sistema de Recolhimento em Valores Fixos Mensais dos Tributos abrangidos pelo Simples Nacional (SIMEI).",
+    purpose: "Formalizar a saída do regime MEI.",
+    howToObtain: "Simples Nacional",
+    hasTemplate: false,
   },
   {
-    id: '6',
-    name: 'Formulário Capa Marrom',
-    description: "Formulário padrão da JUCESP para registro e alteração de empresas.",
-    purpose: 'Padronizar a coleta de informações para processos na JUCESP.',
-    howToObtain: 'JUCESP - Preenchimento MEI',
+    id: "6",
+    name: "Formulário Capa Marrom",
+    description:
+      "Formulário padrão da JUCESP para registro e alteração de empresas.",
+    purpose: "Padronizar a coleta de informações para processos na JUCESP.",
+    howToObtain: "JUCESP - Preenchimento MEI",
     hasTemplate: true,
-    templateUrl: '/templates/formulario-capa-marrom.pdf'
+    templateUrl: "/templates/formulario-capa-marrom.pdf",
   },
   {
-    id: '7',
-    name: 'Requerimento de Desenquadramento/ do Empresário',
-    description: 'Documento para solicitar o desenquadramento do MEI na JUCESP.',
-    purpose: 'Formalizar o desenquadramento do MEI.',
-    howToObtain: 'JUCESP - Preenchimento MEI',
+    id: "7",
+    name: "Requerimento de Desenquadramento/ do Empresário",
+    description:
+      "Documento para solicitar o desenquadramento do MEI na JUCESP.",
+    purpose: "Formalizar o desenquadramento do MEI.",
+    howToObtain: "JUCESP - Preenchimento MEI",
     hasTemplate: true,
-    templateUrl: '/templates/requerimento-desenquadramento.docx'
+    templateUrl: "/templates/requerimento-desenquadramento.docx",
   },
   {
-    id: '8',
-    name: 'Comprovante de pagamento da DARE',
-    description: "Recibo que atesta o recolhimento de tributos e receitas estaduais.",
-    purpose: 'Comprovar o pagamento de tributos estaduais.',
-    howToObtain: 'JUCESP - Emissão na JUCESP',
-    hasTemplate: false
+    id: "8",
+    name: "Comprovante de pagamento da DARE",
+    description:
+      "Recibo que atesta o recolhimento de tributos e receitas estaduais.",
+    purpose: "Comprovar o pagamento de tributos estaduais.",
+    howToObtain: "JUCESP - Emissão na JUCESP",
+    hasTemplate: false,
   },
   {
-    id: '9',
-    name: 'Contrato Social (em caso de mudança na natureza jurídica)',
-    description: "Documento que formaliza a alteração da natureza jurídica da empresa.",
-    purpose: 'Alterar a estrutura jurídica da empresa.',
-    howToObtain: 'MEI redige modelo próprio ou usa da JUCESP',
-    hasTemplate: false
+    id: "9",
+    name: "Contrato Social (em caso de mudança na natureza jurídica)",
+    description:
+      "Documento que formaliza a alteração da natureza jurídica da empresa.",
+    purpose: "Alterar a estrutura jurídica da empresa.",
+    howToObtain: "MEI redige modelo próprio ou usa da JUCESP",
+    hasTemplate: false,
   },
   {
-    id: '10',
-    name: 'CCMEI',
+    id: "10",
+    name: "CCMEI",
     description: "Certificado da Condição de Microempreendedor Individual.",
-    purpose: 'Comprovar a condição de MEI.',
-    howToObtain: 'GOV.BR',
-    hasTemplate: false
+    purpose: "Comprovar a condição de MEI.",
+    howToObtain: "GOV.BR",
+    hasTemplate: false,
   },
   {
-    id: '11',
-    name: 'Cadesp',
+    id: "11",
+    name: "Cadesp",
     description: "Cadastro de Contribuintes do ICMS do Estado de São Paulo.",
-    purpose: 'Registro da empresa como contribuinte do ICMS.',
-    howToObtain: 'Secretaria da Fazenda',
-    hasTemplate: false
+    purpose: "Registro da empresa como contribuinte do ICMS.",
+    howToObtain: "Secretaria da Fazenda",
+    hasTemplate: false,
   },
   {
-    id: '12',
-    name: 'Comprovante da situação do MEI no Simples Nacional',
-    description: "Documento que comprova a situação do MEI no Simples Nacional.",
-    purpose: 'Verificar a regularidade do MEI no Simples Nacional.',
-    howToObtain: 'Simples Nacional',
-    hasTemplate: false
-  }
-]
+    id: "12",
+    name: "Comprovante da situação do MEI no Simples Nacional",
+    description:
+      "Documento que comprova a situação do MEI no Simples Nacional.",
+    purpose: "Verificar a regularidade do MEI no Simples Nacional.",
+    howToObtain: "Simples Nacional",
+    hasTemplate: false,
+  },
+];
 
 export function Checklist() {
-  const [checkedDocuments, setCheckedDocuments] = useState<Set<string>>(new Set())
-  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
+  const userID = 1;
 
-  const toggleDocument = (id: string) => {
-    const newChecked = new Set(checkedDocuments)
-    if (newChecked.has(id)) newChecked.delete(id)
-    else newChecked.add(id)
-    setCheckedDocuments(newChecked)
-  }
-    const handleDownload = (templateUrl: string, filename: string) => {
-    const link = document.createElement('a')
-    link.href = templateUrl
-    link.download = filename
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
+  const { isOpen, open, close } = useDisclosure();
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(
+    null
+  );
 
-  const progress = (checkedDocuments.size / documents.length) * 100
+  const form = useForm<ChecklistFormData>({
+    resolver: zodResolver(checklistSchema),
+    defaultValues: {
+      id_mei: userID,
+      possui_rg: false,
+      possui_cpf: false,
+      possui_comprovante_residencia: false,
+      possui_cartao_cnpj: false,
+      comunicacao_desenquadramento_simei: false,
+      formulario_capa_marrom: false,
+      requerimento_desenquadramento: false,
+      comprovante_pagamento_dare: false,
+      contrato_social: false,
+      possui_ccmei: false,
+      possui_cadesp: false,
+      comprovante_situacao_simples_nacional: false,
+    },
+  });
+
+  const { handleSubmit, watch, setValue } = form;
+
+  const watchedValues = watch();
+
+  // Calcula o progresso de conclusão dos documentos
+  const totalDocs = documents.length;
+  const checkedDocs = Object.entries(watchedValues).filter(
+    ([key, value]) => key !== "id_mei" && value === true
+  ).length;
+  const progress = (checkedDocs / totalDocs) * 100;
+
+  // Carregar os dados iniciais do checklist
+  useEffect(() => {
+    api
+      .get(`checklist-documentos/${userID}`)
+      .then((res) => {
+        const data = res.data;
+
+        if (data) {
+          Object.entries(data).forEach(([key, value]) => {
+            if (key in documentIDToFieldName) {
+              setValue(key as keyof ChecklistFormData, !!value);
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(`Ocorreu um erro ao carregar o checklist: ${err}`);
+        toast.error("Erro ao carregar o checklist.");
+      });
+  }, [userID, setValue]);
+
+  // Função para submeter o formulário
+  const onSubmit = async (values: ChecklistFormData) => {
+    try {
+      await api.post("checklist-documentos", values);
+      toast("Checklist salvo com sucesso!");
+    } catch (error) {
+      console.error(`Erro ao salvar o checklist: ${error}`);
+      toast("Ocorreu um erro ao tentar salvar o checklist.");
+    }
+  };
+
+  const toggleDocument = (docID: string) => {
+    const fieldName = documentIDToFieldName[docID];
+
+    if (fieldName) {
+      const currentValue = watchedValues[fieldName];
+      setValue(fieldName, !currentValue, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  };
+
+  // Função para fazer o download de templates
+  const handleDownload = (templateUrl: string, filename: string) => {
+    const link = document.createElement("a");
+    link.href = templateUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
-    <div className="w-full space-y-8 pt-3">
+    <div className='w-full space-y-8 pt-3'>
       {/* Header */}
       <div>
-        {/* <h1 className="text-3xl font-bold">Checklist de Documentos</h1> */}
-        <h2 className="text-1xl text-muted-foreground">
+        <h2 className='text-1xl text-muted-foreground'>
           Veja os documentos necessários e marque os que você já possui.
         </h2>
       </div>
 
       {/* Barra de Progresso */}
-      <div className="sticky top-0 z-10 bg-background py-4">
-        <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">Progresso</span>
-              <span className="text-sm">{Math.round(progress)}%</span>
-            </div>
-            <Progress value={progress} className="h-4"/>
-            <p className="text-xs text-muted-foreground">
-              {checkedDocuments.size} de {documents.length} documentos
-            </p>
+      <div className='sticky top-0 z-10 bg-background py-4'>
+        <div className='space-y-2'>
+          <div className='flex justify-between items-center'>
+            <span className='text-sm font-medium'>Progresso</span>
+            <span className='text-sm'>{Math.round(progress)}%</span>
+          </div>
+          <Progress value={progress} className='h-4' />
+          <p className='text-xs text-muted-foreground'>
+            {checkedDocs} de {documents.length} documentos
+          </p>
         </div>
       </div>
 
-
       {/* Lista de Documentos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {documents.map((doc) => (
-          <Card
-            key={doc.id}
-            className={`transition-all border ${
-              checkedDocuments.has(doc.id) ? "border-blue-500" : ""
-            }`}
-          >
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-base">{doc.name}</CardTitle>
-                <CardDescription className="line-clamp-2">{doc.description}</CardDescription>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => toggleDocument(doc.id)}
-              >
-                { checkedDocuments.has(doc.id) ? <CheckCircle className="text-blue-500 size-6"/> : <Circle className="text-muted-foreground size-6"/> }
-              </Button>
-            </CardHeader>
+      <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+          {documents.map((doc) => {
+            const fieldName = documentIDToFieldName[doc.id];
+            const isChecked = fieldName ? watchedValues[fieldName] : false;
 
-            <CardContent className="flex gap-2">
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={() => setSelectedDocument(doc)}
+            return (
+              <Card
+                key={doc.id}
+                className={`transition-all border ${
+                  isChecked ? "border-blue-500" : ""
+                }`}
               >
-                <Info className="h-4 w-4 mr-1" />
-                Info
-              </Button>
-              {doc.hasTemplate && (
-                <Button 
-                  size="sm" 
-                  onClick={() => handleDownload(
-                    doc.templateUrl!, 
-                    `${doc.name.toLowerCase().replace(/\s+/g, '-')}.${doc.templateUrl?.split('.').pop()}`
+                <CardHeader className='flex flex-row items-center justify-between'>
+                  <div>
+                    <CardTitle className='text-base'>{doc.name}</CardTitle>
+                    <CardDescription className='line-clamp-2'>
+                      {doc.description}
+                    </CardDescription>
+                  </div>
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    onClick={() => toggleDocument(doc.id)}
+                  >
+                    {isChecked ? (
+                      <CheckCircle className='text-blue-500 size-6' />
+                    ) : (
+                      <Circle className='text-muted-foreground size-6' />
+                    )}
+                  </Button>
+                </CardHeader>
+
+                <CardContent className='flex gap-2'>
+                  <Button
+                    size='sm'
+                    variant='secondary'
+                    onClick={() => {
+                      setSelectedDocument(doc);
+                      open();
+                    }}
+                  >
+                    <Info className='h-4 w-4 mr-1' />
+                    Info
+                  </Button>
+                  {doc.hasTemplate && (
+                    <Button
+                      size='sm'
+                      onClick={() =>
+                        handleDownload(
+                          doc.templateUrl!,
+                          `${doc.name
+                            .toLowerCase()
+                            .replace(/\s+/g, "-")}.${doc.templateUrl
+                            ?.split(".")
+                            .pop()}`
+                        )
+                      }
+                    >
+                      <Download className='h-4 w-4 mr-1' />
+                      Modelo
+                    </Button>
                   )}
-                >
-                  <Download className="h-4 w-4 mr-1" />
-                  Modelo
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Botão para salvar formulário */}
+        <div className='flex'>
+          <Button type='submit' className='flex-1 p-6'>
+            Salvar checklist
+          </Button>
+        </div>
+      </form>
 
       {/* Dialog para Info */}
-      <Dialog open={!!selectedDocument} onOpenChange={() => setSelectedDocument(null)}>
-        <DialogContent className="w-full !max-w-3xl max-h-[80vh] overflow-y-auto">
+      <Dialog open={isOpen} onOpenChange={(o) => (o ? open() : close())}>
+        <DialogContent className='w-full !max-w-3xl max-h-[80vh] overflow-y-auto'>
           {selectedDocument && (
             <>
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-blue-500" />
+                <DialogTitle className='flex items-center gap-2'>
+                  <FileText className='h-5 w-5 text-blue-500' />
                   {selectedDocument.name}
                 </DialogTitle>
-                <DialogDescription>{selectedDocument.description}</DialogDescription>
+                <DialogDescription>
+                  {selectedDocument.description}
+                </DialogDescription>
               </DialogHeader>
 
-              <div className="space-y-4 text-sm">
+              <div className='space-y-4 text-sm'>
                 <div>
-                  <h3 className="font-medium">Propósito</h3>
-                  <p className="text-muted-foreground">{selectedDocument.purpose}</p>
+                  <h3 className='font-medium'>Propósito</h3>
+                  <p className='text-muted-foreground'>
+                    {selectedDocument.purpose}
+                  </p>
                 </div>
                 <div>
-                  <h3 className="font-medium">Como obter</h3>
-                  <p className="text-muted-foreground">{selectedDocument.howToObtain}</p>
+                  <h3 className='font-medium'>Como obter</h3>
+                  <p className='text-muted-foreground'>
+                    {selectedDocument.howToObtain}
+                  </p>
                 </div>
               </div>
 
-              <div className="flex gap-2 pt-4">
+              <div className='flex gap-2 pt-4'>
                 {selectedDocument.hasTemplate && (
-                  <Button 
-                    size="sm" 
-                    onClick={() => handleDownload(
-                      selectedDocument.templateUrl!,
-                      `${selectedDocument.name.toLowerCase().replace(/\s+/g, '-')}.${selectedDocument.templateUrl?.split('.').pop()}`
-                    )}
+                  <Button
+                    size='sm'
+                    onClick={() =>
+                      handleDownload(
+                        selectedDocument.templateUrl!,
+                        `${selectedDocument.name
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}.${selectedDocument.templateUrl
+                          ?.split(".")
+                          .pop()}`
+                      )
+                    }
                   >
-                    <Download className="h-4 w-4 mr-1" />
+                    <Download className='h-4 w-4 mr-1' />
                     Modelo
                   </Button>
                 )}
@@ -268,6 +427,5 @@ export function Checklist() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
-
