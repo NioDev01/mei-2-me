@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('Bootstrap');
 
-  // Configuração do Swagger, para documentação da API
+  // Configuração do Swagger para documentação da API
   const config = new DocumentBuilder()
     .setTitle('MEI-2-ME')
     .setDescription('Documentação da API da aplicação MEI-2-ME.')
@@ -34,7 +34,7 @@ async function bootstrap() {
   ].filter((origin) => origin); // Remove valores falsy (undefined, '', etc.)
 
   app.enableCors({
-    origin: allowedOrigins,
+    origin: allowedOrigins.length > 0 ? allowedOrigins : true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
     allowedHeaders: 'Content-Type,Authorization',
