@@ -1,0 +1,32 @@
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { SimuladorRegimesService } from './simulador-regimes.service';
+import { CreateSimuladorRegimeDto } from './dto/create-simulador-regime.dto';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
+
+@Controller('simulador-regimes')
+@ApiTags('SimuladorRegimes')
+export class SimuladorRegimesController {
+  constructor(
+    private readonly simuladorRegimesService: SimuladorRegimesService,
+  ) {}
+
+  @Post()
+  @ApiOperation({
+    summary: 'Cria ou atualiza um registro de simulação.',
+    description:
+      'Cria um novo registro de simulação com base nos dados fornecidos. Se um registro para o MEI especificado já existir, ele será atualizado com os novos dados.',
+  })
+  create(@Body() createSimuladorRegimeDto: CreateSimuladorRegimeDto) {
+    return this.simuladorRegimesService.create(createSimuladorRegimeDto);
+  }
+
+  @Get(':id_mei')
+  @ApiOperation({
+    summary: 'Obtém os detalhes de uma simulação específica.',
+    description:
+      'Recupera os detalhes de uma simulação com base no ID do MEI fornecido.',
+  })
+  findOne(@Param('id_mei') id_mei: number) {
+    return this.simuladorRegimesService.findOne(+id_mei);
+  }
+}
