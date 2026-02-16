@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { ZoomableDialogImage } from "@/features/components/ZoomableDialogImage";
 import { NavBarMain } from "@/features/NavBarMain";
 import { Link } from 'react-router-dom';
 import { 
@@ -15,6 +16,7 @@ import {
   BotMessageSquare,
 } from "lucide-react"
 import { DialogTrigger } from "@radix-ui/react-dialog";
+import PrevCheckDocs from '@/assets/preview/checklist-docs-preview.png';
 
 interface Benefits {
   cardIcon: React.ReactNode;
@@ -22,7 +24,7 @@ interface Benefits {
   cardContent: string;
   dialogIcon: React.ReactNode;
   dialogTitle: string;
-  dialogContent: string;
+  dialogContent: React.ReactNode;
 }
 
 const benefits: Benefits[] = [
@@ -48,7 +50,7 @@ const benefits: Benefits[] = [
     cardContent: "Nunca mais esqueça um documento importante. Nosso checklist de documentos garante que você tenha tudo em ordem para uma migração tranquila e sem surpresas.",
     dialogIcon: <ListChecks className="w-6 h-6 text-primary-foreground" />,
     dialogTitle: "Checklist de Documentos",
-    dialogContent: "Placeholder: Aqui seria uma imagem do módulo"
+    dialogContent: <ZoomableDialogImage src={PrevCheckDocs} alt="Preview Checklist de Documentos" />
   },
   {
     cardIcon: <BotMessageSquare className="w-8 h-8 text-primary-foreground" />,
@@ -126,7 +128,7 @@ export function Home() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-2 mt-16">
             {/* Benefits */}
             {benefits.map((benefit) => (
-              <Dialog>
+              <Dialog key={benefit.dialogTitle}>
                 <DialogTrigger asChild>
                   <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group cursor-pointer"> 
                     <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -138,7 +140,7 @@ export function Home() {
                     </p>
                   </Card>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="w-[95vw] sm:max-w-5xl max-h-[85vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-4">{benefit.dialogIcon}{benefit.dialogTitle}</DialogTitle>
                   </DialogHeader>
