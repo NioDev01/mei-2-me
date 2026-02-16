@@ -140,7 +140,7 @@ export function Home() {
                     </p>
                   </Card>
                 </DialogTrigger>
-                <DialogContent className="w-[95vw] sm:max-w-5xl max-h-[85vh] overflow-y-auto">
+                <DialogContent className="w-[95vw] sm:max-w-4xl max-h-[85vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-4">{benefit.dialogIcon}{benefit.dialogTitle}</DialogTitle>
                   </DialogHeader>
