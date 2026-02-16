@@ -1,8 +1,66 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { ZoomableDialogImage } from "@/features/ZoomableDialogImage";
 import { NavBarMain } from "@/features/NavBarMain";
 import { Link } from 'react-router-dom';
-import { Users, Cog, ArrowRight, Headphones } from "lucide-react";
+import { 
+  Route, 
+  Calculator, 
+  ListChecks, 
+  BotMessageSquare,
+} from "lucide-react"
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import PrevCheckDocs from '@/assets/preview/checklist-docs-preview.png';
+
+interface Benefits {
+  cardIcon: React.ReactNode;
+  cardTitle: string;
+  cardContent: string;
+  dialogIcon: React.ReactNode;
+  dialogTitle: string;
+  dialogContent: React.ReactNode;
+}
+
+const benefits: Benefits[] = [
+  {
+    cardIcon: <Route className="w-8 h-8 text-primary-foreground" />,
+    cardTitle: "Seguir o Passo a Passo Detalhado",
+    cardContent: "A jornada de migração nunca foi tão clara e acessível. Nosso passo a passo detalhado ira guiá-lo por cada etapa, garantindo que você saiba o que fazer em cada momento.",
+    dialogIcon: <Route className="w-6 h-6 text-primary-foreground" />,
+    dialogTitle: "Jornada",
+    dialogContent: <ZoomableDialogImage src={PrevCheckDocs} alt="Preview Checklist de Documentos" />
+  },
+  {
+    cardIcon: <Calculator className="w-8 h-8 text-primary-foreground" />,
+    cardTitle: "Simular o Melhor Regime Tributário",
+    cardContent: "Com a nossa ferramenta de simulação, você pode comparar diferentes regimes tributários e descobrir qual é o mais vantajoso para o seu negócio, economizando tempo e dinheiro.",
+    dialogIcon: <Calculator className="w-6 h-6 text-primary-foreground" />,
+    dialogTitle: "Simulador de Regime",
+    dialogContent: <ZoomableDialogImage src={PrevCheckDocs} alt="Preview Checklist de Documentos" />
+  },
+  {
+    cardIcon: <ListChecks className="w-8 h-8 text-primary-foreground" />,
+    cardTitle: "Manter os Documentos Organizados",
+    cardContent: "Nunca mais esqueça um documento importante. Nosso checklist de documentos garante que você tenha tudo em ordem para uma migração tranquila e sem surpresas.",
+    dialogIcon: <ListChecks className="w-6 h-6 text-primary-foreground" />,
+    dialogTitle: "Checklist de Documentos",
+    dialogContent: <ZoomableDialogImage src={PrevCheckDocs} alt="Preview Checklist de Documentos" />
+  },
+  {
+    cardIcon: <BotMessageSquare className="w-8 h-8 text-primary-foreground" />,
+    cardTitle: "Tirar suas Dúvidas com a ContAI",
+    cardContent: "A ContAI será sua companheira de confiança na jornada de migração, estando sempre pronta para responder suas perguntas e fornecer orientações personalizadas.",
+    dialogIcon: <BotMessageSquare className="w-6 h-6 text-primary-foreground" />,
+    dialogTitle: "ContAI",
+    dialogContent: <ZoomableDialogImage src={PrevCheckDocs} alt="Preview Checklist de Documentos" />
+  }
+] 
 
 export function Home() {
   return (
@@ -68,49 +126,28 @@ export function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-2 mt-16">
-            {/* Feature 1 */}
-            <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group"> 
-              <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Users className="text-primary-foreground w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold mb-4">Acesso à informações</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Facilitar o acesso à informações e descomplicar a comunicação com os clientes.
-              </p>
-            </Card>
-
-            {/* Feature 2 */}
-            <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group"> 
-              <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Cog className="text-primary-foreground w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold mb-4">Processo Automatizado</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Facilitar o acesso à informações e descomplicar a comunicação com os clientes.
-              </p>
-            </Card>
-
-            {/* Feature 3 */}
-            <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group"> 
-              <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <ArrowRight className="text-primary-foreground w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold mb-4">Facilidade na Migração</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Facilitar o acesso à informações e descomplicar a comunicação com os clientes.
-              </p>
-            </Card>
-
-            {/* Feature 4 */}
-            <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group"> 
-              <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Headphones className="text-primary-foreground w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold mb-4">Acompanhamento Personalizado</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Facilitar o acesso à informações e descomplicar a comunicação com os clientes.
-              </p>
-            </Card>
+            {/* Benefits */}
+            {benefits.map((benefit) => (
+              <Dialog key={benefit.dialogTitle}>
+                <DialogTrigger asChild>
+                  <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group cursor-pointer"> 
+                    <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                      {benefit.cardIcon}
+                    </div>
+                    <h3 className="text-xl font-bold mb-4">{benefit.cardTitle}</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {benefit.cardContent}
+                    </p>
+                  </Card>
+                </DialogTrigger>
+                <DialogContent className="w-[95vw] sm:max-w-4xl max-h-[85vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-4">{benefit.dialogIcon}{benefit.dialogTitle}</DialogTitle>
+                  </DialogHeader>
+                  {benefit.dialogContent}
+                </DialogContent>
+              </Dialog>
+            ))}
           </div>
         </div>
       </section>
