@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { ZoomableDialogImage } from "@/features/components/ZoomableDialogImage";
+import { ZoomableDialogImage } from "@/features/ZoomableDialogImage";
 import { NavBarMain } from "@/features/NavBarMain";
 import { Link } from 'react-router-dom';
 import { 
@@ -34,7 +34,7 @@ const benefits: Benefits[] = [
     cardContent: "A jornada de migração nunca foi tão clara e acessível. Nosso passo a passo detalhado ira guiá-lo por cada etapa, garantindo que você saiba o que fazer em cada momento.",
     dialogIcon: <Route className="w-6 h-6 text-primary-foreground" />,
     dialogTitle: "Jornada",
-    dialogContent: "Placeholder: Aqui seria uma imagem do módulo"
+    dialogContent: <ZoomableDialogImage src={PrevCheckDocs} alt="Preview Checklist de Documentos" />
   },
   {
     cardIcon: <Calculator className="w-8 h-8 text-primary-foreground" />,
@@ -42,7 +42,7 @@ const benefits: Benefits[] = [
     cardContent: "Com a nossa ferramenta de simulação, você pode comparar diferentes regimes tributários e descobrir qual é o mais vantajoso para o seu negócio, economizando tempo e dinheiro.",
     dialogIcon: <Calculator className="w-6 h-6 text-primary-foreground" />,
     dialogTitle: "Simulador de Regime",
-    dialogContent: "Placeholder: Aqui seria uma imagem do módulo"
+    dialogContent: <ZoomableDialogImage src={PrevCheckDocs} alt="Preview Checklist de Documentos" />
   },
   {
     cardIcon: <ListChecks className="w-8 h-8 text-primary-foreground" />,
@@ -58,7 +58,7 @@ const benefits: Benefits[] = [
     cardContent: "A ContAI será sua companheira de confiança na jornada de migração, estando sempre pronta para responder suas perguntas e fornecer orientações personalizadas.",
     dialogIcon: <BotMessageSquare className="w-6 h-6 text-primary-foreground" />,
     dialogTitle: "ContAI",
-    dialogContent: "Placeholder: Aqui seria uma imagem do módulo"
+    dialogContent: <ZoomableDialogImage src={PrevCheckDocs} alt="Preview Checklist de Documentos" />
   }
 ] 
 
