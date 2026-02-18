@@ -68,14 +68,19 @@ model Cnae {
 }
 
 model Usuario {
-  id_user      Int    @id @default(autoincrement())
-  id_mei       Int    @unique
+  id_user      Int      @id @default(autoincrement())
+  id_mei       Int?     @unique
   nome_user    String
-  email_user   String @unique
-  cnpj_user    String @unique @db.VarChar(18)
+  email_user   String   @unique
+  cnpj_user    String   @unique @db.VarChar(18)
   senha_user   String
-  celular_user String @db.VarChar(14)
-  mei          Mei    @relation(fields: [id_mei], references: [id_mei])
+  celular_user String   @unique @db.VarChar(14)
+
+  mei          Mei?     @relation(fields: [id_mei], references: [id_mei])
+
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
   @@map("Usuario")
 }
+
