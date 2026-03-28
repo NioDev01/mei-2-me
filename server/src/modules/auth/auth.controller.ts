@@ -1,7 +1,20 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+  Request,
+  Res,
+  Req,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -14,7 +27,38 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() data: LoginDto) {
-    return this.authService.login(data);
+  async login(
+    @Body() data: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { accessToken, refreshToken } = await this.authService.login(data);
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: false, // true quando estiver em produção (HTTPS)
+      sameSite: 'strict',
+    });
+
+    return { accessToken };
+  }
+
+  @Post('refresh')
+  refresh(@Req() req) {
+    const refreshToken = req.cookies.refreshToken;
+
+    return this.authService.refresh(refreshToken);
+  }
+
+  @Post('logout')
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('refreshToken');
+
+    return { message: 'Logout realizado com sucesso' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  getProfile(@Request() req) {
+    return req.user;
   }
 }

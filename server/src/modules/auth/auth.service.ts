@@ -6,10 +6,14 @@ import { LoginDto } from './dto/login.dto';
 import { UnauthorizedException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   async register(data: RegisterDto) {
     try {
@@ -67,9 +71,65 @@ export class AuthService {
       throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    return {
-      message: 'Login realizado com sucesso',
-      userId: usuario.id_user,
+    const payload = {
+      sub: usuario.id_user,
+      email: usuario.email_user,
     };
+
+    const accessToken = await this.jwtService.signAsync(payload);
+
+    const refreshToken = await this.jwtService.signAsync(
+      { sub: usuario.id_user },
+      {
+        secret: process.env.JWT_REFRESH_SECRET,
+        expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || '7d') as any,
+      },
+    );
+
+    const hashedRefresh = await bcrypt.hash(refreshToken, 10);
+
+    await this.prisma.usuario.update({
+      where: { id_user: usuario.id_user },
+      data: { refresh_token: hashedRefresh },
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async refresh(refreshToken: string) {
+    try {
+      const decoded = await this.jwtService.verifyAsync(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
+
+      const usuario = await this.prisma.usuario.findUnique({
+        where: { id_user: decoded.sub },
+      });
+
+      if (!usuario || !usuario.refresh_token) {
+        throw new UnauthorizedException();
+      }
+
+      const tokenValido = await bcrypt.compare(
+        refreshToken,
+        usuario.refresh_token,
+      );
+
+      if (!tokenValido) {
+        throw new UnauthorizedException();
+      }
+
+      const newAccessToken = await this.jwtService.signAsync({
+        sub: usuario.id_user,
+        email: usuario.email_user,
+      });
+
+      return { accessToken: newAccessToken };
+    } catch {
+      throw new UnauthorizedException();
+    }
   }
 }
