@@ -1,6 +1,8 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -14,22 +16,38 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+import { api } from "@/lib/api";
+import { setAccessToken } from "@/lib/auth";
+
 // Schema de validação
 const loginSchema = z.object({
   loginType: z.enum(["cnpj", "email", "telefone"]),
-  cnpj: z.string().refine(val => val.length === 0 || /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/.test(val), {
-    message: "CNPJ inválido",
-  }),
-  email: z.string().email("E-mail inválido").optional(),
-  telefone: z.string().refine(val => val.length === 0 || /^\(\d{2}\) \d{5}-\d{4}$/.test(val), {
-    message: "Telefone inválido",
-  }),
+
+  cnpj: z.string()
+    .refine(val => val.length === 0 || /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/.test(val), {
+      message: "CNPJ inválido",
+    })
+    .optional(),
+
+  email: z.string()
+    .email("E-mail inválido")
+    .or(z.literal(""))
+    .optional(),
+
+  telefone: z.string()
+    .refine(val => val.length === 0 || /^\(\d{2}\) \d{5}-\d{4}$/.test(val), {
+      message: "Telefone inválido",
+    })
+    .optional(),
+
   password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
+  const navigate = useNavigate();
+
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -61,9 +79,42 @@ export function LoginForm() {
     return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
   };
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log("Dados do login:", data);
-    // Lógica de autenticação aqui
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      let identificador = "";
+
+      if (data.loginType === "cnpj") {
+        identificador = data.cnpj.replace(/\D/g, "");
+      }
+
+      if (data.loginType === "email") {
+        identificador = data.email || "";
+      }
+
+      if (data.loginType === "telefone") {
+        identificador = data.telefone.replace(/\D/g, "");
+      }
+
+      if (!identificador) {
+        alert("Preencha o campo corretamente.");
+        return;
+      }
+
+      const res = await api.post("/auth/login", {
+        identificador,
+        senha: data.password,
+      });
+
+      // salva token em memória
+      setAccessToken(res.data.accessToken);
+
+      // redireciona (ajuste conforme sua rota)
+      navigate("/app");
+
+    } catch (error) {
+      console.error(error);
+      alert("Credenciais inválidas");
+    }
   };
 
   return (
@@ -74,9 +125,14 @@ export function LoginForm() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <Tabs 
-              value={loginType} 
-              onValueChange={(value) => form.setValue("loginType", value as "cnpj" | "email" | "telefone")} 
+            <Tabs
+              value={loginType}
+              onValueChange={(value) =>
+                form.setValue(
+                  "loginType",
+                  value as "cnpj" | "email" | "telefone"
+                )
+              }
               className="w-full"
             >
               <TabsList className="grid w-full grid-cols-3">
@@ -85,7 +141,10 @@ export function LoginForm() {
                 <TabsTrigger value="telefone">Telefone</TabsTrigger>
               </TabsList>
 
-              <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="mt-6 space-y-4"
+              >
                 <TabsContent value="cnpj">
                   <FormField
                     control={form.control}
@@ -97,7 +156,9 @@ export function LoginForm() {
                           <Input
                             placeholder="00.000.000/0000-00"
                             value={field.value}
-                            onChange={(e) => field.onChange(formatCnpj(e.target.value))}
+                            onChange={(e) =>
+                              field.onChange(formatCnpj(e.target.value))
+                            }
                             maxLength={18}
                           />
                         </FormControl>
@@ -137,7 +198,9 @@ export function LoginForm() {
                           <Input
                             placeholder="(00) 00000-0000"
                             value={field.value}
-                            onChange={(e) => field.onChange(formatTelefone(e.target.value))}
+                            onChange={(e) =>
+                              field.onChange(formatTelefone(e.target.value))
+                            }
                             maxLength={15}
                           />
                         </FormControl>
@@ -148,7 +211,10 @@ export function LoginForm() {
                 </TabsContent>
 
                 <div className="text-right text-sm">
-                  <a href="/RecuperarSenha" className="text-blue-600 hover:underline">
+                  <a
+                    href="/RecuperarSenha"
+                    className="text-blue-600 hover:underline"
+                  >
                     Esqueceu sua senha?
                   </a>
                 </div>
@@ -160,11 +226,7 @@ export function LoginForm() {
                     <FormItem>
                       <FormLabel>Senha</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          placeholder=""
-                          {...field}
-                        />
+                        <Input type="password" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -172,13 +234,16 @@ export function LoginForm() {
                 />
 
                 <div className="mt-4 text-right text-sm">
-                  <a>Não possui uma conta? </a>
-                  <a href="/SignIn" className="text-blue-600 hover:underline">
+                  <span>Não possui uma conta? </span>
+                  <a
+                    href="/SignIn"
+                    className="text-blue-600 hover:underline"
+                  >
                     Crie uma conta
                   </a>
                 </div>
 
-                <Button type="submit" className="w-full hover:bg-chart-2">
+                <Button type="submit" className="w-full">
                   Entrar
                 </Button>
               </form>
