@@ -15,23 +15,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    async function loadUser() {
-      try {
-        const res = await api.post('/auth/refresh')
-        setAccessToken(res.data.accessToken)
+  async function loadUser() {
+    try {
+      const res = await api.post('/auth/refresh')
 
-        await api.get('/auth/me')
+      setAccessToken(res.data.accessToken)
 
-        setIsAuthenticated(true)
-      } catch {
-        setIsAuthenticated(false)
-      } finally {
-        setLoading(false)
-      }
+      setIsAuthenticated(true)
+    } catch {
+      setIsAuthenticated(false)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    loadUser()
-  }, [])
+  loadUser()
+}, [])
 
   const logout = async () => {
     await api.post('/auth/logout')
