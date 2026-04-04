@@ -24,7 +24,9 @@ export function Home() {
             <div className="space-y-8">
               <div>
                 <h1 className="font-semi-bold text-foreground lg:text-3xl mb-6 leading-tight">
-                  Do MEI à Microempresa: Conquiste o Sucesso com o MEI2ME
+                  Do MEI à Microempresa: Conquiste o Sucesso com o {""}
+                  <span className="text-primary">MEI</span>
+                  <span className="text-green-500">2ME</span>
                 </h1>
                 <p className="text-2xl text-muted-foreground mb-8">
                   Boas vindas à nossa plataforma digital.
