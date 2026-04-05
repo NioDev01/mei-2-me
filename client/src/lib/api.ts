@@ -23,7 +23,14 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/auth/login") &&
+      !originalRequest.url?.includes("/auth/logout") &&
+      !originalRequest.url?.includes("/auth/register") &&
+      !originalRequest.url?.includes("/auth/refresh")
+    ) {
       originalRequest._retry = true;
 
       try {
@@ -36,7 +43,9 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (err) {
         console.error("Sessão expirada");
-        // aqui depois podemos redirecionar para login
+        setAccessToken("");
+        window.location.href = "/login";
+        return Promise.reject(err);
       }
     }
 

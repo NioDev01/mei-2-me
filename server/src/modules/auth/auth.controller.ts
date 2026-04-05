@@ -49,11 +49,12 @@ export class AuthController {
     return this.authService.refresh(refreshToken);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('logout')
-  logout(@Res({ passthrough: true }) res: Response) {
+  logout(@Request() req, @Res({ passthrough: true }) res: Response) {
     res.clearCookie('refreshToken');
 
-    return { message: 'Logout realizado com sucesso' };
+    return this.authService.logout(req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)

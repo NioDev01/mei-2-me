@@ -5,7 +5,8 @@ import { setAccessToken } from '@/lib/auth'
 type AuthContextType = {
   isAuthenticated: boolean
   loading: boolean
-  logout: () => void
+  logout: () => Promise<void>
+  login: (accessToken: string) => void
 }
 
 const AuthContext = createContext({} as AuthContextType)
@@ -30,16 +31,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   loadUser()
-}, [])
+  }, [])
+
+  const login = (accessToken: string) => {
+  setAccessToken(accessToken)
+  setIsAuthenticated(true)
+  }
 
   const logout = async () => {
+  try {
     await api.post('/auth/logout')
+  } catch (error) {
+    // opcional: logar erro
+  } finally {
     setIsAuthenticated(false)
     setAccessToken('')
   }
+  }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, loading, logout, login }}>
       {children}
     </AuthContext.Provider>
   )

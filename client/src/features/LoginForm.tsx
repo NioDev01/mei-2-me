@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form";
 
 import { api } from "@/lib/api";
-import { setAccessToken } from "@/lib/auth";
+import { useAuth } from "@/context/AuthContext";
 
 // Schema de validação
 const loginSchema = z.object({
@@ -47,6 +47,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -106,14 +107,18 @@ export function LoginForm() {
       });
 
       // salva token em memória
-      setAccessToken(res.data.accessToken);
+      login(res.data.accessToken);
 
       // redireciona (ajuste conforme sua rota)
       navigate("/app");
 
-    } catch (error) {
-      console.error(error);
-      alert("Credenciais inválidas");
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        alert("Credenciais inválidas");
+      } else {
+        console.error(error);
+        alert("Erro inesperado. Tente novamente.");
+      }
     }
   };
 

@@ -7,6 +7,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -97,6 +98,15 @@ export class AuthService {
       accessToken,
       refreshToken,
     };
+  }
+
+  async logout(userId: number) {
+    await this.prisma.usuario.update({
+      where: { id_user: userId },
+      data: { refresh_token: null },
+    });
+
+    return { message: 'Logout realizado com sucesso' };
   }
 
   async refresh(refreshToken: string) {
