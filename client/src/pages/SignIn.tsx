@@ -3,6 +3,9 @@ import { Link } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { api } from "@/lib/api"
+import { useAuth } from "@/context/AuthContext"
+import { useNavigate } from "react-router-dom"
 
 import {
   Form,
@@ -34,6 +37,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog"
 
+import { Toaster, toast } from "sonner";
 
 import {
   User,
@@ -73,6 +77,9 @@ type FormValues = z.infer<typeof formSchema>
 export function SignIn() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+  const { login } = useAuth()
+  const navigate = useNavigate()
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -151,15 +158,47 @@ export function SignIn() {
     }
   }
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Dados do cadastro:", data)
-  }
+  const onSubmit = async (data: FormValues) => {
+  try {
+    // normalizar dados
+    const payload = {
+      nome: data.nome,
+      email: data.email,
+      cnpj: data.cnpj.replace(/\D/g, ""),
+      celular: data.telefone.replace(/\D/g, ""),
+      senha: data.senha,
+    }
 
+    // 1. cadastro
+    await api.post("/auth/register", payload)
+
+    // 2. login automático
+    const loginRes = await api.post("/auth/login", {
+      identificador: payload.email, // pode ser email mesmo
+      senha: payload.senha,
+    })
+
+    // 3. atualizar contexto
+    login(loginRes.data.accessToken)
+
+    // 4. redirecionar
+    navigate("/app")
+
+  } catch (error: any) {
+    if (error.response?.status === 409) {
+      toast.error("Não foi possível realizar o cadastro")
+    } else {
+      console.error(error)
+      toast.error("Erro ao criar conta")
+    }
+  }
+}
   const senhaStrength = getSenhaStrength(form.watch("senha"))
   const { senhaFeedBackCor, senhaFeedBackTexto } = getSenhaFeedback(form.watch("senha"))
 
   return (
     <div className="min-h-screen overflow-hidden flex items-center justify-center p-4 bg-background">
+      <Toaster position="top-center" />
       <Card className="w-full h-full max-w-md shadow-lg">
         <CardHeader className="text-center space-y-1">
           <CardTitle className="text-2xl font-bold">Criar Conta</CardTitle>

@@ -16,6 +16,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+import { Toaster, toast } from "sonner";
+
 import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 
@@ -97,7 +99,7 @@ export function LoginForm() {
       }
 
       if (!identificador) {
-        alert("Preencha o campo corretamente.");
+        toast.error("Preencha o campo " + data.loginType + " corretamente.");
         return;
       }
 
@@ -114,16 +116,17 @@ export function LoginForm() {
 
     } catch (error: any) {
       if (error.response?.status === 401) {
-        alert("Credenciais inválidas");
+        toast.error("Credenciais inválidas");
       } else {
         console.error(error);
-        alert("Erro inesperado. Tente novamente.");
+        toast.error("Erro inesperado. Tente novamente.");
       }
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
+      <Toaster position="top-center" />
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl text-center">Login</CardTitle>
