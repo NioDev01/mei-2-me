@@ -167,7 +167,7 @@ export class AuthService {
     });
 
     await resend.emails.send({
-      from: 'onboarding@resend.dev', // pode usar esse inicialmente
+      from: 'onboarding@resend.dev',
       to: email,
       subject: 'Recuperação de senha - MEI2ME',
       html: `
