@@ -20,6 +20,9 @@ import { Toaster, toast } from "sonner";
 
 import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
+
+import { Eye, EyeOff} from "lucide-react"
 
 // Schema de validação
 const loginSchema = z.object({
@@ -48,6 +51,8 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
+  const [showPassword, setShowPassword] = useState(false)
+  
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -228,18 +233,31 @@ export function LoginForm() {
                 </div>
 
                 <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Senha</FormLabel>
-                      <FormControl>
-                        <Input type="password" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Senha</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              {...field}
+                              type={showPassword ? "text" : "password"}
+                              placeholder="Digite sua senha"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute right-5 top-3 h-4 w-4 text-muted-foreground hover:text-foreground"
+                            >
+                              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                 <div className="mt-4 text-right text-sm">
                   <span>Não possui uma conta? </span>
