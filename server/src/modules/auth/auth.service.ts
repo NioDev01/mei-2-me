@@ -171,11 +171,29 @@ export class AuthService {
       to: email,
       subject: 'Recuperação de senha - MEI2ME',
       html: `
-        <div style="font-family: Arial; text-align: center;">
-          <h2>MEI2ME</h2>
-          <p>Use o código abaixo para redefinir sua senha:</p>
-          <h1 style="letter-spacing: 5px;">${code}</h1>
-          <p>Este código expira em 15 minutos.</p>
+        <div style="background-color:#2563eb;padding:40px 0;font-family:Arial,sans-serif;">
+          <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:8px;padding:32px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            
+            <h2 style="margin-bottom:8px;color:#111;">MEI2ME</h2>
+            <p style="margin:0 0 24px;color:#666;">Recuperação de senha</p>
+
+            <p style="font-size:14px;color:#333;margin-bottom:16px;">
+              Use o código abaixo para redefinir sua senha:
+            </p>
+
+            <div style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#2563eb;margin:24px 0;">
+              ${code}
+            </div>
+
+            <p style="font-size:13px;color:#888;margin-bottom:24px;">
+              Este código expira em 15 minutos.
+            </p>
+
+            <div style="border-top:1px solid #eee;padding-top:16px;font-size:12px;color:#aaa;">
+              Se você não solicitou esta alteração, ignore este e-mail.
+            </div>
+
+          </div>
         </div>
       `,
     });
