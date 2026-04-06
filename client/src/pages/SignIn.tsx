@@ -51,6 +51,30 @@ import {
   Check,
 } from "lucide-react"
 
+const passwordSchema = z
+  .string()
+  .min(6, "A senha deve ter pelo menos 6 caracteres.")
+  .regex(/[a-z]/, "Deve conter letra minúscula.")
+  .regex(/[A-Z]/, "Deve conter letra maiúscula.")
+  .regex(/[0-9]/, "Deve conter número.")
+  .regex(/[!@#$%^&*(),.?:{}|<>]/, "Deve conter caractere especial.")
+
+const validatePassword = (senha: string) => {
+  const result = passwordSchema.safeParse(senha)
+
+  if (result.success) {
+    return {
+      isValid: true,
+      errors: [],
+    }
+  }
+
+  return {
+    isValid: false,
+    errors: result.error.errors.map((err) => err.message),
+  }
+}
+
 const formSchema = z
   .object({
     nome: z.string().min(1, "Nome completo é obrigatório."),
@@ -61,7 +85,7 @@ const formSchema = z
     telefone: z
       .string()
       .regex(/^\(\d{2}\) \d{5}-\d{4}$/, "Telefone inválido."),
-    senha: z.string().min(6, "A senha deve ter pelo menos 6 caracteres."),
+    senha: passwordSchema,
     confirmacaoSenha: z.string(),
     termos: z.boolean().refine(val => val, {
       message: "Você precisa aceitar os termos de uso.",
@@ -129,34 +153,37 @@ export function SignIn() {
     return null
   }
 
-  const getSenhaStrength = (senha: string) => {
-    if (!senha) return 0
-    let strength = 0
-    if (senha.length >= 6) strength++
-    if (/[A-Z]/.test(senha)) strength++
-    if (/[0-9]/.test(senha)) strength++
-    if (/[^A-Za-z0-9]/.test(senha)) strength++
-    return strength
-  }
+  // const getSenhaStrength = (senha: string) => {
+  //   if (!senha) return 0
+  //   let strength = 0
+  //   if (senha.length >= 6) strength++
+  //   if (/[A-Z]/.test(senha)) strength++
+  //   if (/[0-9]/.test(senha)) strength++
+  //   if (/[^A-Za-z0-9]/.test(senha)) strength++
+  //   return strength
+  // }
 
-  const getSenhaFeedback = (senha: string) => {
-    const strength = getSenhaStrength(senha)
+  // const getSenhaFeedback = (senha: string) => {
+  //   const strength = getSenhaStrength(senha)
 
-    switch (strength) {
-        case 0:
-        return { senhaFeedBackCor: "bg-accent-foreground", senhaFeedBackTexto: "Senha muito fraca. Use pelo menos 6 caracteres." }
-        case 1:
-        return { senhaFeedBackCor: "bg-red-500", senhaFeedBackTexto: "Adicione letras maiúsculas para aumentar a segurança." }
-        case 2:
-        return { senhaFeedBackCor: "bg-yellow-500", senhaFeedBackTexto: "Inclua números e símbolos." }
-        case 3:
-        return { senhaFeedBackCor: "bg-blue-500", senhaFeedBackTexto: "Senha razoável. Tente torná-la mais complexa." }
-        case 4:
-        return { senhaFeedBackCor: "bg-green-500", senhaFeedBackTexto: "Senha forte!" }
-        default:
-        return { senhaFeedBackCor: "bg-accent-foreground", senhaFeedBackTexto: "" }
-    }
-  }
+  //   switch (strength) {
+  //       case 0:
+  //       return { senhaFeedBackCor: "bg-accent-foreground", senhaFeedBackTexto: "Senha muito fraca. Use pelo menos 6 caracteres." }
+  //       case 1:
+  //       return { senhaFeedBackCor: "bg-red-500", senhaFeedBackTexto: "Adicione letras maiúsculas para aumentar a segurança." }
+  //       case 2:
+  //       return { senhaFeedBackCor: "bg-yellow-500", senhaFeedBackTexto: "Inclua números e símbolos." }
+  //       case 3:
+  //       return { senhaFeedBackCor: "bg-blue-500", senhaFeedBackTexto: "Senha razoável. Tente torná-la mais complexa." }
+  //       case 4:
+  //       return { senhaFeedBackCor: "bg-green-500", senhaFeedBackTexto: "Senha forte!" }
+  //       default:
+  //       return { senhaFeedBackCor: "bg-accent-foreground", senhaFeedBackTexto: "" }
+  //   }
+  // }
+
+  const senha = form.watch("senha")
+  const passwordValidation = validatePassword(senha)
 
   const onSubmit = async (data: FormValues) => {
   try {
@@ -193,8 +220,10 @@ export function SignIn() {
     }
   }
 }
-  const senhaStrength = getSenhaStrength(form.watch("senha"))
-  const { senhaFeedBackCor, senhaFeedBackTexto } = getSenhaFeedback(form.watch("senha"))
+  // const senhaStrength = getSenhaStrength(form.watch("senha"))
+  // const { senhaFeedBackCor, senhaFeedBackTexto } = getSenhaFeedback(form.watch("senha"))
+
+  const senhaStrength = 5 - passwordValidation.errors.length
 
   return (
     <div className="min-h-screen overflow-hidden flex items-center justify-center p-4 bg-background">
@@ -336,12 +365,18 @@ export function SignIn() {
                         {getFieldIcon("senha")}
                       </div>
                     </FormControl>
-                     <FormDescription className="text-xs mt-1">{senhaFeedBackTexto}</FormDescription>
-                    <div className="h-2 mt-1 rounded bg-accent-foreground overflow-hidden">
-                        <div
-                        className={`h-full transition-all ${senhaFeedBackCor}`}
-                        style={{ width: `${(senhaStrength / 4) * 100}%` }}
-                        />
+                    
+                    <div className="h-2 mt-1 rounded bg-accent overflow-hidden">
+                      <div
+                        className={`h-full transition-all ${
+                          senhaStrength <= 2
+                            ? "bg-red-500"
+                            : senhaStrength <= 4
+                            ? "bg-yellow-500"
+                            : "bg-green-500"
+                        }`}
+                        style={{ width: `${(senhaStrength / 5) * 100}%` }}
+                      />
                     </div>
                     <FormMessage />
                   </FormItem>
@@ -411,21 +446,100 @@ export function SignIn() {
                                 </DialogDescription>
                             </DialogHeader>
                             <div className="mt-4 space-y-4 text-sm leading-relaxed text-muted-foreground">
+                                <h1>Termos de Uso – MEI2ME</h1>
+                                <h2>1. Aceitação dos Termos</h2>
                                 <p>
-                                Este é um exemplo de termos de uso. Aqui você pode inserir
-                                suas condições de uso, políticas de privacidade, responsabilidades e regras do sistema.
+                                  Ao acessar e utilizar o sistema <strong>MEI2ME – Assistente Facilitador MEI → ME</strong>, 
+                                  o usuário declara ter lido, compreendido e concordado com os presentes Termos de Uso.
                                 </p>
                                 <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
-                                feugiat quam sit amet augue efficitur, id tincidunt magna
-                                fringilla. Integer ac malesuada purus. Nulla facilisi. Donec
-                                quis mi vel lorem sollicitudin luctus non ac ante.
+                                  Caso não concorde com qualquer condição aqui estabelecida, o usuário não deverá utilizar a aplicação.
+                                </p>
+
+                                <h2>2. Sobre o Sistema</h2>
+                                <p>
+                                  O MEI2ME é uma aplicação desenvolvida com o objetivo de auxiliar Microempreendedores Individuais (MEIs) 
+                                  no processo de transição para Microempresa (ME), fornecendo orientações, simulações e apoio informativo.
                                 </p>
                                 <p>
-                                Ao aceitar, você concorda em utilizar o sistema conforme as
-                                diretrizes aqui estabelecidas.
+                                  O sistema possui caráter <strong>educacional e informativo</strong>, não substituindo a orientação 
+                                  de profissionais especializados, como contadores ou advogados.
                                 </p>
-                                {/* adicione mais seções conforme necessário */}
+
+                                <h2>3. Cadastro e Responsabilidade do Usuário</h2>
+                                <p>
+                                  Para utilizar determinadas funcionalidades, o usuário deverá realizar cadastro, fornecendo informações 
+                                  verdadeiras, completas e atualizadas.
+                                </p>
+                                <ul>
+                                  <li>Manter a confidencialidade de suas credenciais de acesso;</li>
+                                  <li>Não compartilhar sua conta com terceiros;</li>
+                                  <li>Informar dados verídicos durante o uso do sistema.</li>
+                                </ul>
+                                <p>
+                                  O uso indevido da conta é de inteira responsabilidade do usuário.
+                                </p>
+
+                                <h2>4. Segurança e Proteção de Dados</h2>
+                                <p>
+                                  O sistema adota boas práticas de segurança para proteção das informações dos usuários, incluindo:
+                                </p>
+                                <ul>
+                                  <li>Criptografia de senhas;</li>
+                                  <li>Controle de autenticação e sessão;</li>
+                                  <li>Validação de dados.</li>
+                                </ul>
+                                <p>
+                                  Apesar dos esforços, não é possível garantir segurança absoluta em ambientes digitais.
+                                </p>
+
+                                <h2>5. Limitações de Responsabilidade</h2>
+                                <p>
+                                  O MEI2ME não se responsabiliza por:
+                                </p>
+                                <ul>
+                                  <li>Decisões tomadas pelo usuário com base nas informações fornecidas;</li>
+                                  <li>Eventuais erros ou omissões nas informações apresentadas;</li>
+                                  <li>Indisponibilidade temporária do sistema.</li>
+                                </ul>
+                                <p>
+                                  O uso das informações disponibilizadas é de responsabilidade exclusiva do usuário.
+                                </p>
+
+                                <h2>6. Uso Adequado</h2>
+                                <p>
+                                  O usuário compromete-se a utilizar o sistema de forma ética e legal, sendo proibido:
+                                </p>
+                                <ul>
+                                  <li>Utilizar o sistema para fins ilícitos;</li>
+                                  <li>Tentar acessar áreas restritas sem autorização;</li>
+                                  <li>Inserir dados falsos ou maliciosos.</li>
+                                </ul>
+
+                                <h2>7. Alterações nos Termos</h2>
+                                <p>
+                                  Estes Termos de Uso podem ser atualizados a qualquer momento, visando melhorias no sistema 
+                                  ou adequações legais.
+                                </p>
+                                <p>
+                                  Recomenda-se que o usuário revise este documento periodicamente.
+                                </p>
+
+                                <h2>8. Disposições Gerais</h2>
+                                <p>
+                                  Este sistema foi desenvolvido para fins acadêmicos como Trabalho de Conclusão de Curso (TCC), 
+                                  podendo não contemplar todos os requisitos de um sistema comercial em produção.
+                                </p>
+
+                                <h2>9. Contato</h2>
+                                <p>
+                                  Em caso de dúvidas, sugestões ou problemas, o usuário poderá entrar em contato por meio dos 
+                                  canais disponibilizados na aplicação.
+                                </p>
+
+                                <p className="margin-top: 24px; font-size: 12px; color: #888;">
+                                  Última atualização: Abril de 2026
+                                </p>
                             </div>
                             <DialogFooter className="mt-4">
                                 <DialogClose asChild>
