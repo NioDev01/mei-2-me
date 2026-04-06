@@ -76,6 +76,8 @@ model Usuario {
   senha_user    String
   celular_user  String   @unique @db.VarChar(14)
   refresh_token String?
+  reset_token String? 
+  reset_token_expires DateTime?
 
   mei           Mei?     @relation(fields: [id_mei], references: [id_mei])
 

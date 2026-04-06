@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { UnauthorizedException } from '@nestjs/common';
@@ -8,6 +9,7 @@ import { Prisma } from '@prisma/client';
 import { ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
+import { Resend } from 'resend';
 
 @Injectable()
 export class AuthService {
@@ -141,5 +143,74 @@ export class AuthService {
     } catch {
       throw new UnauthorizedException();
     }
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.prisma.usuario.findUnique({
+      where: { email_user: email },
+    });
+
+    if (!user) return; // não revela se existe
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const hashed = await bcrypt.hash(code, 10);
+
+    await this.prisma.usuario.update({
+      where: { id_user: user.id_user },
+      data: {
+        reset_token: hashed,
+        reset_token_expires: new Date(Date.now() + 15 * 60 * 1000), // 15 min
+      },
+    });
+
+    await resend.emails.send({
+      from: 'onboarding@resend.dev', // pode usar esse inicialmente
+      to: email,
+      subject: 'Recuperação de senha - MEI2ME',
+      html: `
+        <div style="font-family: Arial; text-align: center;">
+          <h2>MEI2ME</h2>
+          <p>Use o código abaixo para redefinir sua senha:</p>
+          <h1 style="letter-spacing: 5px;">${code}</h1>
+          <p>Este código expira em 15 minutos.</p>
+        </div>
+      `,
+    });
+  }
+
+  async resetPassword(data: ResetPasswordDto) {
+    const user = await this.prisma.usuario.findUnique({
+      where: { email_user: data.email },
+    });
+
+    if (!user || !user.reset_token) {
+      throw new UnauthorizedException('Código inválido');
+    }
+
+    if (!user.reset_token_expires || user.reset_token_expires < new Date()) {
+      throw new UnauthorizedException('Código expirado');
+    }
+
+    const isValid = await bcrypt.compare(data.token, user.reset_token);
+
+    if (!isValid) {
+      throw new UnauthorizedException('Código inválido');
+    }
+
+    const hashedPassword = await bcrypt.hash(data.novaSenha, 10);
+
+    await this.prisma.usuario.update({
+      where: { id_user: user.id_user },
+      data: {
+        senha_user: hashedPassword,
+        reset_token: null,
+        reset_token_expires: null,
+      },
+    });
+
+    return { message: 'Senha atualizada com sucesso' };
   }
 }

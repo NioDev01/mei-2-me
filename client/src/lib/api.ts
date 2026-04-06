@@ -29,7 +29,9 @@ api.interceptors.response.use(
       !originalRequest.url?.includes("/auth/login") &&
       !originalRequest.url?.includes("/auth/logout") &&
       !originalRequest.url?.includes("/auth/register") &&
-      !originalRequest.url?.includes("/auth/refresh")
+      !originalRequest.url?.includes("/auth/refresh") &&
+      !originalRequest.url?.includes("/auth/reset-password") &&
+      !originalRequest.url?.includes("/auth/forgot-password")
     ) {
       originalRequest._retry = true;
 

@@ -1,8 +1,11 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link } from "react-router-dom"
+import { useLocation } from "react-router-dom"
+import { api } from "@/lib/api"
+import { useNavigate } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,8 +24,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp"
 
 import { Eye, EyeOff, Lock, ArrowLeft, Check, AlertCircle } from "lucide-react"
+
+import { Toaster, toast } from "sonner";
 
 const passwordSchema = z
   .string()
@@ -32,21 +42,43 @@ const passwordSchema = z
   .regex(/[0-9]/, "A senha deve conter números.")
   .regex(/[!@#$%^&*(),.?:{}|<>]/, "A senha deve conter caracteres especiais.")
 
-const formSchema = z
-  .object({
-    novaSenha: passwordSchema,
-    confirmarSenha: z.string(),
-  })
-  .refine((data) => data.novaSenha === data.confirmarSenha, {
-    path: ["confirmarSenha"],
-    message: "As senhas não coincidem.",
-  })
+const formSchema = z.object({
+  token: z.string().length(6, "Código inválido"),
+  novaSenha: passwordSchema,
+  confirmarSenha: z.string(),
+})
+.refine((data) => data.novaSenha === data.confirmarSenha, {
+  path: ["confirmarSenha"],
+  message: "As senhas não coincidem.",
+})
 
 type FormValues = z.infer<typeof formSchema>
 
 export function RedefinirSenha() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [cooldown, setCooldown] = useState(0)
+
+  useEffect(() => {
+    setCooldown(30)
+
+    const interval = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const location = useLocation()
+  const email = location.state?.email
+
+  const navigate = useNavigate()
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -57,9 +89,50 @@ export function RedefinirSenha() {
     mode: "onChange",
   })
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Nova senha definida:", data)
-    // Lógica para redefinir senha
+  const onSubmit = async (data: FormValues) => {
+    try {
+      await api.post("/auth/reset-password", {
+        email,
+        token: data.token,
+        novaSenha: data.novaSenha,
+      })
+
+      toast.success("Senha redefinida com sucesso")
+
+      navigate("/login")
+
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        toast.error("Código inválido ou expirado")
+      } else {
+        toast.error("Erro ao redefinir senha")
+      }
+    }
+  }
+
+  const handleResendCode = async () => {
+    if (cooldown > 0) return
+
+    try {
+      await api.post("/auth/forgot-password", { email })
+
+      toast.success("Novo código enviado!")
+
+      setCooldown(30)
+
+      const interval = setInterval(() => {
+        setCooldown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval)
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
+
+    } catch (error) {
+      toast.error("Erro ao reenviar código")
+    }
   }
 
   const getFieldClassName = (name: keyof FormValues) => {
@@ -80,16 +153,55 @@ export function RedefinirSenha() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+      <Toaster position="top-center" />
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold">Redefinir Senha</CardTitle>
           <CardDescription>
-            Digite sua nova senha e confirme para finalizar a recuperação
+            Digite o código enviado para o seu e-mail <br/> Informe sua nova senha e confirme para finalizar a recuperação
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
+              {/* Código OTP */}
+              <FormField
+                control={form.control}
+                name="token"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Código de verificação</FormLabel>
+                    <FormControl>
+                      <InputOTP
+                        maxLength={6}
+                        value={field.value}
+                        onChange={field.onChange}
+                      >
+                        <InputOTPGroup>
+                          <InputOTPSlot index={0} />
+                          <InputOTPSlot index={1} />
+                          <InputOTPSlot index={2} />
+                          <InputOTPSlot index={3} />
+                          <InputOTPSlot index={4} />
+                          <InputOTPSlot index={5} />
+                        </InputOTPGroup>
+                      </InputOTP>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="button"
+                variant="link"
+                onClick={handleResendCode}
+                disabled={cooldown > 0}
+              >
+                {cooldown > 0
+                  ? `Reenviar código em ${cooldown}s`
+                  : "Reenviar código"}
+              </Button>
 
               {/* Nova Senha */}
               <FormField

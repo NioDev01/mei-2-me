@@ -13,6 +13,8 @@ import {
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { Response } from 'express';
 
@@ -55,6 +57,16 @@ export class AuthController {
     res.clearCookie('refreshToken');
 
     return this.authService.logout(req.user.userId);
+  }
+
+  @Post('forgot-password')
+  forgot(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto.email);
+  }
+
+  @Post('reset-password')
+  reset(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto);
   }
 
   @UseGuards(JwtAuthGuard)
