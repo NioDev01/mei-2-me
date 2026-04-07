@@ -89,6 +89,12 @@ export function RedefinirSenha() {
     mode: "onChange",
   })
 
+  if (!email) {
+    toast.error("Sessão inválida. Solicite o código novamente.");
+    navigate("/recuperar-senha");
+    return;
+  } 
+
   const onSubmit = async (data: FormValues) => {
     try {
       await api.post("/auth/reset-password", {

@@ -31,7 +31,6 @@ export class AuthService {
           cnpj_user: data.cnpj,
           celular_user: data.celular,
           senha_user: hashedPassword,
-          mei: {},
         },
       });
 
@@ -102,11 +101,17 @@ export class AuthService {
     };
   }
 
-  async logout(userId: number) {
-    await this.prisma.usuario.update({
-      where: { id_user: userId },
-      data: { refresh_token: null },
-    });
+  async logout(userId: number | undefined) {
+    try {
+      if (userId) {
+        await this.prisma.usuario.update({
+          where: { id_user: userId },
+          data: { refresh_token: null },
+        });
+      }
+    } catch {
+      // ignora erros, logout é idempotente
+    }
 
     return { message: 'Logout realizado com sucesso' };
   }

@@ -37,8 +37,8 @@ export class AuthController {
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false, // true quando estiver em produção (HTTPS)
-      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
     });
 
     return { accessToken };
@@ -51,12 +51,11 @@ export class AuthController {
     return this.authService.refresh(refreshToken);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('logout')
   logout(@Request() req, @Res({ passthrough: true }) res: Response) {
     res.clearCookie('refreshToken');
 
-    return this.authService.logout(req.user.userId);
+    return this.authService.logout(req.user?.userId);
   }
 
   @Post('forgot-password')
