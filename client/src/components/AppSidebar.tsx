@@ -36,6 +36,8 @@ import {
 } from "lucide-react"
 
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "@/context/AuthContext"
 
 // Módulos
 const items = [
@@ -47,6 +49,14 @@ const items = [
 
 export function AppSidebar() {
   const [activeHash, setActiveHash] = useState("painel")
+
+  const navigate = useNavigate()
+  const { logout } = useAuth()
+
+  const handleLogout = async () => {
+    await logout()
+    navigate("/login")
+  }
 
   // Atualiza estado sempre que o hash mudar
   useEffect(() => {
@@ -77,7 +87,10 @@ export function AppSidebar() {
                 <DropdownMenuItem><Settings/>Configurações</DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem><LogOut/>Sair</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut />
+                Sair
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <p className="text-lg font-semibold pl-2">MEI2ME</p>
