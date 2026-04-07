@@ -51,4 +51,7 @@ export class CreateDiagnosticoInicialDto {
 
   @IsBoolean()
   exporta_acima_limite!: boolean;
+
+  @IsBoolean()
+  importacao_direta!: boolean;
 }
