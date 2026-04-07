@@ -14,7 +14,6 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -537,7 +536,7 @@ export function SignIn() {
                                   canais disponibilizados na aplicação.
                                 </p>
 
-                                <p className="margin-top: 24px; font-size: 12px; color: #888;">
+                                <p style={{ marginTop: 24, fontSize: 12, color: "#888" }}>
                                   Última atualização: Abril de 2026
                                 </p>
                             </div>

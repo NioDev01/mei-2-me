@@ -91,16 +91,18 @@ export function LoginForm() {
     try {
       let identificador = "";
 
-      if (data.loginType === "cnpj") {
-        identificador = data.cnpj.replace(/\D/g, "");
-      }
+      switch (data.loginType) {
+        case "cnpj":
+          identificador = (data.cnpj ?? "").replace(/\D/g, "");
+          break;
 
-      if (data.loginType === "email") {
-        identificador = data.email || "";
-      }
+        case "email":
+          identificador = data.email ?? "";
+          break;
 
-      if (data.loginType === "telefone") {
-        identificador = data.telefone.replace(/\D/g, "");
+        case "telefone":
+          identificador = (data.telefone ?? "").replace(/\D/g, "");
+          break;
       }
 
       if (!identificador) {
