@@ -101,16 +101,20 @@ export class AuthService {
     };
   }
 
-  async logout(userId: number | undefined) {
+  async logout(refreshToken: string | undefined) {
     try {
-      if (userId) {
-        await this.prisma.usuario.update({
-          where: { id_user: userId },
-          data: { refresh_token: null },
-        });
-      }
+      if (!refreshToken) return;
+
+      const decoded = await this.jwtService.verifyAsync(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
+
+      await this.prisma.usuario.update({
+        where: { id_user: decoded.sub },
+        data: { refresh_token: null },
+      });
     } catch {
-      // ignora erros, logout é idempotente
+      // logout deve ser silencioso
     }
 
     return { message: 'Logout realizado com sucesso' };

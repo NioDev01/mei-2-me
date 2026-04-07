@@ -9,6 +9,7 @@ import {
   Request,
   Res,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -48,14 +49,20 @@ export class AuthController {
   refresh(@Req() req) {
     const refreshToken = req.cookies.refreshToken;
 
+    if (!refreshToken) {
+      throw new UnauthorizedException();
+    }
+
     return this.authService.refresh(refreshToken);
   }
 
   @Post('logout')
-  logout(@Request() req, @Res({ passthrough: true }) res: Response) {
+  logout(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.cookies?.refreshToken;
+
     res.clearCookie('refreshToken');
 
-    return this.authService.logout(req.user?.userId);
+    return this.authService.logout(refreshToken);
   }
 
   @Post('forgot-password')
