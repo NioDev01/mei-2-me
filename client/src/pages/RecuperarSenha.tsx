@@ -3,6 +3,8 @@ import { Link } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { api } from "@/lib/api"
+import { useNavigate } from "react-router-dom"
 
 import {
   Form,
@@ -34,6 +36,8 @@ type FormValues = z.infer<typeof formSchema>
 export function RecuperarSenha() {
   const [submitted, setSubmitted] = useState(false)
 
+  const navigate = useNavigate()
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,10 +46,24 @@ export function RecuperarSenha() {
     mode: "onChange",
   })
 
-  const onSubmit = (data: FormValues) => {
-    console.log("E-mail para recuperação:", data.email)
+  const onSubmit = async (data: FormValues) => {
+  try {
+    await api.post("/auth/forgot-password", {
+      email: data.email,
+    })
+
+    // opcional: feedback visual
     setSubmitted(true)
+
+    // redireciona para redefinir senha
+    navigate("/RedefinirSenha", {
+      state: { email: data.email },
+    })
+
+  } catch (error) {
+    console.error(error)
   }
+}
 
   const getFieldClassName = (name: keyof FormValues) => {
     const hasError = form.formState.errors[name]

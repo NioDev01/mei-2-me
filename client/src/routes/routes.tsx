@@ -7,6 +7,7 @@ import { RedefinirSenha } from '@/pages/RedefinirSenha';
 import { RecuperarSenha } from '@/pages/RecuperarSenha';
 import { SignIn } from '@/pages/SignIn';
 import { AppHub } from '@/pages/AppHub';
+import { PrivateRoute } from '@/routes/PrivateRoute'
 
 export function AppRoutes() {
   return (
@@ -18,7 +19,7 @@ export function AppRoutes() {
       <Route path="/redefinirsenha" element={<RedefinirSenha />} />
       <Route path="/recuperarsenha" element={<RecuperarSenha />} />
       <Route path="/signin" element={<SignIn />} />
-      <Route path="/app" element={<AppHub />} />
+      <Route path="/app" element={<PrivateRoute><AppHub /></PrivateRoute>} />
     </Routes>
   );
 }

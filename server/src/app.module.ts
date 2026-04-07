@@ -5,6 +5,7 @@ import { ReceitawsApiService } from './integrations/receitaws-api/receitaws-api.
 import { HttpModule } from '@nestjs/axios';
 import { AnaliseMigracaoModule } from './modules/analise-migracao/analise-migracao.module';
 import { DiagnosticoInicialModule } from './modules/diagnostico-inicial/diagnostico-inicial.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { DiagnosticoInicialModule } from './modules/diagnostico-inicial/diagnost
     HttpModule,
     AnaliseMigracaoModule,
     DiagnosticoInicialModule,
+    AuthModule,
   ],
   providers: [ReceitawsApiService],
 })

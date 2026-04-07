@@ -10,7 +10,9 @@ import {
 } from 'class-validator';
 
 export class CreateDiagnosticoInicialDto {
-  @Transform(({ value }) => value?.replace(/\D/g, ''))
+  @Transform(({ value }) => {
+    return typeof value === 'string' ? value.replace(/\D/g, '') : value;
+  })
   @Matches(/^\d{14}$/, { message: 'CNPJ deve ter 14 dígitos' })
   @IsString({ message: 'Digite apenas os números do CNPJ.' })
   @Length(14, 14, {

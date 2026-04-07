@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url  	   = env("DATABASE_URL")
 }
 
 model Mensagem {
@@ -68,14 +68,22 @@ model Cnae {
 }
 
 model Usuario {
-  id_user      Int    @id @default(autoincrement())
-  id_mei       Int    @unique
-  nome_user    String
-  email_user   String @unique
-  cnpj_user    String @unique @db.VarChar(18)
-  senha_user   String
-  celular_user String @db.VarChar(14)
-  mei          Mei    @relation(fields: [id_mei], references: [id_mei])
+  id_user       Int      @id @default(autoincrement())
+  id_mei        Int?     @unique
+  nome_user     String
+  email_user    String   @unique
+  cnpj_user     String   @unique @db.VarChar(18)
+  senha_user    String
+  celular_user  String   @unique @db.VarChar(14)
+  refresh_token String?
+  reset_token String? 
+  reset_token_expires DateTime?
+
+  mei           Mei?     @relation(fields: [id_mei], references: [id_mei])
+
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 
   @@map("Usuario")
 }
+
