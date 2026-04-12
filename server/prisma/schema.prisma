@@ -34,6 +34,7 @@ model Mei {
   diagnostico             Diagnostico?
   usuarios                Usuario?
   importacao_direta       Boolean
+  CalculoRegime           CalculoRegime?
   
   @@map("Mei")
 }
@@ -65,6 +66,22 @@ model Cnae {
   @@index([cnae, ocupacao_cnae], map: "cnae_cnae_ocupacao_cnae_index")
   @@index([cnae, descricao_subclasse], map: "cnae_cnae_descricao_subclasse_index")
   @@map("Cnae")
+}
+
+model CalculoRegime {
+  id_mei                    Int      @id
+  receitas_financeiras      Decimal? @default(0.00) @db.Decimal(12, 2)
+  receitas_nao_operacionais Decimal? @default(0.00) @db.Decimal(12, 2)
+  despesas_financeiras      Decimal? @default(0.00) @db.Decimal(12, 2)
+  tributos_simples          Decimal  @db.Decimal(12, 2)
+  tributos_lucrop           Decimal  @db.Decimal(12, 2)
+  atualizado_em             DateTime @db.Timestamp(0)
+  aliq_efetiva_lucrop       Decimal  @db.Decimal(5, 4)
+  aliq_efetiva_simples      Decimal  @db.Decimal(5, 4)
+  lucro_liq_lucrop          Decimal  @db.Decimal(12, 2)
+  lucro_liq_simples         Decimal  @db.Decimal(12, 2)
+  recomendacao              String   @db.Char(2)
+  Mei                       Mei      @relation(fields: [id_mei], references: [id_mei])
 }
 
 model Usuario {
