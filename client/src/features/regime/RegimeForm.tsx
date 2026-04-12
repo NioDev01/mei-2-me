@@ -30,7 +30,7 @@ const formSchema = z.object({
   despesas_financeiras: z.coerce.number().nonnegative(),
 });
 
-const FALLBACK_FATURAMENTO = 81000;
+const FALLBACK_FATURAMENTO = "Aguardando cálculo...";
 
 function handleMoneyChange(
   value: string,
