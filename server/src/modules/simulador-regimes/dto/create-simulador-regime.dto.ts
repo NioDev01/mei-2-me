@@ -1,17 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsNotEmpty, IsNumber, IsInt, Min } from 'class-validator';
+import { IsOptional, IsNumber, Min } from 'class-validator';
 
 export class CreateSimuladorRegimeDto {
-  @ApiProperty({
-    description: 'ID do MEI',
-    example: 1,
-    required: true,
-  })
-  @IsNotEmpty({ message: 'O campo id_mei é obrigatório.' })
-  @IsInt({ message: 'O campo id_mei deve ser um número inteiro.' })
-  @Min(1, { message: 'O campo id_mei deve ser maior que zero.' })
-  id_mei!: number;
-
   @ApiProperty({
     description:
       'Receita financeira anual do MEI (Rendimentos de aplicações, juros recebidos)',

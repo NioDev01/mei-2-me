@@ -20,7 +20,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import axios from "axios";
+import { api } from "@/lib/api";
 import { toast, Toaster } from "sonner";
 import type { ResultadoSimulador } from "./types/ResultadoSimulador";
 
@@ -42,13 +42,11 @@ function handleMoneyChange(
 }
 
 interface RegimeFormProps {
-  id_mei: number;
   dadosIniciais?: any;
   onResultadoChange?: (resultado: ResultadoSimulador) => void;
 }
 
 export function RegimeForm({
-  id_mei,
   dadosIniciais,
   onResultadoChange,
 }: RegimeFormProps) {
@@ -77,9 +75,9 @@ export function RegimeForm({
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${import.meta.env.VITE_API_URL}/simulador-regimes`,
-        { id_mei, ...data }
+        data
       );
 
       toast.success("Simulação realizada com sucesso!");

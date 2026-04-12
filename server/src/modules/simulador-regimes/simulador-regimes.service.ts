@@ -43,9 +43,8 @@ export class SimuladorRegimesService {
     return 'ID';
   }
 
-  async create(dto: CreateSimuladorRegimeDto) {
+  async create(dto: CreateSimuladorRegimeDto, id_mei: number) {
     const {
-      id_mei,
       receitas_financeiras,
       receitas_nao_operacionais,
       despesas_financeiras,

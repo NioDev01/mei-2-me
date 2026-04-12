@@ -3,15 +3,17 @@ import {
   Get,
   Post,
   Body,
-  Param,
-  ParseIntPipe,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { SimuladorRegimesService } from './simulador-regimes.service';
 import { CreateSimuladorRegimeDto } from './dto/create-simulador-regime.dto';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('simulador-regimes')
 @ApiTags('SimuladorRegimes')
+@UseGuards(JwtAuthGuard) // protege todas as rotas
 export class SimuladorRegimesController {
   constructor(
     private readonly simuladorRegimesService: SimuladorRegimesService,
@@ -21,15 +23,20 @@ export class SimuladorRegimesController {
   @ApiOperation({
     summary: 'Calcula e salva uma simulação de regime tributário',
   })
-  calcular(@Body() dto: CreateSimuladorRegimeDto) {
-    return this.simuladorRegimesService.create(dto);
+  @Post()
+  calcular(@Request() req, @Body() dto: CreateSimuladorRegimeDto) {
+    const id_mei = req.user.id_mei;
+
+    return this.simuladorRegimesService.create(dto, id_mei);
   }
 
-  @Get(':id_mei')
+  @Get()
   @ApiOperation({
-    summary: 'Obtém simulação pelo ID do MEI',
+    summary: 'Obtém simulação do usuário autenticado',
   })
-  findOne(@Param('id_mei', ParseIntPipe) id_mei: number) {
+  findOne(@Request() req) {
+    const id_mei = req.user.id_mei;
+
     return this.simuladorRegimesService.findOne(id_mei);
   }
 }

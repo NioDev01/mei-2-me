@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { api } from "@/lib/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -27,30 +27,29 @@ export function Simulador() {
   const [isLoading, setIsLoading] = useState(true);
   const [retorno, setRetorno] = useState<ResultadoSimulador | undefined>();
 
-  async function fetchSimulacao(meiId: number) {
-    try {
-      const response = await axios.get<ResultadoSimulador>(
-        `${import.meta.env.VITE_API_URL}/simulador-regimes/${meiId}`
-      );
+  async function fetchSimulacao() {
+  try {
+    const response = await api.get<ResultadoSimulador>(
+      `${import.meta.env.VITE_API_URL}/simulador-regimes`
+    );
 
-      setRetorno(response.data ?? undefined);
-    } catch (error: any) {
-      if (error.response?.status === 404) {
-        // estado válido (ainda não simulou)
-        setRetorno(undefined);
-      } else {
-        console.error("Erro ao buscar simulador:", error);
-      }
-    } finally {
-      setIsLoading(false);
+    setRetorno(response.data ?? undefined);
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      setRetorno(undefined);
+    } else {
+      console.error("Erro ao buscar simulador:", error);
     }
+  } finally {
+    setIsLoading(false);
   }
+}
 
   useEffect(() => {
     if (!id_mei) return;
 
     setIsLoading(true);
-    fetchSimulacao(id_mei);
+    fetchSimulacao();
   }, [id_mei]);
 
   const handleUpdateResultado = (novoResultado: ResultadoSimulador) => {
@@ -230,7 +229,6 @@ export function Simulador() {
             <Skeleton className="w-full h-[200px] rounded-lg" />
           ) : (
             <RegimeForm
-              id_mei={id_mei}
               dadosIniciais={dadosForm}
               onResultadoChange={handleUpdateResultado}
             />
