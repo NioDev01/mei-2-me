@@ -60,13 +60,13 @@ export function Simulador() {
   };
 
   const dadosForm = retorno
-    ? {
-        faturamento_12m: retorno.faturamento_12m,
-        receitas_financeiras: retorno.receitas_financeiras,
-        receitas_nao_operacionais: retorno.receitas_nao_operacionais,
-        despesas_financeiras: retorno.despesas_financeiras,
-      }
-    : undefined;
+  ? {
+      faturamento_12m: retorno.faturamento_12m ?? 0,
+      receitas_financeiras: retorno.receitas_financeiras ?? 0,
+      receitas_nao_operacionais: retorno.receitas_nao_operacionais ?? 0,
+      despesas_financeiras: retorno.despesas_financeiras ?? 0,
+    }
+  : undefined;
 
   // 🔐 Loading de autenticação
   if (authLoading) {
