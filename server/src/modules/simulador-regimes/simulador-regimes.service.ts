@@ -217,7 +217,21 @@ export class SimuladorRegimesService {
     });
 
     if (!registroCalculo) {
-      throw new NotFoundException(`Cálculo para MEI não encontrado.`);
+      return {
+        faturamento_12m: infosMei?.faturamento_12m
+          ? Number(infosMei.faturamento_12m)
+          : 0,
+        receitas_financeiras: 0,
+        receitas_nao_operacionais: 0,
+        despesas_financeiras: 0,
+        tributos_simples: 0,
+        aliq_efetiva_simples: 0,
+        lucro_liq_simples: 0,
+        tributos_lucrop: 0,
+        aliq_efetiva_lucrop: 0,
+        lucro_liq_lucrop: 0,
+        recomendacao: 'SN',
+      };
     }
 
     return {
