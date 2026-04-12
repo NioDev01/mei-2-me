@@ -79,7 +79,7 @@ export function Simulador() {
     return (
       <Card className="p-6 text-center">
         <p className="text-muted-foreground">
-          Você precisa estar autenticado para acessar o simulador.
+          Não conseguimos carregar os dados do simulador.
         </p>
       </Card>
     );

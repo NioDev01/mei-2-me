@@ -181,7 +181,7 @@ export function SignIn() {
 
       toast.success("Conta criada com sucesso!")
 
-      // 3. Redirecionamento
+      // 4. Redirecionamento
       navigate("/app")
 
     } catch (error: any) {
@@ -537,9 +537,9 @@ export function SignIn() {
                 {isSubmitting ? "Criando conta..." : "Criar Conta"}
               </Button>
 
-              <div className="text-center text-sm">
+              <div className="text-center text-sm text-muted-foreground mt-4">
                 Já tem conta?{" "}
-                <Link to="/login" className="text-primary underline">
+                <Link to="/login" className="text-primary hover:underline font-medium">
                   Entrar
                 </Link>
               </div>
