@@ -1,11 +1,10 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { api } from "@/lib/api"
 import { useAuth } from "@/context/AuthContext"
-import { useNavigate } from "react-router-dom"
 
 import {
   Form,
@@ -21,9 +20,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card"
 import {
   Dialog,
@@ -36,8 +35,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog"
 
-import { Toaster, toast } from "sonner";
-
+import { Toaster, toast } from "sonner"
 import {
   User,
   Building2,
@@ -100,6 +98,7 @@ type FormValues = z.infer<typeof formSchema>
 export function SignIn() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -152,39 +151,12 @@ export function SignIn() {
     return null
   }
 
-  // const getSenhaStrength = (senha: string) => {
-  //   if (!senha) return 0
-  //   let strength = 0
-  //   if (senha.length >= 6) strength++
-  //   if (/[A-Z]/.test(senha)) strength++
-  //   if (/[0-9]/.test(senha)) strength++
-  //   if (/[^A-Za-z0-9]/.test(senha)) strength++
-  //   return strength
-  // }
-
-  // const getSenhaFeedback = (senha: string) => {
-  //   const strength = getSenhaStrength(senha)
-
-  //   switch (strength) {
-  //       case 0:
-  //       return { senhaFeedBackCor: "bg-accent-foreground", senhaFeedBackTexto: "Senha muito fraca. Use pelo menos 6 caracteres." }
-  //       case 1:
-  //       return { senhaFeedBackCor: "bg-red-500", senhaFeedBackTexto: "Adicione letras maiúsculas para aumentar a segurança." }
-  //       case 2:
-  //       return { senhaFeedBackCor: "bg-yellow-500", senhaFeedBackTexto: "Inclua números e símbolos." }
-  //       case 3:
-  //       return { senhaFeedBackCor: "bg-blue-500", senhaFeedBackTexto: "Senha razoável. Tente torná-la mais complexa." }
-  //       case 4:
-  //       return { senhaFeedBackCor: "bg-green-500", senhaFeedBackTexto: "Senha forte!" }
-  //       default:
-  //       return { senhaFeedBackCor: "bg-accent-foreground", senhaFeedBackTexto: "" }
-  //   }
-  // }
 
   const senha = form.watch("senha")
   const passwordValidation = validatePassword(senha)
 
   const onSubmit = async (data: FormValues) => {
+  setIsSubmitting(true)
   try {
     // normalizar dados
     const payload = {
@@ -195,34 +167,36 @@ export function SignIn() {
       senha: data.senha,
     }
 
-    // 1. cadastro
-    await api.post("/auth/register", payload)
+      // 1. Cadastro
+      await api.post("/auth/register", payload)
 
-    // 2. login automático
-    const loginRes = await api.post("/auth/login", {
-      identificador: payload.email, // pode ser email mesmo
-      senha: payload.senha,
-    })
+      // 2. Login automático
+      const loginRes = await api.post("/auth/login", {
+        identificador: payload.email,
+        senha: payload.senha,
+      })
 
-    // 3. atualizar contexto
-    login(loginRes.data.accessToken)
+      // 3. atualizar contexto
+      await login(loginRes.data.accessToken)
 
-    // 4. redirecionar
-    navigate("/app")
+      toast.success("Conta criada com sucesso!")
 
-  } catch (error: any) {
-    if (error.response?.status === 409) {
-      toast.error("Não foi possível realizar o cadastro")
-    } else {
-      console.error(error)
-      toast.error("Erro ao criar conta")
+      // 4. Redirecionamento
+      navigate("/app")
+
+    } catch (error: any) {
+      if (error.response?.status === 409) {
+        toast.error("Não foi possível realizar o cadastro")
+      } else {
+        console.error(error)
+        toast.error("Erro ao criar conta")
+      }
+    } finally {
+      setIsSubmitting(false)
     }
   }
-}
-  // const senhaStrength = getSenhaStrength(form.watch("senha"))
-  // const { senhaFeedBackCor, senhaFeedBackTexto } = getSenhaFeedback(form.watch("senha"))
+    const senhaStrength = 5 - passwordValidation.errors.length
 
-  const senhaStrength = 5 - passwordValidation.errors.length
 
   return (
     <div className="min-h-screen overflow-hidden flex items-center justify-center p-4 bg-background">
@@ -554,17 +528,22 @@ export function SignIn() {
                 )}
               />
 
-
-              <Button type="submit" className="w-full mt-6" size="lg">
-                Criar Conta
+              <Button
+                type="submit"
+                className="w-full mt-6"
+                size="lg"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Criando conta..." : "Criar Conta"}
               </Button>
 
               <div className="text-center text-sm text-muted-foreground mt-4">
-                Já tem uma conta?{" "}
+                Já tem conta?{" "}
                 <Link to="/login" className="text-primary hover:underline font-medium">
-                  Faça login
+                  Entrar
                 </Link>
               </div>
+
             </form>
           </Form>
         </CardContent>
