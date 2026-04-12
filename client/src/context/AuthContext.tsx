@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   loadUser()
   }, [])
 
-  const login = async (accessToken: string) => {
+  const login: (accessToken: string) => Promise<void> = async (accessToken) => {
   setAccessToken(accessToken)
 
   try {

@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,32 +18,35 @@ import {
 } from "@/components/ui/form";
 
 import { Toaster, toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
 
 import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
-import { useState } from "react";
 
-import { Eye, EyeOff} from "lucide-react"
-
-// Schema de validação
+// Schema
 const loginSchema = z.object({
   loginType: z.enum(["cnpj", "email", "telefone"]),
 
-  cnpj: z.string()
-    .refine(val => val.length === 0 || /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/.test(val), {
-      message: "CNPJ inválido",
-    })
+  cnpj: z
+    .string()
+    .refine(
+      (val) =>
+        val.length === 0 ||
+        /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/.test(val),
+      { message: "CNPJ inválido" }
+    )
     .optional(),
 
-  email: z.string()
-    .email("E-mail inválido")
-    .or(z.literal(""))
-    .optional(),
+  email: z.string().email("E-mail inválido").or(z.literal("")).optional(),
 
-  telefone: z.string()
-    .refine(val => val.length === 0 || /^\(\d{2}\) \d{5}-\d{4}$/.test(val), {
-      message: "Telefone inválido",
-    })
+  telefone: z
+    .string()
+    .refine(
+      (val) =>
+        val.length === 0 ||
+        /^\(\d{2}\) \d{5}-\d{4}$/.test(val),
+      { message: "Telefone inválido" }
+    )
     .optional(),
 
   password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
@@ -51,8 +55,9 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const [showPassword, setShowPassword] = useState(false)
-  
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -88,6 +93,8 @@ export function LoginForm() {
   };
 
   const onSubmit = async (data: LoginFormValues) => {
+    setIsSubmitting(true);
+
     try {
       let identificador = "";
 
@@ -116,7 +123,9 @@ export function LoginForm() {
       });
 
       // salva token em memória
-      login(res.data.accessToken);
+      await login(res.data.accessToken);
+
+      toast.success("Login realizado com sucesso!");
 
       // redireciona (ajuste conforme sua rota)
       navigate("/app");
@@ -128,16 +137,20 @@ export function LoginForm() {
         console.error(error);
         toast.error("Erro inesperado. Tente novamente.");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Toaster position="top-center" />
+
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl text-center">Login</CardTitle>
         </CardHeader>
+
         <CardContent>
           <Form {...form}>
             <Tabs
@@ -260,7 +273,7 @@ export function LoginForm() {
                       </FormItem>
                     )}
                   />
-
+                
                 <div className="mt-4 text-right text-sm">
                   <span>Não possui uma conta? </span>
                   <a
@@ -270,9 +283,13 @@ export function LoginForm() {
                     Crie uma conta
                   </a>
                 </div>
-
-                <Button type="submit" className="w-full">
-                  Entrar
+                
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Entrando..." : "Entrar"}
                 </Button>
               </form>
             </Tabs>
