@@ -100,9 +100,7 @@ export function RegimeForm({
     }
   }
 
-  const faturamento = Number(
-    dadosIniciais?.faturamento_12m ?? FALLBACK_FATURAMENTO
-  );
+  const faturamento = dadosIniciais?.faturamento_12m ? Number(dadosIniciais.faturamento_12m) : FALLBACK_FATURAMENTO;
 
   return (
     <div>
