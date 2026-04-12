@@ -16,11 +16,10 @@ type User = {
   email: string
 }
 
-const [user, setUser] = useState<User | null>(null)
-
 const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
 
