@@ -1,14 +1,14 @@
 interface ResultadoSimulador {
-  faturamento_12m: number | string;
-  receitas_financeiras: number | string;
-  receitas_nao_operacionais: number | string;
-  despesas_financeiras: number | string;
-  tributos_simples: number | string;
-  aliq_efetiva_simples: number | string;
-  lucro_liq_simples: number | string;
-  tributos_lucrop: number | string;
-  aliq_efetiva_lucrop: number | string;
-  lucro_liq_lucrop: number | string;
+  faturamento_12m: number;
+  receitas_financeiras: number;
+  receitas_nao_operacionais: number;
+  despesas_financeiras: number;
+  tributos_simples: number;
+  aliq_efetiva_simples: number;
+  lucro_liq_simples: number;
+  tributos_lucrop: number;
+  aliq_efetiva_lucrop: number;
+  lucro_liq_lucrop: number;
   recomendacao: "SN" | "LP";
 }
 
