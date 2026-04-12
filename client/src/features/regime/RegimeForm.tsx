@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,6 +16,7 @@ import {
   BanknoteArrowUp,
   BanknoteArrowDown,
 } from "lucide-react";
+import { NumericFormat } from "react-number-format";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -32,14 +33,14 @@ const formSchema = z.object({
 
 const FALLBACK_FATURAMENTO = "Aguardando cálculo...";
 
-function handleMoneyChange(
-  value: string,
-  onChange: (v: number) => void
-) {
-  const parsed = parseFloat(value);
-  if (!isNaN(parsed)) onChange(Math.abs(parsed));
-  else onChange(0);
-}
+// function handleMoneyChange(
+//   value: string,
+//   onChange: (v: number) => void
+// ) {
+//   const parsed = parseFloat(value);
+//   if (!isNaN(parsed)) onChange(Math.abs(parsed));
+//   else onChange(0);
+// }
 
 interface RegimeFormProps {
   dadosIniciais?: any;
@@ -130,14 +131,19 @@ export function RegimeForm({
                   <FormControl>
                     <div className="relative">
                       <BanknoteArrowUp className="absolute left-3 top-3 h-4 w-4 text-green-600" />
-                      <Input
-                        {...field}
-                        type="number"
-                        step="0.01"
-                        className="pl-10"
-                        onChange={(e) =>
-                          handleMoneyChange(e.target.value, field.onChange)
-                        }
+
+                      <NumericFormat
+                        value={field.value ?? 0}
+                        thousandSeparator="."
+                        decimalSeparator=","
+                        prefix="R$ "
+                        decimalScale={2}
+                        fixedDecimalScale
+                        allowNegative={false}
+                        className="pl-10 border rounded-md h-10 w-full"
+                        onValueChange={(values) => {
+                          field.onChange(values.floatValue ?? 0);
+                        }}
                       />
                     </div>
                   </FormControl>
@@ -156,14 +162,19 @@ export function RegimeForm({
                   <FormControl>
                     <div className="relative">
                       <BanknoteArrowUp className="absolute left-3 top-3 h-4 w-4 text-green-600" />
-                      <Input
-                        {...field}
-                        type="number"
-                        step="0.01"
-                        className="pl-10"
-                        onChange={(e) =>
-                          handleMoneyChange(e.target.value, field.onChange)
-                        }
+
+                      <NumericFormat
+                        value={field.value ?? 0}
+                        thousandSeparator="."
+                        decimalSeparator=","
+                        prefix="R$ "
+                        decimalScale={2}
+                        fixedDecimalScale
+                        allowNegative={false}
+                        className="pl-10 border rounded-md h-10 w-full"
+                        onValueChange={(values) => {
+                          field.onChange(values.floatValue ?? 0);
+                        }}
                       />
                     </div>
                   </FormControl>
@@ -182,14 +193,19 @@ export function RegimeForm({
                   <FormControl>
                     <div className="relative">
                       <BanknoteArrowDown className="absolute left-3 top-3 h-4 w-4 text-red-600" />
-                      <Input
-                        {...field}
-                        type="number"
-                        step="0.01"
-                        className="pl-10"
-                        onChange={(e) =>
-                          handleMoneyChange(e.target.value, field.onChange)
-                        }
+
+                      <NumericFormat
+                        value={field.value ?? 0}
+                        thousandSeparator="."
+                        decimalSeparator=","
+                        prefix="R$ "
+                        decimalScale={2}
+                        fixedDecimalScale
+                        allowNegative={false}
+                        className="pl-10 border rounded-md h-10 w-full"
+                        onValueChange={(values) => {
+                          field.onChange(values.floatValue ?? 0);
+                        }}
                       />
                     </div>
                   </FormControl>
