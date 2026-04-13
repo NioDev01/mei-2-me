@@ -4,9 +4,10 @@ import { DiagnosticoInicialController } from './diagnostico-inicial.controller';
 import { HttpModule } from '@nestjs/axios';
 import { ReceitawsApiService } from 'src/integrations/receitaws-api/receitaws-api.service';
 import { AnaliseMigracaoModule } from '../analise-migracao/analise-migracao.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [HttpModule, AnaliseMigracaoModule],
+  imports: [HttpModule, AnaliseMigracaoModule, AuthModule],
   controllers: [DiagnosticoInicialController],
   providers: [DiagnosticoInicialService, ReceitawsApiService],
 })

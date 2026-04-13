@@ -3,9 +3,9 @@ import {
   InternalServerErrorException,
   Logger,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateDiagnosticoInicialDto } from './dto/create-diagnostico-inicial.dto';
-import { UpdateDiagnosticoInicialDto } from './dto/update-diagnostico-inicial.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { ReceitawsApiService } from 'src/integrations/receitaws-api/receitaws-api.service';
 import { AnaliseMigracaoService } from '../analise-migracao/analise-migracao.service';
@@ -37,8 +37,24 @@ export class DiagnosticoInicialService {
     private readonly analiseService: AnaliseMigracaoService,
   ) {}
 
-  async create(createDiagnosticoInicialDto: CreateDiagnosticoInicialDto) {
+  async create(
+    createDiagnosticoInicialDto: CreateDiagnosticoInicialDto,
+    user: { id_user: number; email: string; id_mei?: number },
+  ) {
+    if (!user || !user.id_user) {
+      throw new UnauthorizedException('Usuário precisa estar autenticado');
+    }
+
     const { cnpj_mei, ...dadosManuais } = createDiagnosticoInicialDto;
+
+    const userEntity = await this.prisma.usuario.findUnique({
+      where: { id_user: user.id_user },
+      include: { mei: true },
+    });
+
+    if (!userEntity) {
+      throw new UnauthorizedException('Usuário não encontrado');
+    }
 
     let apiData: ReceitaWsApiData;
 
@@ -50,15 +66,9 @@ export class DiagnosticoInicialService {
         error,
       );
 
-      if (error instanceof Error) {
-        throw new InternalServerErrorException(
-          `Falha ao consultar a API da ReceitaWs: ${error.message}`,
-        );
-      } else {
-        throw new InternalServerErrorException(
-          `Falha desconhecida ao consultar a API da ReceitaWs`,
-        );
-      }
+      throw new InternalServerErrorException(
+        'Falha ao consultar a API da ReceitaWs',
+      );
     }
 
     if (!apiData || apiData.status === 'ERROR') {
@@ -94,13 +104,35 @@ export class DiagnosticoInicialService {
       });
 
       if (mei) {
-        await this.prisma.mei.update({
+        const meiAssociatedUser = await this.prisma.usuario.findFirst({
+          where: {
+            id_mei: mei?.id_mei,
+          },
+        });
+
+        if (
+          meiAssociatedUser &&
+          meiAssociatedUser.id_user !== userEntity.id_user
+        ) {
+          throw new UnauthorizedException('Não é possível usar este CNPJ');
+        }
+
+        mei = await this.prisma.mei.update({
           where: { cnpj_mei: data.cnpj_mei },
-          data: dadosManuais,
+          data,
         });
       } else {
-        mei = await this.prisma.mei.create({ data: data });
+        mei = await this.prisma.mei.create({
+          data,
+        });
       }
+
+      await this.prisma.usuario.update({
+        where: { id_user: userEntity.id_user },
+        data: {
+          id_mei: mei.id_mei,
+        },
+      });
 
       const resultadoAnalise =
         await this.analiseService.analisarMigracao(cnpj_mei);

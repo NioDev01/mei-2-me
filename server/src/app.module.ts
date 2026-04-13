@@ -7,9 +7,13 @@ import { AnaliseMigracaoModule } from './modules/analise-migracao/analise-migrac
 import { DiagnosticoInicialModule } from './modules/diagnostico-inicial/diagnostico-inicial.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { SimuladorRegimesModule } from './modules/simulador-regimes/simulador-regimes.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     PrismaModule,
     MessageModule,
     HttpModule,

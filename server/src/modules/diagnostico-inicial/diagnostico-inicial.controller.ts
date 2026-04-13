@@ -3,13 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { DiagnosticoInicialService } from './diagnostico-inicial.service';
 import { CreateDiagnosticoInicialDto } from './dto/create-diagnostico-inicial.dto';
-import { UpdateDiagnosticoInicialDto } from './dto/update-diagnostico-inicial.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('diagnostico-inicial')
 export class DiagnosticoInicialController {
@@ -17,9 +17,16 @@ export class DiagnosticoInicialController {
     private readonly diagnosticoInicialService: DiagnosticoInicialService,
   ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createDiagnosticoInicialDto: CreateDiagnosticoInicialDto) {
-    return this.diagnosticoInicialService.create(createDiagnosticoInicialDto);
+  create(
+    @Body() createDiagnosticoInicialDto: CreateDiagnosticoInicialDto,
+    @Request() req,
+  ) {
+    return this.diagnosticoInicialService.create(
+      createDiagnosticoInicialDto,
+      req.user,
+    );
   }
 
   @Get(':cnpj')
