@@ -56,8 +56,8 @@ export class AuthService {
       where: {
         OR: [
           { email_user: data.identificador },
-          { cnpj_user: data.identificador },
-          { celular_user: data.identificador },
+          { cnpj_user: data.identificador.replace(/\D/g, '') },
+          { celular_user: data.identificador.replace(/\D/g, '') },
         ],
       },
     });
@@ -81,7 +81,7 @@ export class AuthService {
     };
 
     const accessToken = await this.jwtService.signAsync(payload, {
-      expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN'),
+      expiresIn: this.configService.get('JWT_EXPIRES_IN'),
     });
 
     const refreshToken = await this.jwtService.signAsync(
