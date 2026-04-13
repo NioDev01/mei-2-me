@@ -9,6 +9,7 @@ import { CreateDiagnosticoInicialDto } from './dto/create-diagnostico-inicial.dt
 import { PrismaService } from 'prisma/prisma.service';
 import { ReceitawsApiService } from 'src/integrations/receitaws-api/receitaws-api.service';
 import { AnaliseMigracaoService } from '../analise-migracao/analise-migracao.service';
+import { Prisma } from '@prisma/client';
 
 interface AtividadeDto {
   code: string;
@@ -99,53 +100,59 @@ export class DiagnosticoInicialService {
 
     // Verifica se já existe MEI cadastrado
     try {
-      let mei = await this.prisma.mei.findUnique({
-        where: { cnpj_mei: data.cnpj_mei },
-      });
+      const result = await this.prisma.$transaction(async (tx) => {
+        let mei = await tx.mei.findUnique({
+          where: { cnpj_mei: data.cnpj_mei },
+        });
 
-      if (mei) {
-        const meiAssociatedUser = await this.prisma.usuario.findFirst({
-          where: {
-            id_mei: mei?.id_mei,
+        if (mei) {
+          const meiAssociatedUser = await tx.usuario.findFirst({
+            where: {
+              id_mei: mei.id_mei,
+            },
+          });
+
+          if (
+            meiAssociatedUser &&
+            meiAssociatedUser.id_user !== userEntity.id_user
+          ) {
+            throw new UnauthorizedException(
+              'Não é possível vincular esse CNPJ ao seu usuário.',
+            );
+          }
+
+          mei = await tx.mei.update({
+            where: { cnpj_mei: data.cnpj_mei },
+            data,
+          });
+        } else {
+          mei = await tx.mei.create({
+            data,
+          });
+        }
+
+        await tx.usuario.update({
+          where: { id_user: userEntity.id_user },
+          data: {
+            id_mei: mei.id_mei,
           },
         });
 
-        if (
-          meiAssociatedUser &&
-          meiAssociatedUser.id_user !== userEntity.id_user
-        ) {
-          throw new UnauthorizedException('Não é possível usar este CNPJ');
-        }
-
-        mei = await this.prisma.mei.update({
-          where: { cnpj_mei: data.cnpj_mei },
-          data,
-        });
-      } else {
-        mei = await this.prisma.mei.create({
-          data,
-        });
-      }
-
-      await this.prisma.usuario.update({
-        where: { id_user: userEntity.id_user },
-        data: {
-          id_mei: mei.id_mei,
-        },
+        return mei;
       });
 
       const resultadoAnalise =
         await this.analiseService.analisarMigracao(cnpj_mei);
 
       const diagnostico = await this.prisma.diagnostico.upsert({
-        where: { id_mei: mei.id_mei },
+        where: { id_mei: result.id_mei },
         update: {
           resultado_diag: resultadoAnalise.analise,
           motivos_resultado: resultadoAnalise.motivos || [],
           atualizado_em: new Date(),
         },
         create: {
-          id_mei: mei.id_mei,
+          id_mei: result.id_mei,
           resultado_diag: resultadoAnalise.analise,
           motivos_resultado: resultadoAnalise.motivos || [],
           atualizado_em: new Date(),
@@ -162,15 +169,38 @@ export class DiagnosticoInicialService {
         `Erro ao salvar os dados no banco de dados ${cnpj_mei}: `,
         error,
       );
+
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new UnauthorizedException('Este CNPJ não pode ser usado.');
+      }
       throw new InternalServerErrorException(
         `Erro ao salvar os dados do usuário no banco de dados.`,
       );
     }
   }
 
-  findOne(cnpj: string) {
-    return this.prisma.mei.findUnique({
-      where: { cnpj_mei: cnpj },
+  async findOne(cnpj: string, userId: number) {
+    const diagnostico = await this.prisma.diagnostico.findFirst({
+      where: {
+        mei: {
+          cnpj_mei: cnpj,
+          usuarios: {
+            id_user: userId,
+          },
+        },
+      },
+      include: {
+        mei: true,
+      },
     });
+
+    if (!diagnostico) {
+      throw new NotFoundException('Diagnóstico não encontrado');
+    }
+
+    return diagnostico;
   }
 }
