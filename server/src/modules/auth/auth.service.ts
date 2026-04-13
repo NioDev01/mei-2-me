@@ -8,14 +8,15 @@ import { UnauthorizedException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
 import { Resend } from 'resend';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async register(data: RegisterDto) {
@@ -28,8 +29,8 @@ export class AuthService {
         data: {
           nome_user: data.nome,
           email_user: data.email,
-          cnpj_user: data.cnpj,
-          celular_user: data.celular,
+          cnpj_user: data.cnpj.replace(/\D/g, ''),
+          celular_user: data.celular.replace(/\D/g, ''),
           senha_user: hashedPassword,
         },
       });
@@ -79,13 +80,15 @@ export class AuthService {
       id_mei: usuario.id_mei,
     };
 
-    const accessToken = await this.jwtService.signAsync(payload);
+    const accessToken = await this.jwtService.signAsync(payload, {
+      expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN'),
+    });
 
     const refreshToken = await this.jwtService.signAsync(
       { sub: usuario.id_user },
       {
-        secret: process.env.JWT_REFRESH_SECRET,
-        expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || '7d') as any,
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+        expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN') || '7d',
       },
     );
 
@@ -107,7 +110,7 @@ export class AuthService {
       if (!refreshToken) return;
 
       const decoded = await this.jwtService.verifyAsync(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET,
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       });
 
       await this.prisma.usuario.update({
@@ -124,7 +127,7 @@ export class AuthService {
   async refresh(refreshToken: string) {
     try {
       const decoded = await this.jwtService.verifyAsync(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET,
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       });
 
       const usuario = await this.prisma.usuario.findUnique({
@@ -162,7 +165,7 @@ export class AuthService {
 
     if (!user) return; // não revela se existe
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
+    const resend = new Resend(this.configService.get<string>('RESEND_API_KEY'));
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
