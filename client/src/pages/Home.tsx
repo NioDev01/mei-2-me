@@ -2,7 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { NavBarMain } from "@/features/NavBarMain";
 import { Link } from 'react-router-dom';
-import { Users, Cog, ArrowRight, Headphones } from "lucide-react";
+import { FileText, BadgeDollarSign, Route, BotMessageSquare } from "lucide-react"
+
+  
+  
+  
 
 export function Home() {
   return (
@@ -20,7 +24,9 @@ export function Home() {
             <div className="space-y-8">
               <div>
                 <h1 className="font-semi-bold text-foreground lg:text-3xl mb-6 leading-tight">
-                  Do MEI à Microempresa: Conquiste o Sucesso com o MEI2ME
+                  Do MEI à Microempresa: Conquiste o Sucesso com o {""}
+                  <span className="text-primary">MEI</span>
+                  <span className="text-green-500">2ME</span>
                 </h1>
                 <p className="text-2xl text-muted-foreground mb-8">
                   Boas vindas à nossa plataforma digital.
@@ -71,44 +77,44 @@ export function Home() {
             {/* Feature 1 */}
             <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group"> 
               <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Users className="text-primary-foreground w-8 h-8" />
+                <FileText className="text-primary-foreground w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Acesso à informações</h3>
+              <h3 className="text-xl font-bold mb-4">Checklist de documentos</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Facilitar o acesso à informações e descomplicar a comunicação com os clientes.
+                Organize e acompanhe todos os documentos importantes em um só lugar. Nosso módulo de checklist mostra exatamente o que falta e o que já foi entregue, trazendo mais agilidade e segurança para o seu processo. Cadastre-se agora e tenha acesso completo aos nossos módulos exclusivos!
               </p>
             </Card>
 
             {/* Feature 2 */}
             <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group"> 
               <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Cog className="text-primary-foreground w-8 h-8" />
+                <Route className="text-primary-foreground w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Processo Automatizado</h3>
+              <h3 className="text-xl font-bold mb-4">Jornada</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Facilitar o acesso à informações e descomplicar a comunicação com os clientes.
+                Acompanhe cada etapa do seu processo de forma simples e visual. O módulo mostra seu progresso, o que já foi concluído e o que ainda está por vir, garantindo clareza e organização.
               </p>
             </Card>
 
             {/* Feature 3 */}
             <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group"> 
               <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <ArrowRight className="text-primary-foreground w-8 h-8" />
+                <BadgeDollarSign className="text-primary-foreground w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Facilidade na Migração</h3>
+              <h3 className="text-xl font-bold mb-4">Simulador de Regime</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Facilitar o acesso à informações e descomplicar a comunicação com os clientes.
+                Descubra qual regime tributário é mais vantajoso para o seu negócio na transição de MEI para ME. Nosso simulador mostra cenários personalizados e ajuda você a tomar decisões mais seguras.
               </p>
             </Card>
 
             {/* Feature 4 */}
             <Card className="bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group"> 
               <div className="bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Headphones className="text-primary-foreground w-8 h-8" />
+                <BotMessageSquare className="text-primary-foreground w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold mb-4">Acompanhamento Personalizado</h3>
+              <h3 className="text-xl font-bold mb-4">ContAI</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Facilitar o acesso à informações e descomplicar a comunicação com os clientes.
+                Deixe a burocracia com a tecnologia! O módulo ajuda você a organizar e automatizar cálculos, simulações e obrigações da sua empresa durante a transição de MEI para ME. Mais facilidade, menos erros.
               </p>
             </Card>
           </div>

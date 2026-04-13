@@ -163,11 +163,28 @@ export function LoginForm() {
               }
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="cnpj">CNPJ</TabsTrigger>
-                <TabsTrigger value="email">Email</TabsTrigger>
-                <TabsTrigger value="telefone">Telefone</TabsTrigger>
-              </TabsList>
+              <TabsList className="grid w-full grid-cols-3 bg-muted p-1 rounded-lg">
+              <TabsTrigger
+                value="cnpj"
+                className="data-[state=active]:bg-primary data-[state=active]:text-white"
+              >
+                CNPJ
+              </TabsTrigger>
+
+              <TabsTrigger
+                value="email"
+                className="data-[state=active]:bg-primary data-[state=active]:text-white"
+              >
+                Email
+              </TabsTrigger>
+
+              <TabsTrigger
+                value="telefone"
+                className="data-[state=active]:bg-primary data-[state=active]:text-white"
+              >
+                Telefone
+              </TabsTrigger>
+            </TabsList>
 
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
