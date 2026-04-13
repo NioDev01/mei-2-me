@@ -45,6 +45,7 @@ export class DiagnosticoInicialController {
   }
 
   @Get(':cnpj')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Retorna diagnóstico inicial do usuário.',
     description:
@@ -58,9 +59,9 @@ export class DiagnosticoInicialController {
     status: 400,
     description: 'Erro ao tentar retornar os dados do diagnóstico.',
   })
-  async findOne(@Param('cnpj') cnpj: string) {
-    const data = await this.diagnosticoInicialService.findOne(cnpj);
+  async findOne(@Param('cnpj') cnpj: string, @Request() req) {
+    const userId = req.user.id_user;
 
-    return data;
+    return this.diagnosticoInicialService.findOne(cnpj, userId);
   }
 }
