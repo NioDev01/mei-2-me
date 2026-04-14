@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/public/mei2me.svg" />
+    <script>
+  const theme = localStorage.getItem("theme");
+  if (theme === "dark") {
+    document.documentElement.classList.add("dark");
+  }
+</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MEI2ME</title>
   </head>

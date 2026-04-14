@@ -18,7 +18,11 @@ export function ToggleTemas () {
     const newDarkMode = !isDarkMode;
 
     setIsDarkMode(newDarkMode);
-    document.documentElement.classList.toggle("dark", newDarkMode);
+   if (newDarkMode) {
+  document.documentElement.classList.add("dark");
+  } else {
+  document.documentElement.classList.remove("dark");
+  }
     
     // Salva a preferência
     localStorage.setItem("theme", newDarkMode ? "dark" : "light");
