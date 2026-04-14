@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url  	   = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Mensagem {
@@ -14,34 +14,34 @@ model Mensagem {
 }
 
 model Mei {
-  id_mei                  Int          @id @default(autoincrement())
-  cnpj_mei                String       @unique @db.VarChar(18)
-  data_abertura           DateTime     @db.Date
-  uf_mei                  String       @db.Char(2)
-  razao_social            String       @db.VarChar(255)
-  nome_fantasia           String       @db.VarChar(255)
-  municipio_mei           String       @db.VarChar(255)
+  id_mei                  Int            @id @default(autoincrement())
+  cnpj_mei                String         @unique @db.VarChar(18)
+  data_abertura           DateTime       @db.Date
+  uf_mei                  String         @db.Char(2)
+  razao_social            String         @db.VarChar(255)
+  nome_fantasia           String         @db.VarChar(255)
+  municipio_mei           String         @db.VarChar(255)
   cnae_principal          Json
   cnae_secundario         Json?
-  natureza_juridica       String       @db.VarChar(255)
+  natureza_juridica       String         @db.VarChar(255)
   possui_filial           Boolean
   qtd_funcionario         Int
   paga_acima_piso         Boolean
   participa_outra_empresa Boolean
-  faturamento_12m         Decimal      @db.Decimal(8, 2)
-  compras_12m             Decimal      @db.Decimal(8, 2)
+  faturamento_12m         Decimal        @db.Decimal(8, 2)
+  compras_12m             Decimal        @db.Decimal(8, 2)
   exporta_acima_limite    Boolean
   diagnostico             Diagnostico?
   usuarios                Usuario?
   importacao_direta       Boolean
   CalculoRegime           CalculoRegime?
-  
+
   @@map("Mei")
 }
 
 model Diagnostico {
   id_mei            Int      @id
-  resultado_diag    String   @db.VarChar(255)
+  resultado_diag    String   @db.Text
   atualizado_em     DateTime @db.Timestamp(0)
   motivos_resultado Json
   mei               Mei      @relation(fields: [id_mei], references: [id_mei])
@@ -85,22 +85,21 @@ model CalculoRegime {
 }
 
 model Usuario {
-  id_user       Int      @id @default(autoincrement())
-  id_mei        Int?     @unique
-  nome_user     String
-  email_user    String   @unique
-  cnpj_user     String   @unique @db.VarChar(18)
-  senha_user    String
-  celular_user  String   @unique @db.VarChar(14)
-  refresh_token String?
-  reset_token String? 
+  id_user             Int       @id @default(autoincrement())
+  id_mei              Int?      @unique
+  nome_user           String
+  email_user          String    @unique
+  cnpj_user           String    @unique @db.VarChar(18)
+  senha_user          String
+  celular_user        String    @unique @db.VarChar(14)
+  refresh_token       String?
+  reset_token         String?
   reset_token_expires DateTime?
 
-  mei           Mei?     @relation(fields: [id_mei], references: [id_mei])
+  mei Mei? @relation(fields: [id_mei], references: [id_mei])
 
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@map("Usuario")
 }
-
