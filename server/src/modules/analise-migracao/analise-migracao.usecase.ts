@@ -12,7 +12,7 @@ export class AnaliseMigracaoUseCase {
   async execute(cnpj: string, userId: number) {
     const mei = await this.prisma.mei.findFirst({
       where: {
-        cnpj_mei: cnpj,
+        cnpj_mei: cnpj.replace(/\D/g, ''),
         usuarios: { id_user: userId },
       },
     });
