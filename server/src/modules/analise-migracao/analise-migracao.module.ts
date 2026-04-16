@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AnaliseMigracaoService } from './analise-migracao.service';
-import { AnaliseMigracaoController } from './analise-migracao.controller';
+import { AnaliseMigracaoService } from '@/modules/analise-migracao/analise-migracao.service';
+import { AnaliseMigracaoController } from '@/modules/analise-migracao/analise-migracao.controller';
+import { AnaliseMigracaoUseCase } from '@/modules/analise-migracao/analise-migracao.usecase';
 
 @Module({
   controllers: [AnaliseMigracaoController],
-  providers: [AnaliseMigracaoService],
-  exports: [AnaliseMigracaoService],
+  providers: [AnaliseMigracaoService, AnaliseMigracaoUseCase],
+  exports: [AnaliseMigracaoUseCase],
 })
 export class AnaliseMigracaoModule {}
