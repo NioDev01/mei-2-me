@@ -24,6 +24,10 @@ export class AnaliseMigracaoController {
     description: 'Ocorreu um erro ao tentar retornar os dados da análise.',
   })
   @ApiResponse({
+    status: 401,
+    description: 'Usuário não autorizado.',
+  })
+  @ApiResponse({
     status: 404,
     description: 'Os dados da análise de migração não foram encontrados.',
   })
