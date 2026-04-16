@@ -98,25 +98,18 @@ export class DiagnosticoInicialService {
     };
 
     const mei = await this.prisma.$transaction(async (tx) => {
-      let mei = await tx.mei.findUnique({
+      const mei = await tx.mei.upsert({
         where: { cnpj_mei: data.cnpj_mei },
+        update: data,
+        create: data,
       });
 
-      if (mei) {
-        const owner = await tx.usuario.findFirst({
-          where: { id_mei: mei.id_mei },
-        });
+      const ower = await tx.usuario.findFirst({
+        where: { id_mei: mei.id_mei },
+      });
 
-        if (owner && owner.id_user !== user.id_user) {
-          throw new UnauthorizedException('CNPJ já vinculado');
-        }
-
-        mei = await tx.mei.update({
-          where: { id_mei: mei.id_mei },
-          data,
-        });
-      } else {
-        mei = await tx.mei.create({ data });
+      if (ower && ower.id_user !== user.id_user) {
+        throw new UnauthorizedException('CNPJ já vinculado');
       }
 
       await tx.usuario.update({
