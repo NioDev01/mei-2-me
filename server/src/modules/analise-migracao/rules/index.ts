@@ -28,7 +28,7 @@ export const diagnostico: Diagnostico[] = [
   },
   {
     id: 2,
-    rule: 'Faturamento anual superior a 20% do limite',
+    rule: 'Faturamento anual superior à 20% do limite',
     reasons: ['Faturamento anual excede o limite tolerado de R$ 97.200,00'],
     risks: [
       'Desenquadramento imediato e retroativo ao mês da ultrapassagem',

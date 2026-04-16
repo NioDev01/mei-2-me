@@ -12,7 +12,7 @@ export function validaCNAE(
     const code = atividades[0]?.code?.trim();
     const cnaesNormalizados = cnaesPermitidos.map((code) => code.trim());
 
-    if (cnaesNormalizados.includes(code)) {
+    if (!cnaesNormalizados.includes(code)) {
       adicionar('Atividades Permitidas');
     }
   } catch (err) {
