@@ -3,7 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '@prisma/prisma.service';
 import { CreateSimuladorRegimeDto } from './dto/create-simulador-regime.dto';
 import { calcularSimplesNacional, calcularLucroPresumido } from './rules';
 

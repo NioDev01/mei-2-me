@@ -1,4 +1,4 @@
-import { Diagnostico } from '../analise-migracao.service';
+import { Diagnostico } from '@/interfaces/diagnostico';
 
 export function validaParticipacaoSocietaria(
   user: any,

@@ -7,9 +7,9 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { DiagnosticoInicialService } from './diagnostico-inicial.service';
-import { CreateDiagnosticoInicialDto } from './dto/create-diagnostico-inicial.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { DiagnosticoInicialService } from '@/modules/diagnostico-inicial/diagnostico-inicial.service';
+import { CreateDiagnosticoInicialDto } from '@/modules/diagnostico-inicial/dto/create-diagnostico-inicial.dto';
+import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('diagnostico-inicial')
