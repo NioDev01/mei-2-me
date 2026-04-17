@@ -14,34 +14,35 @@ model Mensagem {
 }
 
 model Mei {
-  id_mei                  Int            @id @default(autoincrement())
-  cnpj_mei                String         @unique @db.VarChar(18)
-  data_abertura           DateTime       @db.Date
-  uf_mei                  String         @db.Char(2)
-  razao_social            String         @db.VarChar(255)
-  nome_fantasia           String         @db.VarChar(255)
-  municipio_mei           String         @db.VarChar(255)
+  id_mei                  Int             @id @default(autoincrement())
+  cnpj_mei                String          @unique @db.VarChar(18)
+  data_abertura           DateTime        @db.Date
+  uf_mei                  String          @db.Char(2)
+  razao_social            String          @db.VarChar(255)
+  nome_fantasia           String          @db.VarChar(255)
+  municipio_mei           String          @db.VarChar(255)
   cnae_principal          Json
   cnae_secundario         Json?
-  natureza_juridica       String         @db.VarChar(255)
+  natureza_juridica       String          @db.VarChar(255)
   possui_filial           Boolean
   qtd_funcionario         Int
   paga_acima_piso         Boolean
   participa_outra_empresa Boolean
-  faturamento_12m         Decimal        @db.Decimal(8, 2)
-  compras_12m             Decimal        @db.Decimal(8, 2)
+  faturamento_12m         Decimal         @db.Decimal(8, 2)
+  compras_12m             Decimal         @db.Decimal(8, 2)
   exporta_acima_limite    Boolean
-  diagnostico             Diagnostico?
-  usuarios                Usuario?
   importacao_direta       Boolean
   CalculoRegime           CalculoRegime?
+  diagnostico             Diagnostico?
+  usuarios                Usuario?
+  documentosMeis          DocumentosMei[]
 
   @@map("Mei")
 }
 
 model Diagnostico {
   id_mei            Int      @id
-  resultado_diag    String   @db.Text
+  resultado_diag    String
   atualizado_em     DateTime @default(now()) @updatedAt
   motivos_resultado Json
   mei               Mei      @relation(fields: [id_mei], references: [id_mei])
@@ -92,14 +93,31 @@ model Usuario {
   cnpj_user           String    @unique @db.VarChar(18)
   senha_user          String
   celular_user        String    @unique @db.VarChar(14)
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
   refresh_token       String?
   reset_token         String?
   reset_token_expires DateTime?
-
-  mei Mei? @relation(fields: [id_mei], references: [id_mei])
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  mei                 Mei?      @relation(fields: [id_mei], references: [id_mei])
 
   @@map("Usuario")
+}
+
+model DocumentosMei {
+  id_mei                                Int      @id
+  possui_rg                             Boolean  @default(false)
+  possui_cpf                            Boolean  @default(false)
+  possui_comprovante_residencia         Boolean  @default(false)
+  possui_cartao_cnpj                    Boolean  @default(false)
+  comunicacao_desenquadramento_social   Boolean  @default(false)
+  formulario_capa_marrom                Boolean  @default(false)
+  requerimento_desenquadramento         Boolean  @default(false)
+  comprovante_pagamento_dare            Boolean  @default(false)
+  contrato_social                       Boolean  @default(false)
+  possui_ccmei                          Boolean  @default(false)
+  possui_cadesp                         Boolean  @default(false)
+  comprovante_situacao_simples_nacional Boolean  @default(false)
+  criado_em                             DateTime @default(now())
+  atualizado_em                         DateTime @updatedAt
+  Mei                                   Mei      @relation(fields: [id_mei], references: [id_mei])
 }
