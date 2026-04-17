@@ -5,11 +5,10 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateDiagnosticoInicialDto } from './dto/create-diagnostico-inicial.dto';
-import { PrismaService } from 'prisma/prisma.service';
-import { ReceitawsApiService } from 'src/integrations/receitaws-api/receitaws-api.service';
-import { AnaliseMigracaoService } from '../analise-migracao/analise-migracao.service';
-import { Prisma } from '@prisma/client';
+import { CreateDiagnosticoInicialDto } from '@/modules/diagnostico-inicial/dto/create-diagnostico-inicial.dto';
+import { PrismaService } from '@prisma/prisma.service';
+import { ReceitawsApiService } from '@/integrations/receitaws-api/receitaws-api.service';
+import { AnaliseMigracaoUseCase } from '@/modules/analise-migracao/analise-migracao.usecase';
 
 interface AtividadeDto {
   code: string;
@@ -35,14 +34,14 @@ export class DiagnosticoInicialService {
   constructor(
     private prisma: PrismaService,
     private readonly receitawsAPIService: ReceitawsApiService,
-    private readonly analiseService: AnaliseMigracaoService,
+    private readonly analiseUseCase: AnaliseMigracaoUseCase,
   ) {}
 
   async create(
     createDiagnosticoInicialDto: CreateDiagnosticoInicialDto,
-    user: { id_user: number; email: string; id_mei?: number },
+    user: { id_user: number },
   ) {
-    if (!user || !user.id_user) {
+    if (!user.id_user) {
       throw new UnauthorizedException('Usuário precisa estar autenticado');
     }
 
@@ -98,109 +97,54 @@ export class DiagnosticoInicialService {
       ),
     };
 
-    // Verifica se já existe MEI cadastrado
-    try {
-      const result = await this.prisma.$transaction(async (tx) => {
-        let mei = await tx.mei.findUnique({
-          where: { cnpj_mei: data.cnpj_mei },
-        });
-
-        if (mei) {
-          const meiAssociatedUser = await tx.usuario.findFirst({
-            where: {
-              id_mei: mei.id_mei,
-            },
-          });
-
-          if (
-            meiAssociatedUser &&
-            meiAssociatedUser.id_user !== userEntity.id_user
-          ) {
-            throw new UnauthorizedException(
-              'Não é possível vincular esse CNPJ ao seu usuário.',
-            );
-          }
-
-          mei = await tx.mei.update({
-            where: { cnpj_mei: data.cnpj_mei },
-            data,
-          });
-        } else {
-          mei = await tx.mei.create({
-            data,
-          });
-        }
-
-        await tx.usuario.update({
-          where: { id_user: userEntity.id_user },
-          data: {
-            id_mei: mei.id_mei,
-          },
-        });
-
-        return mei;
+    const mei = await this.prisma.$transaction(async (tx) => {
+      const mei = await tx.mei.upsert({
+        where: { cnpj_mei: data.cnpj_mei },
+        update: data,
+        create: data,
       });
 
-      const resultadoAnalise =
-        await this.analiseService.analisarMigracao(cnpj_mei);
-
-      const diagnostico = await this.prisma.diagnostico.upsert({
-        where: { id_mei: result.id_mei },
-        update: {
-          resultado_diag: resultadoAnalise.analise,
-          motivos_resultado: resultadoAnalise.motivos || [],
-          atualizado_em: new Date(),
-        },
-        create: {
-          id_mei: result.id_mei,
-          resultado_diag: resultadoAnalise.analise,
-          motivos_resultado: resultadoAnalise.motivos || [],
-          atualizado_em: new Date(),
-        },
+      const ower = await tx.usuario.findFirst({
+        where: { id_mei: mei.id_mei },
       });
 
-      return {
-        message: 'Diagnóstico salvo com sucesso!',
-        dados: diagnostico,
-        analise: resultadoAnalise,
-      };
-    } catch (error: unknown) {
-      Logger.error(
-        `Erro ao salvar os dados no banco de dados ${cnpj_mei}: `,
-        error,
-      );
-
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        throw new UnauthorizedException('Este CNPJ não pode ser usado.');
+      if (ower && ower.id_user !== user.id_user) {
+        throw new UnauthorizedException('CNPJ já vinculado');
       }
-      throw new InternalServerErrorException(
-        `Erro ao salvar os dados do usuário no banco de dados.`,
-      );
-    }
-  }
 
-  async findOne(cnpj: string, userId: number) {
-    const diagnostico = await this.prisma.diagnostico.findFirst({
-      where: {
-        mei: {
-          cnpj_mei: cnpj,
-          usuarios: {
-            id_user: userId,
-          },
-        },
+      await tx.usuario.update({
+        where: { id_user: user.id_user },
+        data: { id_mei: mei.id_mei },
+      });
+
+      return mei;
+    });
+
+    const resultadoAnalise = await this.analiseUseCase.execute(
+      mei.cnpj_mei,
+      user.id_user,
+    );
+
+    await this.prisma.diagnostico.upsert({
+      where: { id_mei: mei.id_mei },
+      update: {
+        resultado_diag: resultadoAnalise.analise,
+        motivos_resultado: resultadoAnalise.motivos,
       },
-      include: {
-        mei: true,
+      create: {
+        id_mei: mei.id_mei,
+        resultado_diag: resultadoAnalise.analise,
+        motivos_resultado: resultadoAnalise.motivos,
       },
     });
 
-    if (!diagnostico) {
-      throw new NotFoundException('Diagnóstico não encontrado');
-    }
+    return {
+      message: 'Diagnóstico realizado com sucesso!',
+      analise: resultadoAnalise,
+    };
+  }
 
-    return diagnostico;
+  async findOne(cnpj: string, userId: number) {
+    return this.analiseUseCase.execute(cnpj, userId);
   }
 }

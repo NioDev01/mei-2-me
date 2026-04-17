@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Diagnostico" ALTER COLUMN "atualizado_em" SET DEFAULT CURRENT_TIMESTAMP,
+ALTER COLUMN "atualizado_em" SET DATA TYPE TIMESTAMP(3);

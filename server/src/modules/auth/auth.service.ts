@@ -210,6 +210,8 @@ export class AuthService {
         </div>
       `,
     });
+
+    return { token: code.toString() };
   }
 
   async resetPassword(data: ResetPasswordDto) {
