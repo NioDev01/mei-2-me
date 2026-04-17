@@ -9,11 +9,14 @@ export function validaCNAE(
 ) {
   try {
     const atividades = user.cnae_principal;
-    const code = atividades[0]?.code?.trim();
+    const rawCode = atividades[0]?.code?.trim();
+    const code = rawCode
+      ?.replace(/\./g, '') // Remove todos os pontos
+      ?.replace(/-(\d{2})$/, '/$1'); // Troca o último hífen por uma barra
     const cnaesNormalizados = cnaesPermitidos.map((code) => code.trim());
 
     if (!cnaesNormalizados.includes(code)) {
-      adicionar('Atividades Permitidas');
+      adicionar('Atividade não permitida para MEI');
     }
   } catch (err) {
     Logger.error(`Erro ao tentar validar CNAE: ${err}`);

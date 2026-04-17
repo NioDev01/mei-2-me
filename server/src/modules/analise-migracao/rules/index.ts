@@ -14,7 +14,7 @@ export * from './salario-acima-piso.rule';
 export const diagnostico: Diagnostico[] = [
   {
     id: 1,
-    rule: 'Faturamento anual até 20% acima do limite',
+    rule: 'Faturamento anual acima do limite, mas dentro do tolerado',
     reasons: [
       'Faturamento anual superior à R$81.000,00',
       'Faturamento dentro da margem de até 20% acima do limite legal (até R$97.200,00)',
@@ -28,7 +28,7 @@ export const diagnostico: Diagnostico[] = [
   },
   {
     id: 2,
-    rule: 'Faturamento anual superior à 20% do limite',
+    rule: 'Faturamento anual acima do limite, excedendo o tolerado',
     reasons: ['Faturamento anual excede o limite tolerado de R$ 97.200,00'],
     risks: [
       'Desenquadramento imediato e retroativo ao mês da ultrapassagem',
@@ -39,7 +39,7 @@ export const diagnostico: Diagnostico[] = [
   },
   {
     id: 3,
-    rule: 'Atividades Permitidas',
+    rule: 'Atividade não permitida para MEI',
     reasons: [
       'Atividade exercida não consta na lista oficial de CNAEs permitidos para MEI',
       'Ramo da empresa não listado nas opções pré-definidas',
