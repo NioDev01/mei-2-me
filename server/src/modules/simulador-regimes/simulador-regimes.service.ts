@@ -3,7 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '@prisma/prisma.service';
 import { CreateSimuladorRegimeDto } from './dto/create-simulador-regime.dto';
 import { calcularSimplesNacional, calcularLucroPresumido } from './rules';
 
@@ -65,13 +65,15 @@ export class SimuladorRegimesService {
 
     const cnae = infosMei.cnae_principal as any;
 
-    if (!cnae?.code) {
+    // Verifica se existe o array e o primeiro elemento
+    if (!cnae || !cnae[0]?.code) {
       throw new BadRequestException(
         'CNAE principal do MEI não encontrado ou inválido.',
       );
     }
 
-    const cnaePrincipal = this.formatCnaeMei(cnae.code);
+    // Formata o CNAE do MEI
+    const cnaePrincipal = this.formatCnaeMei(cnae[0].code);
 
     if (!cnaePrincipal) {
       throw new BadRequestException('Não foi possível formatar o CNAE do MEI.');
