@@ -17,6 +17,41 @@ export class JornadaService {
     this.engine = new JornadaEngine(JORNADA_INITIAL_STATE);
   }
 
+  async getSummary(id_mei: number) {
+    const steps = await this.getStepsWithStatus(id_mei);
+
+    const totalSteps = steps.length;
+
+    const completedSteps = steps.filter(
+      (s) => s.status === JornadaStepStatus.COMPLETED,
+    ).length;
+
+    const progress = Math.round((completedSteps / totalSteps) * 100);
+
+    const currentStepObj = steps.find(
+      (s) => s.status !== JornadaStepStatus.COMPLETED,
+    );
+
+    const currentStep = currentStepObj?.step ?? null;
+
+    // 🔥 NOVO: nextStep
+    const nextStepObj =
+      steps.find((s) => s.status === JornadaStepStatus.AVAILABLE) ??
+      steps.find((s) => s.status === JornadaStepStatus.IN_PROGRESS) ??
+      null;
+
+    const nextStep = nextStepObj?.step ?? null;
+
+    return {
+      progress,
+      currentStep,
+      nextStep,
+      completedSteps,
+      totalSteps,
+      steps,
+    };
+  }
+
   async ensureJourneyInitialized(id_mei: number) {
     const existing = await this.prisma.jornadaStepProgress.findMany({
       where: { id_mei },
@@ -38,19 +73,19 @@ export class JornadaService {
   async getStepsWithStatus(id_mei: number) {
     await this.ensureJourneyInitialized(id_mei);
 
-    const steps = await this.prisma.jornadaStepProgress.findMany({
+    const stepsFromDb = await this.prisma.jornadaStepProgress.findMany({
       where: { id_mei },
     });
 
-    const stepStates = steps.map((s) => ({
+    const normalizedSteps = stepsFromDb.map((s) => ({
       step: s.step as JornadaStep,
       started: s.started,
       completed: s.completed,
     }));
 
-    return stepStates.map((stepState) => ({
-      step: stepState.step,
-      status: getStepStatus(stepState.step, stepStates),
+    return JORNADA_FLOW.map((step) => ({
+      step,
+      status: getStepStatus(step, normalizedSteps),
     }));
   }
 
