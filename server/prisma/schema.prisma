@@ -35,6 +35,8 @@ model Mei {
   usuarios                Usuario?
   importacao_direta       Boolean
   CalculoRegime           CalculoRegime?
+  JornadaSteps            JornadaStepProgress[]
+  JornadaChecklist        JornadaChecklistItem[]
 
   @@map("Mei")
 }
@@ -82,6 +84,38 @@ model CalculoRegime {
   lucro_liq_simples         Decimal  @db.Decimal(12, 2)
   recomendacao              String   @db.Char(2)
   Mei                       Mei      @relation(fields: [id_mei], references: [id_mei])
+}
+
+model JornadaStepProgress {
+  id        Int     @id @default(autoincrement())
+  id_mei    Int
+  step      String
+  started   Boolean @default(false)
+  completed Boolean @default(false)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  mei Mei @relation(fields: [id_mei], references: [id_mei])
+
+  @@unique([id_mei, step])
+  @@map("JornadaStepProgress")
+}
+
+model JornadaChecklistItem {
+  id         Int     @id @default(autoincrement())
+  id_mei     Int
+  step       String
+  item_id    String
+  is_checked Boolean @default(false)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  mei Mei @relation(fields: [id_mei], references: [id_mei])
+
+  @@unique([id_mei, step, item_id])
+  @@map("JornadaChecklistItem")
 }
 
 model Usuario {

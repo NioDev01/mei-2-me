@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  ParseEnumPipe,
+} from '@nestjs/common';
 import { JornadaService } from './jornada.service';
 import { JornadaStep } from './enums/jornada-step.enum';
 
@@ -6,39 +13,58 @@ import { JornadaStep } from './enums/jornada-step.enum';
 export class JornadaController {
   constructor(private readonly jornadaService: JornadaService) {}
 
+  // 🔸 TEMP: mock de usuário
+  private getMeiId(): number {
+    return 1;
+  }
+
   // 🔹 Status de todas as etapas
   @Get('steps')
-  getSteps() {
-    return this.jornadaService.getStepsWithStatus();
+  async getSteps() {
+    const id_mei = this.getMeiId();
+    return this.jornadaService.getStepsWithStatus(id_mei);
   }
 
   // 🔹 Checklist de uma etapa
   @Get('steps/:step/checklist')
-  getChecklist(@Param('step') step: JornadaStep) {
-    return this.jornadaService.getChecklist(step);
+  async getChecklist(
+    @Param('step', new ParseEnumPipe(JornadaStep)) step: JornadaStep,
+  ) {
+    const id_mei = this.getMeiId();
+    return this.jornadaService.getChecklist(id_mei, step);
   }
 
   // 🔹 Iniciar etapa
   @Post('steps/:step/start')
-  startStep(@Param('step') step: JornadaStep) {
-    this.jornadaService.startStep(step);
+  async startStep(
+    @Param('step', new ParseEnumPipe(JornadaStep)) step: JornadaStep,
+  ) {
+    const id_mei = this.getMeiId();
+    await this.jornadaService.startStep(id_mei, step);
+
     return { message: 'Etapa iniciada' };
   }
 
   // 🔹 Marcar/desmarcar item
   @Patch('steps/:step/checklist/:itemId')
-  toggleItem(
-    @Param('step') step: JornadaStep,
+  async toggleItem(
+    @Param('step', new ParseEnumPipe(JornadaStep)) step: JornadaStep,
     @Param('itemId') itemId: string,
   ) {
-    this.jornadaService.toggleItem(step, itemId);
+    const id_mei = this.getMeiId();
+    await this.jornadaService.toggleItem(id_mei, step, itemId);
+
     return { message: 'Item atualizado' };
   }
 
   // 🔹 Concluir etapa
   @Post('steps/:step/complete')
-  completeStep(@Param('step') step: JornadaStep) {
-    this.jornadaService.completeStep(step);
+  async completeStep(
+    @Param('step', new ParseEnumPipe(JornadaStep)) step: JornadaStep,
+  ) {
+    const id_mei = this.getMeiId();
+    await this.jornadaService.completeStep(id_mei, step);
+
     return { message: 'Etapa concluída' };
   }
 }
