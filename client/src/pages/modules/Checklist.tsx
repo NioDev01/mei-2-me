@@ -51,7 +51,7 @@ const documents: Document[] = [
     description:
       "Documento de identificação emitido pelo Governo do Estado de São Paulo (SSP).",
     purpose: "Identificação pessoal do cidadão.",
-    howToObtain: "Governo do Estado de São Paulo (SSP)",
+    howToObtain: "Poupatempo",
     hasTemplate: false,
   },
   {
@@ -59,7 +59,7 @@ const documents: Document[] = [
     name: "CPF",
     description: "Cadastro de Pessoa Física, emitido pela Receita Federal.",
     purpose: "Identificação do contribuinte perante a Receita Federal.",
-    howToObtain: "Receita Federal",
+    howToObtain: "Site da Receita Federal ou presencialmente no Poupatempo",
     hasTemplate: false,
   },
   {
@@ -96,7 +96,7 @@ const documents: Document[] = [
     purpose: "Padronizar a coleta de informações para processos na JUCESP.",
     howToObtain: "JUCESP - Preenchimento MEI",
     hasTemplate: true,
-    templateUrl: "#",
+    templateUrl: "@/docs/formulario-capa-marrom.pdf",
   },
   {
     id: "7",
@@ -106,7 +106,7 @@ const documents: Document[] = [
     purpose: "Formalizar o desenquadramento do MEI.",
     howToObtain: "JUCESP - Preenchimento MEI",
     hasTemplate: true,
-    templateUrl: "#",
+    templateUrl: "@/docs/mei_desenquadramento.pdf",
   },
   {
     id: "8",
@@ -148,9 +148,10 @@ const documents: Document[] = [
     description:
       "Documento que comprova a situação do MEI no Simples Nacional.",
     purpose: "Verificar a regularidade do MEI no Simples Nacional.",
-    howToObtain: "Simples Nacional",
+    howToObtain: "Consultar o Simples Nacional",
     hasTemplate: true,
-    templateUrl: "#",
+    templateUrl:
+      "https://www8.receita.fazenda.gov.br/simplesnacional/aplicacoes.aspx?id=21",
   },
 ];
 
