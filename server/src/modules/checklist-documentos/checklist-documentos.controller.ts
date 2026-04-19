@@ -6,10 +6,10 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { ChecklistDocumentosService } from './checklist-documentos.service';
-import { CreateChecklistDocumentoDto } from './dto/create-checklist-documento.dto';
+import { ChecklistDocumentosService } from '@/modules/checklist-documentos/checklist-documentos.service';
+import { CreateChecklistDocumentoDto } from '@/modules/checklist-documentos/dto/create-checklist-documento.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '@/modules/auth/jwt-auth.guard';
 
 @Controller('checklist-documentos')
 @ApiTags('Checklist de Documentos')
@@ -38,7 +38,7 @@ export class ChecklistDocumentosController {
     @Body() createChecklistDocumentoDto: CreateChecklistDocumentoDto,
   ) {
     return this.checklistDocumentosService.create(
-      req.user.id_user,
+      req.user.id_mei,
       createChecklistDocumentoDto,
     );
   }
@@ -63,6 +63,6 @@ export class ChecklistDocumentosController {
     description: 'Erro ao tentar encontrar checklist de documentos.',
   })
   findMe(@Request() req) {
-    return this.checklistDocumentosService.findOne(req.user.id_user);
+    return this.checklistDocumentosService.findOne(req.user.id_mei);
   }
 }
