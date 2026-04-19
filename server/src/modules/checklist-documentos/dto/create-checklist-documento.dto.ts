@@ -1,76 +1,64 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsBoolean, IsOptional } from 'class-validator';
 
 export class CreateChecklistDocumentoDto {
   @IsBoolean()
   @IsOptional()
-  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
-  @ApiProperty()
+  @ApiPropertyOptional()
   possui_rg?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
-  @ApiProperty()
+  @ApiPropertyOptional()
   possui_cpf?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
-  @ApiProperty()
+  @ApiPropertyOptional()
   possui_comprovante_residencia?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
-  @ApiProperty()
+  @ApiPropertyOptional()
   possui_cartao_cnpj?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
-  @ApiProperty()
+  @ApiPropertyOptional()
   comunicacao_desenquadramento_simei?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
-  @ApiProperty()
+  @ApiPropertyOptional()
   formulario_capa_marrom?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
-  @ApiProperty()
+  @ApiPropertyOptional()
   requerimento_desenquadramento?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
-  @ApiProperty()
+  @ApiPropertyOptional()
   comprovante_pagamento_dare?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
-  @ApiProperty()
+  @ApiPropertyOptional()
   contrato_social?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
-  @ApiProperty()
+  @ApiPropertyOptional()
   possui_ccmei?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
-  @ApiProperty()
+  @ApiPropertyOptional()
   possui_cadesp?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  @IsNotEmpty({ message: 'O usuário precisa selecionar uma opção.' })
-  @ApiProperty()
+  @ApiPropertyOptional()
   comprovante_situacao_simples_nacional?: boolean;
 }
