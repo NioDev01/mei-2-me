@@ -109,7 +109,7 @@ model DocumentosMei {
   possui_cpf                            Boolean  @default(false)
   possui_comprovante_residencia         Boolean  @default(false)
   possui_cartao_cnpj                    Boolean  @default(false)
-  comunicacao_desenquadramento_social   Boolean  @default(false)
+  comunicacao_desenquadramento_simei    Boolean  @default(false)
   formulario_capa_marrom                Boolean  @default(false)
   requerimento_desenquadramento         Boolean  @default(false)
   comprovante_pagamento_dare            Boolean  @default(false)
