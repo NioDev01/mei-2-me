@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateChecklistDocumentoDto } from './dto/create-checklist-documento.dto';
-import { PrismaService } from 'prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
+import { CreateChecklistDocumentoDto } from '@/modules/checklist-documentos/dto/create-checklist-documento.dto';
+import { PrismaService } from '@prisma/prisma.service';
+import { ChecklistDocumentoResponseDto } from '@/modules/checklist-documentos/dto/checklist-documento-response.dto';
 
 @Injectable()
 export class ChecklistDocumentosService {
@@ -10,7 +11,7 @@ export class ChecklistDocumentosService {
   async create(
     id_mei: number,
     createChecklistDocumentoDto: CreateChecklistDocumentoDto,
-  ) {
+  ): Promise<ChecklistDocumentoResponseDto> {
     return await this.prisma.documentosMei.upsert({
       where: { id_mei },
       update: {
@@ -20,13 +21,41 @@ export class ChecklistDocumentosService {
         id_mei,
         ...createChecklistDocumentoDto,
       },
+      select: {
+        possui_rg: true,
+        possui_cpf: true,
+        possui_comprovante_residencia: true,
+        possui_cartao_cnpj: true,
+        comunicacao_desenquadramento_simei: true,
+        formulario_capa_marrom: true,
+        requerimento_desenquadramento: true,
+        comprovante_pagamento_dare: true,
+        contrato_social: true,
+        possui_ccmei: true,
+        possui_cadesp: true,
+        comprovante_situacao_simples_nacional: true,
+      },
     });
   }
 
   // Busca dados do usuário
-  async findOne(id_mei: number) {
+  async findOne(id_mei: number): Promise<ChecklistDocumentoResponseDto> {
     const data = await this.prisma.documentosMei.findUnique({
       where: { id_mei },
+      select: {
+        possui_rg: true,
+        possui_cpf: true,
+        possui_comprovante_residencia: true,
+        possui_cartao_cnpj: true,
+        comunicacao_desenquadramento_simei: true,
+        formulario_capa_marrom: true,
+        requerimento_desenquadramento: true,
+        comprovante_pagamento_dare: true,
+        contrato_social: true,
+        possui_ccmei: true,
+        possui_cadesp: true,
+        comprovante_situacao_simples_nacional: true,
+      },
     });
 
     if (!data) {
