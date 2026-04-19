@@ -1,92 +1,252 @@
-import { useMemo } from "react"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import {
+  CheckCircle,
+  Circle,
+  Lock,
+  PlayCircle,
+  Route,
+  Building2,
+  FileText,
+  Landmark,
+  RefreshCcw,
+  ClipboardList,
+  Coins,
+  FileCheck,
+} from "lucide-react"
 
 type Props = {
   data: any
-  onStart: () => void
+  onStart: (step: string) => void
+}
+
+const stepConfig: Record<
+  string,
+  { label: string; description: string; icon: any }
+> = {
+  desenquadramento: {
+    label: "Desenquadramento do MEI",
+    description: "Transição do MEI para ME",
+    icon: Route,
+  },
+  definicao_empresa: {
+    label: "Definição da empresa",
+    description: "Informações da empresa",
+    icon: Building2,
+  },
+  contrato_social: {
+    label: "Contrato Social",
+    description: "Base legal da empresa",
+    icon: FileText,
+  },
+  junta_comercial: {
+    label: "Junta Comercial",
+    description: "Registro da empresa",
+    icon: Landmark,
+  },
+  cnpj: {
+    label: "Atualização do CNPJ",
+    description: "Alterações cadastrais",
+    icon: RefreshCcw,
+  },
+  licenciamento: {
+    label: "Licenciamento",
+    description: "Autorizações legais",
+    icon: ClipboardList,
+  },
+  regime_tributario: {
+    label: "Regime Tributário",
+    description: "Definição de impostos",
+    icon: Coins,
+  },
+  obrigacoes_fiscais: {
+    label: "Obrigações Fiscais",
+    description: "Compromissos legais",
+    icon: FileCheck,
+  },
+}
+
+function getStatusIcon(status: string) {
+  switch (status) {
+    case "completed":
+      return <CheckCircle className="text-green-500 w-5 h-5" />
+    case "in_progress":
+      return <PlayCircle className="text-yellow-500 w-5 h-5" />
+    case "available":
+      return <Circle className="text-blue-500 w-5 h-5" />
+    default:
+      return <Lock className="text-muted-foreground w-5 h-5" />
+  }
 }
 
 export function JornadaOverview({ data, onStart }: Props) {
-  const canContinue = !!data.nextStep
-
-  const stepLabel = useMemo(() => {
-    const map: Record<string, string> = {
-      desenquadramento: "Desenquadramento do MEI",
-      definicao_empresa: "Definição da Empresa",
-      contrato_social: "Contrato Social",
-      junta_comercial: "Junta Comercial",
-      cnpj: "Atualização do CNPJ",
-      licenciamento: "Licenciamento",
-      regime_tributario: "Regime Tributário",
-      obrigacoes_fiscais: "Obrigações Fiscais",
-    }
-
-    return map
-  }, [])
-
   return (
-    <div className="p-6 space-y-6">
-      {/* HEADER */}
+    <div className="w-full space-y-8 pt-3">
+
+      {/* 🟦 HEADER */}
       <div>
-        <h1 className="text-xl font-semibold">
-          Processo de formalização
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Acompanhe sua jornada de MEI para ME
-        </p>
+        <h2 className="text-1xl text-muted-foreground">
+          Acompanhe sua jornada de transição de MEI para Microempresa (ME)
+        </h2>
       </div>
 
-      {/* PROGRESSO */}
-      <div>
-        <div className="h-2 bg-muted rounded">
-          <div
-            className="h-2 bg-primary rounded transition-all"
-            style={{ width: `${data.progress}%` }}
-          />
-        </div>
-        <p className="text-sm mt-2">
-          {data.progress}% concluído
-        </p>
-      </div>
+      {/* 📍 LINHA DO TEMPO */}
+      <Card className="sticky top-0 z-10 bg-card">
+        <CardContent className="py-4">
 
-      {/* ETAPAS */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {data.steps.map((step: any, index: number) => (
-          <div
-            key={step.step}
-            className={`p-4 rounded-lg border transition
-              ${
-                step.status === "completed"
-                  ? "border-green-500"
-                  : step.status === "in_progress"
-                  ? "border-yellow-500"
-                  : step.status === "available"
-                  ? "border-blue-500"
-                  : "border-muted opacity-50"
-              }
-            `}
-          >
-            <p className="text-sm font-medium">
-              {index + 1}. {stepLabel[step.step] || step.step}
-            </p>
+          <div className="flex items-center justify-between relative">
 
-            <p className="text-xs mt-1 capitalize text-muted-foreground">
-              {step.status}
-            </p>
+            {/* 🔵 INÍCIO — MEI */}
+            <div className="flex flex-col items-center z-10">
+              <div className="w-13 h-13 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-l font-bold">
+                MEI
+              </div>
+            </div>
+
+            {/* 🔗 LINHA BASE */}
+            <div className="absolute left-0 right-0 top-1/2 h-[2px] bg-card-foreground -translate-y-1/2 z-0" />
+
+            {/* 🔄 ETAPAS */}
+            {data.steps.map((step: any) => {
+              const config = stepConfig[step.step]
+              const Icon = config.icon
+
+              const isCurrent = step.step === data.currentStep
+              const isCompleted = step.status === "completed"
+
+              return (
+                <div key={step.step} className="flex flex-col items-center z-10 transform hover:scale-150 transition-all duration-300">
+
+                  <div
+                    className={`
+                      w-10 h-10 rounded-full flex items-center justify-center border
+                      transition
+
+                      ${isCompleted ? "bg-green-500 text-muted border-card" : ""}
+                      ${isCurrent ? "bg-accent-foreground text-muted border-card scale-110" : ""}
+                      ${
+                        !isCompleted && !isCurrent
+                          ? "bg-card-foreground text-muted border-card border-3"
+                          : ""
+                      }
+                    `}
+                  >
+                    <Icon className="w-5 h-5" />
+                  </div>
+
+                </div>
+              )
+            })}
+
+            {/* 🟢 FINAL — ME */}
+            <div className="flex flex-col items-center z-10">
+              <div className="w-13 h-13 rounded-full bg-green-500 text-primary-foreground flex items-center justify-center text-l font-bold">
+                ME
+              </div>
+            </div>
           </div>
-        ))}
+
+        </CardContent>
+      </Card>
+
+      {/* 🧠 DIFERENÇA MEI x ME */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Diferenças entre MEI e ME</CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm text-muted-foreground space-y-2">
+          <p>
+            A transição de MEI para ME permite crescimento do negócio,
+            maior faturamento e mais possibilidades de atuação.
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>Maior limite de faturamento</li>
+            <li>Possibilidade de contratar mais funcionários</li>
+            <li>Mais opções de atividades (CNAE)</li>
+            <li>Maior flexibilidade operacional</li>
+          </ul>
+        </CardContent>
+      </Card>
+
+      {/* 🧩 CARDS DAS ETAPAS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {data.steps.map((step: any) => {
+          const config = stepConfig[step.step]
+          const Icon = config.icon
+
+          const isCurrent = step.step === data.currentStep
+          const isCompleted = step.status === "completed"
+          const isClickable = step.status !== "locked"
+
+          return (
+            <Card
+              key={step.step}
+              onClick={() => {
+                if (isClickable) onStart(step.step)
+              }}
+              className={`
+                transition cursor-pointer group
+
+                ${isClickable ? "transform hover:scale-102 transition-all duration-300" : "opacity-50 cursor-not-allowed"}
+                ${isCurrent ? "border-primary shadow-sm" : ""}
+              `}
+            >
+              <CardContent className="p-4 flex flex-col gap-3">
+
+                {/* 🔹 HEADER */}
+                <div className="flex items-center justify-between">
+                  <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition" />
+
+                  <span className="text-xs">
+                    {step.status === "completed" && "Concluído"}
+                    {step.status === "in_progress" && "Em andamento"}
+                    {step.status === "available" && "Disponível"}
+                    {step.status === "locked" && "Bloqueado"}
+                  </span>
+                </div>
+
+                {/* 🔹 TÍTULO */}
+                <div>
+                  <p className="text-sm font-medium leading-tight">
+                    {config.label}
+                  </p>
+
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {config.description}
+                  </p>
+                </div>
+
+                {/* 🔹 INDICADOR ATUAL */}
+                {isCurrent && (
+                  <div className="text-xs text-primary font-medium">
+                    Etapa atual
+                  </div>
+                )}
+
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
 
-      {/* CTA */}
+      {/* 🚀 CTA */}
       <div>
-        <button
-          onClick={onStart}
-          disabled={!canContinue}
-          className="px-4 py-2 bg-primary text-white rounded disabled:opacity-50"
+        <Button
+          onClick={() => {
+            if (data.nextStep) {
+              onStart(data.nextStep)
+            }
+          }}
         >
           {data.progress === 0
             ? "Iniciar jornada"
             : "Continuar jornada"}
-        </button>
+        </Button>
       </div>
     </div>
   )

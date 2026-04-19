@@ -14,6 +14,7 @@ type User = {
   id_user: number
   id_mei: number
   email: string
+  cnpj: string
 }
 
 const AuthContext = createContext({} as AuthContextType)

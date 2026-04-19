@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+
 import {
   getChecklist,
   toggleItem,
@@ -6,14 +7,28 @@ import {
   startStep,
 } from "@/pages/modules/jornada/services/jornada.service"
 
+import { stepComponentMap } from "@/pages/modules/jornada/steps"
+
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+
 type Props = {
   step: string
   onBack: () => void
+  onComplete: () => void
+  onRefresh: () => void
 }
 
-export function JornadaStep({ step, onBack }: Props) {
+export function JornadaStep({
+  step,
+  onBack,
+  onComplete,
+  onRefresh,
+}: Props) {
   const [checklist, setChecklist] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+
+  const StepComponent = stepComponentMap[step]
 
   useEffect(() => {
     load()
@@ -22,7 +37,7 @@ export function JornadaStep({ step, onBack }: Props) {
   async function load() {
     setLoading(true)
 
-    await startStep(step) // inicia automaticamente
+    await startStep(step)
 
     const data = await getChecklist(step)
     setChecklist(data)
@@ -37,61 +52,82 @@ export function JornadaStep({ step, onBack }: Props) {
       prev.map(item =>
         item.id === id
           ? { ...item, isChecked: !item.isChecked }
-          : item,
-      ),
+          : item
+      )
     )
+
+    // 🔥 sincroniza fluxo com backend
+    await onRefresh()
   }
 
   async function handleComplete() {
     await completeStep(step)
-    onBack()
+
+    // 🔥 navega para próxima etapa
+    onComplete()
   }
 
   const canComplete = checklist.every(
-    item => !item.required || item.isChecked,
+    item => !item.required || item.isChecked
   )
 
   if (loading) return <div>Carregando...</div>
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-xl font-semibold">
-        Etapa: {step}
-      </h1>
 
-      {/* CHECKLIST */}
-      <div className="space-y-2">
+      {/* 🔹 CONTEÚDO DINÂMICO */}
+      {StepComponent ? (
+        <StepComponent />
+      ) : (
+        <Card>
+          <CardContent className="p-4 text-sm text-muted-foreground">
+            Conteúdo não disponível para esta etapa.
+          </CardContent>
+        </Card>
+      )}
+
+      {/* 🔹 CHECKLIST */}
+      <div className="space-y-3">
         {checklist.map(item => (
           <label
             key={item.id}
-            className="flex items-center gap-2 cursor-pointer"
+            className="
+              flex items-center gap-3
+              p-3 rounded-lg border
+              hover:bg-muted transition cursor-pointer
+            "
           >
             <input
               type="checkbox"
               checked={item.isChecked}
               onChange={() => handleToggle(item.id)}
             />
-            <span>{item.label}</span>
+
+            <span
+              className={`
+                text-sm
+                ${item.isChecked ? "line-through opacity-60" : ""}
+              `}
+            >
+              {item.label}
+            </span>
           </label>
         ))}
       </div>
 
-      {/* AÇÕES */}
-      <div className="flex gap-4">
-        <button
-          onClick={onBack}
-          className="px-4 py-2 border rounded"
-        >
+      {/* 🔹 AÇÕES */}
+      <div className="flex justify-between">
+        <Button variant="outline" onClick={onBack}>
           Voltar
-        </button>
+        </Button>
 
-        <button
+        <Button
           disabled={!canComplete}
           onClick={handleComplete}
-          className="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50"
         >
           Concluir etapa
-        </button>
+        </Button>
       </div>
     </div>
   )
