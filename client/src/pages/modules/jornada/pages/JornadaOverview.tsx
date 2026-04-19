@@ -6,10 +6,6 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
-  CheckCircle,
-  Circle,
-  Lock,
-  PlayCircle,
   Route,
   Building2,
   FileText,
@@ -71,18 +67,18 @@ const stepConfig: Record<
   },
 }
 
-function getStatusIcon(status: string) {
-  switch (status) {
-    case "completed":
-      return <CheckCircle className="text-green-500 w-5 h-5" />
-    case "in_progress":
-      return <PlayCircle className="text-yellow-500 w-5 h-5" />
-    case "available":
-      return <Circle className="text-blue-500 w-5 h-5" />
-    default:
-      return <Lock className="text-muted-foreground w-5 h-5" />
-  }
-}
+// function getStatusIcon(status: string) {
+//   switch (status) {
+//     case "completed":
+//       return <CheckCircle className="text-green-500 w-5 h-5" />
+//     case "in_progress":
+//       return <PlayCircle className="text-yellow-500 w-5 h-5" />
+//     case "available":
+//       return <Circle className="text-blue-500 w-5 h-5" />
+//     default:
+//       return <Lock className="text-muted-foreground w-5 h-5" />
+//   }
+// }
 
 export function JornadaOverview({ data, onStart }: Props) {
   return (
@@ -118,25 +114,50 @@ export function JornadaOverview({ data, onStart }: Props) {
 
               const isCurrent = step.step === data.currentStep
               const isCompleted = step.status === "completed"
+              const isClickable = step.status !== "locked"
 
               return (
-                <div key={step.step} className="flex flex-col items-center z-10 transform hover:scale-150 transition-all duration-300">
+                <div
+                  key={step.step}
+                  className="relative flex flex-col items-center z-10 group"
+                >
 
+                  {/* 🔹 ÍCONE */}
                   <div
+                    onClick={() => {
+                      if (isClickable) onStart(step.step)
+                    }}
                     className={`
                       w-10 h-10 rounded-full flex items-center justify-center border
-                      transition
+                      transition 
+                      
+                      ${isClickable ? "cursor-pointer" : "cursor-not-allowed"}
+                      
+                      group-hover:scale-125
 
                       ${isCompleted ? "bg-green-500 text-muted border-card" : ""}
                       ${isCurrent ? "bg-accent-foreground text-muted border-card scale-110" : ""}
                       ${
                         !isCompleted && !isCurrent
-                          ? "bg-card-foreground text-muted border-card border-3"
+                          ? "bg-muted-foreground text-muted border-card"
                           : ""
                       }
                     `}
                   >
                     <Icon className="w-5 h-5" />
+                  </div>
+
+                  {/* 🔹 TOOLTIP */}
+                  <div
+                    className="
+                      absolute top-12
+                      opacity-0 group-hover:opacity-100
+                      transition
+                      text-xs bg-black text-white px-2 py-1 rounded
+                      whitespace-nowrap
+                    "
+                  >
+                    {config.label}
                   </div>
 
                 </div>
@@ -145,7 +166,7 @@ export function JornadaOverview({ data, onStart }: Props) {
 
             {/* 🟢 FINAL — ME */}
             <div className="flex flex-col items-center z-10">
-              <div className="w-13 h-13 rounded-full bg-green-500 text-primary-foreground flex items-center justify-center text-l font-bold">
+              <div className="w-13 h-13 rounded-full bg-green-500 text-white flex items-center justify-center text-l font-bold">
                 ME
               </div>
             </div>
@@ -180,7 +201,6 @@ export function JornadaOverview({ data, onStart }: Props) {
           const Icon = config.icon
 
           const isCurrent = step.step === data.currentStep
-          const isCompleted = step.status === "completed"
           const isClickable = step.status !== "locked"
 
           return (
@@ -193,7 +213,7 @@ export function JornadaOverview({ data, onStart }: Props) {
                 transition cursor-pointer group
 
                 ${isClickable ? "transform hover:scale-102 transition-all duration-300" : "opacity-50 cursor-not-allowed"}
-                ${isCurrent ? "border-primary shadow-sm" : ""}
+                ${isCurrent ? "border-primary border-2 shadow-sm" : ""}
               `}
             >
               <CardContent className="p-4 flex flex-col gap-3">

@@ -101,9 +101,8 @@ export function DesenquadramentoStep() {
           title: "O que é o desenquadramento",
           content: (
             <>
-              O desenquadramento é o processo de saída do regime MEI
-              para Microempresa (ME), exigido quando os requisitos do
-              MEI não são mais atendidos.
+              O desenquadramento é o processo de saída do regime MEI para outro tipo de empresa, como Microempresa (ME). 
+              Após isso, sua empresa passa a ter novas obrigações fiscais e tributárias.
             </>
           ),
         },
@@ -152,9 +151,14 @@ export function DesenquadramentoStep() {
           title: "O que você vai precisar?",
           content: (
             <>
-              <p>CNPJ</p>
-              <p>Conta gov.br</p>
-              <p>Acesso ao Portal do Simples Nacional</p>
+            <ul className="list-disc pl-5 mt-1 text-muted-foreground">
+              <li>CNPJ.</li>
+              <li>Possuir uma conta gov.br (o nível básico já é suficiente).</li>
+              <li>Ter acesso ao Portal do Simples Nacional.</li>
+              <ul className="list-disc pl-5 mt-1 text-muted-foreground">
+                <li>Observação: lembre-se de marcar os documentos necessários no menu de Checklist de Documentos.</li>
+              </ul>
+            </ul>
             </>
           ),
         },
@@ -164,10 +168,13 @@ export function DesenquadramentoStep() {
         title: "Como fazer?",
         content: (
           <>
-            <p>1. Acesse o Portal do Simples Nacional</p>
-            <p>2. Vá em “Desenquadramento do SIMEI”</p>
-            <p>3. Informe o motivo</p>
-            <p>4. Confirme a solicitação</p>
+            <p>Passo a passo:</p>
+            <ol className="list-decimal pl-5 mt-2 text-muted-foreground">
+              <li>Acesse o Portal do Simples Nacional com sua conta gov.br.</li>
+              <li>Vá em “Desenquadramento do SIMEI”.</li>
+              <li>Selecione o motivo do desenquadramento.</li>
+              <li>Confirme e envie a solicitação.</li>
+            </ol>
 
             <Button variant="secondary" className="mt-2">
               Acessar Portal
