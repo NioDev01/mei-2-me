@@ -160,6 +160,7 @@ export function Checklist() {
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(
     null,
   );
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const form = useForm<ChecklistFormData>({
     resolver: zodResolver(checklistSchema),
@@ -188,26 +189,6 @@ export function Checklist() {
     ([key, value]) => key !== "id_mei" && value === true,
   ).length;
   const progress = (checkedDocs / totalDocs) * 100;
-
-  useEffect(() => {
-    api
-      .get(`checklist-documentos`)
-      .then((res) => {
-        const data = res.data;
-
-        if (data) {
-          (Object.keys(data) as (keyof ChecklistFormData)[]).forEach((key) => {
-            if (key) {
-              setValue(key, data[key] as boolean);
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        console.error(`Ocorreu um erro ao carregar o checklist: ${err}`);
-        toast.error("Erro ao carregar o checklist.");
-      });
-  }, [setValue]);
 
   const onSubmit = async (values: ChecklistFormData) => {
     try {
@@ -239,6 +220,36 @@ export function Checklist() {
       });
     }
   };
+
+  useEffect(() => {
+    api
+      .get(`checklist-documentos`)
+      .then((res) => {
+        const data = res.data;
+
+        if (data) {
+          (Object.keys(data) as (keyof ChecklistFormData)[]).forEach((key) => {
+            setValue(key, data[key]);
+          });
+        }
+
+        setIsInitialized(true);
+      })
+      .catch((err) => {
+        console.error(`Ocorreu um erro ao carregar o checklist: ${err}`);
+        toast.error("Erro ao carregar o checklist.");
+      });
+  }, [setValue]);
+
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    const timeout = setTimeout(() => {
+      handleSubmit(onSubmit)();
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [watchedValues, isInitialized]);
 
   return (
     <div className='w-full space-y-8 pt-3'>
@@ -299,6 +310,7 @@ export function Checklist() {
 
                 <CardContent className='flex gap-2'>
                   <Button
+                    type='button'
                     size='sm'
                     variant='secondary'
                     onClick={() => {
@@ -311,6 +323,7 @@ export function Checklist() {
                   </Button>
                   {doc.hasTemplate && (
                     <Button
+                      type='button'
                       size='sm'
                       onClick={() =>
                         handleDownload(
