@@ -147,4 +147,19 @@ export class DiagnosticoInicialService {
   async findOne(cnpj: string, userId: number) {
     return this.analiseUseCase.execute(cnpj, userId);
   }
+
+  async findCnpjData(cnpj: string) {
+    const apiData = await this.receitawsAPIService.findOne(cnpj);
+
+    if (!apiData || (apiData as any).status === 'ERROR') {
+      throw new NotFoundException(`CNPJ ${cnpj} não encontrado ou inválido.`);
+    }
+
+    return {
+      razao_social: apiData.nome,
+      nome_fantasia: apiData.fantasia,
+      uf: apiData.uf,
+      municipio: apiData.municipio,
+    };
+  }
 }

@@ -14,12 +14,12 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('diagnostico-inicial')
 @ApiTags('Diagnóstico Inicial')
+@UseGuards(JwtAuthGuard)
 export class DiagnosticoInicialController {
   constructor(
     private readonly diagnosticoInicialService: DiagnosticoInicialService,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   @ApiOperation({
     summary: 'Cria diagnóstico inicial.',
@@ -45,7 +45,6 @@ export class DiagnosticoInicialController {
   }
 
   @Get(':cnpj')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Retorna diagnóstico inicial do usuário.',
     description:
@@ -63,5 +62,10 @@ export class DiagnosticoInicialController {
     const userId = req.user.id_user;
 
     return this.diagnosticoInicialService.findOne(cnpj, userId);
+  }
+
+  @Get('cnpj/:cnpj')
+  async findCnpjData(@Param('cnpj') cnpj: string) {
+    return this.diagnosticoInicialService.findCnpjData(cnpj);
   }
 }
