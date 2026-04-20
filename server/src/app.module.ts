@@ -9,6 +9,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { SimuladorRegimesModule } from './modules/simulador-regimes/simulador-regimes.module';
 import { JornadaModule } from './modules/jornada/jornada.module';
 import { ConfigModule } from '@nestjs/config';
+import { ChecklistDocumentosModule } from './modules/checklist-documentos/checklist-documentos.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ConfigModule } from '@nestjs/config';
     DiagnosticoInicialModule,
     AuthModule,
     SimuladorRegimesModule,
+    ChecklistDocumentosModule,
     JornadaModule,
   ],
   providers: [ReceitawsApiService],
