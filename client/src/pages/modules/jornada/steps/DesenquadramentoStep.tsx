@@ -176,7 +176,7 @@ export function DesenquadramentoStep() {
               <li>Confirme e envie a solicitação.</li>
             </ol>
 
-            <Button variant="secondary" className="mt-2">
+            <Button variant="secondary" className="mt-2" onClick={() => window.open('https://www8.receita.fazenda.gov.br/SimplesNacional/Servicos/Grupo.aspx?grp=t&area=2', '_blank')}>
               Acessar Portal
             </Button>
           </>

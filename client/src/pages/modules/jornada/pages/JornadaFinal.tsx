@@ -12,7 +12,7 @@ export function JornadaFinal({
   onReviewSteps,
 }: Props) {
   return (
-    <div className="p-6 space-y-6">
+    <div className="w-full space-y-8 pt-3">
 
       {/* 🎉 HEADER */}
       <div className="flex items-center gap-4">

@@ -29,7 +29,7 @@ export function StepTemplate({
   tips,
 }: Props) {
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-8 pt-3">
 
       {/* 🔹 HEADER CUSTOM (ex: semáforo) */}
       {header}

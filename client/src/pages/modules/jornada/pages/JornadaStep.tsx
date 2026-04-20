@@ -76,7 +76,7 @@ export function JornadaStep({
   if (loading) return <div>Carregando...</div>
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-8 pt-3">
 
       {/* 🔥 HEADER GLOBAL */}
       <JornadaHeader
