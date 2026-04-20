@@ -50,10 +50,15 @@ export function Jornada() {
   async function handleRefresh() {
     const data = await loadSummary()
 
-    // Se o fluxo voltou para etapa anterior, reposiciona
     if (data.currentStep !== selectedStep) {
       setSelectedStep(data.currentStep)
     }
+  }
+
+  // 🔹 Navegação manual pelo header
+  function handleNavigateStep(step: string) {
+    setSelectedStep(step)
+    setView("step")
   }
 
   if (!summary) return <div>Carregando...</div>
@@ -65,16 +70,21 @@ export function Jornada() {
     return (
       <JornadaStep
         step={stepToRender}
+        summary={summary}
         onBack={() => setView("overview")}
         onComplete={handleNextStep}
         onRefresh={handleRefresh}
+        onNavigateStep={handleNavigateStep}
       />
     )
   }
 
   // 🔹 FINAL
   if (view === "final") {
-    return <JornadaFinal />
+    return <JornadaFinal 
+      onBackToDashboard={() => setView("overview")}
+      onReviewSteps={() => setView("step")}
+    />
   }
 
   // 🔹 OVERVIEW

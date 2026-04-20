@@ -5,66 +5,12 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import {
-  Route,
-  Building2,
-  FileText,
-  Landmark,
-  RefreshCcw,
-  ClipboardList,
-  Coins,
-  FileCheck,
-} from "lucide-react"
+import { stepConfig } from "@/pages/modules/jornada/steps/stepConfig"
+import { JornadaHeader } from "../components/JornadaHeader"
 
 type Props = {
   data: any
   onStart: (step: string) => void
-}
-
-const stepConfig: Record<
-  string,
-  { label: string; description: string; icon: any }
-> = {
-  desenquadramento: {
-    label: "Desenquadramento do MEI",
-    description: "Transição do MEI para ME",
-    icon: Route,
-  },
-  definicao_empresa: {
-    label: "Definição da empresa",
-    description: "Informações da empresa",
-    icon: Building2,
-  },
-  contrato_social: {
-    label: "Contrato Social",
-    description: "Base legal da empresa",
-    icon: FileText,
-  },
-  junta_comercial: {
-    label: "Junta Comercial",
-    description: "Registro da empresa",
-    icon: Landmark,
-  },
-  cnpj: {
-    label: "Atualização do CNPJ",
-    description: "Alterações cadastrais",
-    icon: RefreshCcw,
-  },
-  licenciamento: {
-    label: "Licenciamento",
-    description: "Autorizações legais",
-    icon: ClipboardList,
-  },
-  regime_tributario: {
-    label: "Regime Tributário",
-    description: "Definição de impostos",
-    icon: Coins,
-  },
-  obrigacoes_fiscais: {
-    label: "Obrigações Fiscais",
-    description: "Compromissos legais",
-    icon: FileCheck,
-  },
 }
 
 // function getStatusIcon(status: string) {
@@ -92,88 +38,7 @@ export function JornadaOverview({ data, onStart }: Props) {
       </div>
 
       {/* 📍 LINHA DO TEMPO */}
-      <Card className="sticky top-0 z-10 bg-card">
-        <CardContent className="py-4">
-
-          <div className="flex items-center justify-between relative">
-
-            {/* 🔵 INÍCIO — MEI */}
-            <div className="flex flex-col items-center z-10">
-              <div className="w-13 h-13 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-l font-bold">
-                MEI
-              </div>
-            </div>
-
-            {/* 🔗 LINHA BASE */}
-            <div className="absolute left-0 right-0 top-1/2 h-[2px] bg-card-foreground -translate-y-1/2 z-0" />
-
-            {/* 🔄 ETAPAS */}
-            {data.steps.map((step: any) => {
-              const config = stepConfig[step.step]
-              const Icon = config.icon
-
-              const isCurrent = step.step === data.currentStep
-              const isCompleted = step.status === "completed"
-              const isClickable = step.status !== "locked"
-
-              return (
-                <div
-                  key={step.step}
-                  className="relative flex flex-col items-center z-10 group"
-                >
-
-                  {/* 🔹 ÍCONE */}
-                  <div
-                    onClick={() => {
-                      if (isClickable) onStart(step.step)
-                    }}
-                    className={`
-                      w-10 h-10 rounded-full flex items-center justify-center border
-                      transition 
-                      
-                      ${isClickable ? "cursor-pointer" : "cursor-not-allowed"}
-                      
-                      group-hover:scale-125
-
-                      ${isCompleted ? "bg-green-500 text-muted border-card" : ""}
-                      ${isCurrent ? "bg-accent-foreground text-muted border-card scale-110" : ""}
-                      ${
-                        !isCompleted && !isCurrent
-                          ? "bg-muted-foreground text-muted border-card"
-                          : ""
-                      }
-                    `}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </div>
-
-                  {/* 🔹 TOOLTIP */}
-                  <div
-                    className="
-                      absolute top-12
-                      opacity-0 group-hover:opacity-100
-                      transition
-                      text-xs bg-black text-white px-2 py-1 rounded
-                      whitespace-nowrap
-                    "
-                  >
-                    {config.label}
-                  </div>
-
-                </div>
-              )
-            })}
-
-            {/* 🟢 FINAL — ME */}
-            <div className="flex flex-col items-center z-10">
-              <div className="w-13 h-13 rounded-full bg-green-500 text-white flex items-center justify-center text-l font-bold">
-                ME
-              </div>
-            </div>
-          </div>
-
-        </CardContent>
-      </Card>
+      <JornadaHeader data={data} onStepClick={onStart} />
 
       {/* 🧠 DIFERENÇA MEI x ME */}
       <Card>
