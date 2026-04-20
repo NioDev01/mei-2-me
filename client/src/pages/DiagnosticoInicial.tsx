@@ -33,7 +33,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export function DiagInicial() {
-  const [empresData, setEmpresaData] = useState<{
+  const [empresaData, setEmpresaData] = useState<{
     razao_social?: string;
     nome_fantasia?: string;
     uf?: string;
@@ -93,6 +93,8 @@ export function DiagInicial() {
       });
     } catch (error) {
       console.error(`Erro ao buscar CNPJ: ${error}`);
+      setEmpresaData({});
+      toast.error("Não foi possível buscar os dados do CNPJ.");
     }
   };
 
@@ -160,15 +162,15 @@ export function DiagInicial() {
                 />
 
                 {/* Placeholder invisível para manter o CNPJ na primeira coluna */}
-                {!empresData.uf && <div className='hidden md:block' />}
+                {!empresaData.uf && <div className='hidden md:block' />}
 
                 {/* Dados da empresa (readonly) */}
-                {empresData.uf && (
+                {empresaData.uf && (
                   <>
                     <FormItem>
                       <FormLabel>Razão social</FormLabel>
                       <FormControl>
-                        <Input value={empresData.razao_social} readOnly />
+                        <Input value={empresaData.razao_social} readOnly />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -176,7 +178,7 @@ export function DiagInicial() {
                     <FormItem>
                       <FormLabel>Nome fantasia</FormLabel>
                       <FormControl>
-                        <Input value={empresData.nome_fantasia} readOnly />
+                        <Input value={empresaData.nome_fantasia} readOnly />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -184,7 +186,7 @@ export function DiagInicial() {
                     <FormItem>
                       <FormLabel>UF</FormLabel>
                       <FormControl>
-                        <Input value={empresData.uf} readOnly />
+                        <Input value={empresaData.uf} readOnly />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -192,7 +194,7 @@ export function DiagInicial() {
                     <FormItem>
                       <FormLabel>Município</FormLabel>
                       <FormControl>
-                        <Input value={empresData.municipio} readOnly />
+                        <Input value={empresaData.municipio} readOnly />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
