@@ -31,7 +31,7 @@ export function StepTemplate({
   return (
     <div className="w-full space-y-8 pt-3">
 
-      {/* 🔹 HEADER CUSTOM (ex: semáforo) */}
+      {/* 🔹 HEADER CUSTOM */}
       {header}
 
       {/* 🔹 GRID PRINCIPAL */}
@@ -75,7 +75,7 @@ export function StepTemplate({
 
       </div>
 
-      {/* 🔹 COMO FAZER (FULL WIDTH) */}
+      {/* 🔹 COMO FAZER */}
       <Card className="border-primary">
         <CardHeader>
           <CardTitle>{howTo.title}</CardTitle>

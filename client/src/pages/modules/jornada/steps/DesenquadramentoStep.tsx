@@ -41,7 +41,7 @@ export function DesenquadramentoStep() {
   if (!cnpj) return <div>Carregando usuário...</div>
   if (!data) return <div>Carregando diagnóstico...</div>
 
-  // 🧠 STATUS → SEMÁFORO
+  // STATUS → SEMÁFORO
   function mapStatus(status?: string) {
     if (!status) return "warning"
 

@@ -34,7 +34,6 @@ export class JornadaService {
 
     const currentStep = currentStepObj?.step ?? null;
 
-    // 🔥 NOVO: nextStep
     const nextStepObj =
       steps.find((s) => s.status === JornadaStepStatus.AVAILABLE) ??
       steps.find((s) => s.status === JornadaStepStatus.IN_PROGRESS) ??
@@ -195,7 +194,7 @@ export class JornadaService {
       });
     }
 
-    // 🔥 NOVA REGRA: revalidar etapa
+    // revalidar etapa
     const checklist = await this.getChecklist(id_mei, step);
 
     if (!canCompleteStep(checklist)) {
@@ -212,7 +211,7 @@ export class JornadaService {
         },
       });
 
-      // 🔥 resetar próximas etapas
+      // resetar próximas etapas
       await this.resetNextSteps(id_mei, step);
     }
   }

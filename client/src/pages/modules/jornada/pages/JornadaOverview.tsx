@@ -13,19 +13,6 @@ type Props = {
   onStart: (step: string) => void
 }
 
-// function getStatusIcon(status: string) {
-//   switch (status) {
-//     case "completed":
-//       return <CheckCircle className="text-green-500 w-5 h-5" />
-//     case "in_progress":
-//       return <PlayCircle className="text-yellow-500 w-5 h-5" />
-//     case "available":
-//       return <Circle className="text-blue-500 w-5 h-5" />
-//     default:
-//       return <Lock className="text-muted-foreground w-5 h-5" />
-//   }
-// }
-
 export function JornadaOverview({ data, onStart }: Props) {
   return (
     <div className="w-full space-y-8 pt-3">

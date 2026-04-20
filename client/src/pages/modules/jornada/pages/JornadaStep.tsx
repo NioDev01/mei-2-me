@@ -78,7 +78,7 @@ export function JornadaStep({
   return (
     <div className="w-full space-y-8 pt-3">
 
-      {/* 🔥 HEADER GLOBAL */}
+      {/* HEADER GLOBAL */}
       <JornadaHeader
         data={summary}
         onStepClick={onNavigateStep}
