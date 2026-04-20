@@ -15,8 +15,8 @@ import {
   ChartNoAxesCombined,
 } from "lucide-react";
 
-import { RegimeForm, RegimeResultado } from "@/features/regime";
-import type { ResultadoSimulador } from "@/features/regime/types/ResultadoSimulador";
+import { RegimeForm, RegimeResultado } from "@/pages/modules/simulador/index";
+import type { ResultadoSimulador } from "@/pages/modules/simulador/types/ResultadoSimulador";
 import { useAuth } from "@/context/AuthContext";
 
 export function Simulador() {
