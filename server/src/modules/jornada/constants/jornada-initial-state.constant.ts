@@ -1,4 +1,3 @@
-import { JornadaStep } from '../enums/jornada-step.enum';
 import { JornadaStepState } from '../types/jornada-step-state.type';
 import { JORNADA_FLOW } from './jornada-flow.constant';
 
