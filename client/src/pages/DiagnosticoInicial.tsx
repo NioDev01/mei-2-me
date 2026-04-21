@@ -17,6 +17,16 @@ import {
 import { useState } from "react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 const formSchema = z.object({
   cnpj_mei: z.string().min(14, "CNPJ inválido").max(18),
@@ -39,7 +49,33 @@ export function DiagInicial() {
     uf?: string;
     municipio?: string;
   }>({});
+  const [analise, setAnalise] = useState<null | {
+    cnpj: string;
+    razaoSocial: string;
+    status: "APTO" | "NÃO APTO";
+    analise: string;
+    motivos: {
+      regra: string;
+      razoes: string[];
+      riscos: string[];
+      referenciasLegais: string[];
+    }[];
+  }>(null);
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const { refreshUser } = useAuth();
+
+  const navigate = useNavigate();
+
+  const handleNavigate = async () => {
+    setOpen(false);
+
+    await refreshUser();
+
+    setTimeout(() => {
+      navigate("/app");
+    }, 0);
+  };
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -107,7 +143,9 @@ export function DiagInicial() {
     setLoading(true);
 
     try {
-      await api.post("diagnostico-inicial", payload);
+      const res = await api.post("diagnostico-inicial", payload);
+      setAnalise(res.data.analise);
+      setOpen(true);
       toast.success("Diagnóstico realizado com sucesso!");
     } catch (err) {
       console.error("Erro ao enviar formulário", err);
@@ -345,6 +383,51 @@ export function DiagInicial() {
           </form>
         </Form>
       </div>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className='max-w-2xl max-h-[80vh] overflow-y-auto'>
+          <DialogHeader>
+            <DialogTitle className='text-gray-900'>
+              Resultado do Diagnóstico
+            </DialogTitle>
+            <p className='text-sm text-gray-600'>
+              O usuário está{" "}
+              <span
+                className={`font-semibold text-sm ${analise?.status === "APTO" ? "text-[#49af50]" : "text-red-700"}`}
+              >
+                {analise?.status}
+              </span>{" "}
+              para fazer a migração!
+            </p>
+          </DialogHeader>
+
+          <div className='mt-4'>
+            <DialogDescription className='text-gray-600'>
+              {analise?.analise}.
+            </DialogDescription>
+          </div>
+
+          {analise?.motivos && analise.motivos.length > 0 && (
+            <div className='space-y-2 '>
+              <p className='font-semibold text-gray-800'>Regras violadas:</p>
+              <ul className='list-disc pl-4 space-y-1'>
+                {analise.motivos.map((motivo, i) => (
+                  <li key={i} className='text-sm text-gray-700'>
+                    {motivo.regra}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant='outline' onClick={handleNavigate}>
+              Ver mais informações
+            </Button>
+            <Button onClick={handleNavigate}>Continuar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
