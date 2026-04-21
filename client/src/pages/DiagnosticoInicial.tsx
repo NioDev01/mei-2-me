@@ -206,33 +206,53 @@ export function DiagInicial() {
                 {empresaData.uf && (
                   <>
                     <FormItem>
-                      <FormLabel>Razão social</FormLabel>
+                      <FormLabel className='text-gray-400'>
+                        Razão social
+                      </FormLabel>
                       <FormControl>
-                        <Input value={empresaData.razao_social} readOnly />
+                        <Input
+                          className='bg-accent cursor-not-allowed opacity-50'
+                          value={empresaData.razao_social}
+                          readOnly
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
 
                     <FormItem>
-                      <FormLabel>Nome fantasia</FormLabel>
+                      <FormLabel className='text-gray-400'>
+                        Nome fantasia
+                      </FormLabel>
                       <FormControl>
-                        <Input value={empresaData.nome_fantasia} readOnly />
+                        <Input
+                          className='bg-accent cursor-not-allowed opacity-50'
+                          value={empresaData.nome_fantasia}
+                          readOnly
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
 
                     <FormItem>
-                      <FormLabel>UF</FormLabel>
+                      <FormLabel className='text-gray-400'>UF</FormLabel>
                       <FormControl>
-                        <Input value={empresaData.uf} readOnly />
+                        <Input
+                          className='bg-accent cursor-not-allowed opacity-50'
+                          value={empresaData.uf}
+                          readOnly
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
 
                     <FormItem>
-                      <FormLabel>Município</FormLabel>
+                      <FormLabel className='text-gray-400'>Município</FormLabel>
                       <FormControl>
-                        <Input value={empresaData.municipio} readOnly />
+                        <Input
+                          className='bg-accent cursor-not-allowed opacity-50'
+                          value={empresaData.municipio}
+                          readOnly
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
