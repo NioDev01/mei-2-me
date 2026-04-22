@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -12,6 +12,7 @@ type Socio = {
   nome: string
   cpf: string
   participacao: string
+  funcao: string
 }
 
 type ContratoData = {
@@ -48,6 +49,10 @@ const ABA_LABELS = [
 
 export function ContratoSocialStep() {
   const [abaAtiva, setAbaAtiva] = useState(0)
+  const [modoImportar, setModoImportar] = useState(false)
+  const [arquivoImportado, setArquivoImportado] = useState<File | null>(null)
+  const [dragging, setDragging] = useState(false)
+  const inputFileRef = useRef<HTMLInputElement>(null)
   const [data, setData] = useState<ContratoData>({
     razaoSocial: "",
     nomeFantasia: "",
@@ -70,47 +75,182 @@ export function ContratoSocialStep() {
 
   // ── CONTEÚDO POR ABA ────────────────────────────────────────────────────────
 
+
+
   // 1.1 – Informações Básicas
   const aba11 = (
     <div className="space-y-4">
-      <Card className="bg-muted/40">
-        <CardContent className="p-4">
-          <p className="font-medium text-sm">Informações Básicas</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Você precisará fornecer a razão social e o nome fantasia da empresa.
-          </p>
-        </CardContent>
-      </Card>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <Label>Razão Social <span className="text-destructive">*</span></Label>
-          <Input
-            placeholder="Exemplo: Silva & Associados Ltda"
-            value={data.razaoSocial}
-            onChange={(e) => set("razaoSocial", e.target.value)}
-          />
-          <p className="text-xs text-muted-foreground">Nome oficial da empresa para documentos legais.</p>
-        </div>
-        <div className="space-y-1">
-          <Label>Nome Fantasia</Label>
-          <Input
-            placeholder="Exemplo: Silva Consultoria"
-            value={data.nomeFantasia}
-            onChange={(e) => set("nomeFantasia", e.target.value)}
-          />
-          <p className="text-xs text-muted-foreground">Nome comercial usado no dia a dia (opcional).</p>
+      {/* Toggle Manual / Importar */}
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-sm text-muted-foreground">
+          Crie ou faça upload do seu contrato social passo a passo com orientações especializadas.
+        </p>
+        <div className="flex gap-2 shrink-0">
+          <Button
+            size="sm"
+            variant={modoImportar ? "outline" : "default"}
+            onClick={() => setModoImportar(false)}
+          >
+            Manual
+          </Button>
+          <Button
+            size="sm"
+            variant={modoImportar ? "default" : "outline"}
+            onClick={() => setModoImportar(true)}
+          >
+            Importar
+          </Button>
         </div>
       </div>
 
-      <div>
-        <p className="font-medium text-sm mb-1">Documentos necessários:</p>
-        <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
-          <li>RG e CPF de todos os sócios</li>
-          <li>Comprovante de residência dos sócios</li>
-          <li>Consulta de viabilidade de nome empresarial</li>
-        </ul>
-      </div>
+      {modoImportar ? (
+        /* ── MODO IMPORTAR ─────────────────────────────────────────────────── */
+        <div className="space-y-4">
+          <Card className="bg-muted/40">
+            <CardContent className="p-4">
+              <p className="font-medium text-sm">Importação de Contrato</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Faça upload do seu Contrato Social atual para extrair as informações automaticamente.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Área de drag & drop */}
+          <input
+            ref={inputFileRef}
+            type="file"
+            accept=".pdf,.doc,.docx"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0] ?? null
+              setArquivoImportado(file)
+            }}
+          />
+          <div
+            onClick={() => inputFileRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault()
+              setDragging(false)
+              const file = e.dataTransfer.files?.[0] ?? null
+              setArquivoImportado(file)
+            }}
+            className={`flex flex-col items-center justify-center gap-2 border-2 border-dashed rounded-lg p-10 cursor-pointer transition-colors ${
+              dragging
+                ? "border-primary bg-primary/5"
+                : "border-muted-foreground/30 hover:border-primary hover:bg-muted/30"
+            }`}
+          >
+            <span className="text-3xl">↑</span>
+            <p className="font-medium text-sm">
+              {arquivoImportado ? arquivoImportado.name : "Clique para fazer upload"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {arquivoImportado ? "Clique para trocar o arquivo" : "Ou arraste e solte o arquivo aqui"}
+            </p>
+            {!arquivoImportado && (
+              <p className="text-xs text-muted-foreground">Formatos de arquivos aceitos: PDF, DOC, DOCX</p>
+            )}
+          </div>
+
+          {/* Aviso */}
+          <Card className="border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20">
+            <CardContent className="p-3 flex gap-2 items-start">
+              <span className="text-yellow-500">⚠</span>
+              <div>
+                <p className="text-sm font-medium text-yellow-700 dark:text-yellow-400">Importante!</p>
+                <p className="text-xs text-yellow-600 dark:text-yellow-500">
+                  Após a importação, revise todas as informações extraídas antes de prosseguir.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Campos de revisão pós-importação */}
+          <Card className="bg-muted/40">
+            <CardContent className="p-4">
+              <p className="font-medium text-sm">Informações Necessárias</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Você precisará fornecer a razão social e nome fantasia da empresa.
+              </p>
+            </CardContent>
+          </Card>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label>Razão Social <span className="text-destructive">*</span></Label>
+              <Input
+                placeholder="Exemplo: Silva & Associados Ltda"
+                value={data.razaoSocial}
+                onChange={(e) => set("razaoSocial", e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">Nome oficial da empresa para documentos legais.</p>
+            </div>
+            <div className="space-y-1">
+              <Label>Nome Fantasia</Label>
+              <Input
+                placeholder="Exemplo: Silva Consultoria"
+                value={data.nomeFantasia}
+                onChange={(e) => set("nomeFantasia", e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">Nome comercial usado no dia a dia (opcional).</p>
+            </div>
+          </div>
+
+          <div>
+            <p className="font-medium text-sm mb-1">Documentos necessários:</p>
+            <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+              <li>RG e CPF de todos os sócios</li>
+              <li>Comprovante de residência dos sócios</li>
+              <li>Consulta de viabilidade de nome empresarial</li>
+            </ul>
+          </div>
+        </div>
+      ) : (
+        /* ── MODO MANUAL ───────────────────────────────────────────────────── */
+        <div className="space-y-4">
+          <Card className="bg-muted/40">
+            <CardContent className="p-4">
+              <p className="font-medium text-sm">Informações Básicas</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Você precisará fornecer a razão social e o nome fantasia da empresa.
+              </p>
+            </CardContent>
+          </Card>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label>Razão Social <span className="text-destructive">*</span></Label>
+              <Input
+                placeholder="Exemplo: Silva & Associados Ltda"
+                value={data.razaoSocial}
+                onChange={(e) => set("razaoSocial", e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">Nome oficial da empresa para documentos legais.</p>
+            </div>
+            <div className="space-y-1">
+              <Label>Nome Fantasia</Label>
+              <Input
+                placeholder="Exemplo: Silva Consultoria"
+                value={data.nomeFantasia}
+                onChange={(e) => set("nomeFantasia", e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">Nome comercial usado no dia a dia (opcional).</p>
+            </div>
+          </div>
+
+          <div>
+            <p className="font-medium text-sm mb-1">Documentos necessários:</p>
+            <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+              <li>RG e CPF de todos os sócios</li>
+              <li>Comprovante de residência dos sócios</li>
+              <li>Consulta de viabilidade de nome empresarial</li>
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   )
 
@@ -198,7 +338,7 @@ export function ContratoSocialStep() {
           <p className="font-medium text-sm">Sócio da Empresa</p>
           <Button
             size="sm"
-            onClick={() => set("socios", [...data.socios, { nome: "", cpf: "", participacao: "" }])}
+            onClick={() => set("socios", [...data.socios, { nome: "", cpf: "", participacao: "", funcao: "" }])}
           >
             + Adicionar Sócio
           </Button>
@@ -215,20 +355,21 @@ export function ContratoSocialStep() {
             {data.socios.map((socio, i) => (
               <Card key={i}>
                 <CardContent className="p-3 space-y-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 mb-3">
                     <p className="text-sm font-medium">Sócio {i + 1}</p>
                     <button
                       onClick={() => set("socios", data.socios.filter((_, idx) => idx !== i))}
-                      className="text-xs text-destructive hover:underline"
+                      className="text-destructive hover:text-destructive/70 transition-colors"
+                      title="Remover sócio"
                     >
-                      Remover
+                      🗑
                     </button>
                   </div>
-                  <div className="grid md:grid-cols-3 gap-2">
+                  <div className="grid md:grid-cols-2 gap-3">
                     <div className="space-y-1">
-                      <Label className="text-xs">Nome</Label>
+                      <Label className="text-xs">Nome Completo</Label>
                       <Input
-                        placeholder="Nome completo"
+                        placeholder="Nome do sócio"
                         value={socio.nome}
                         onChange={(e) => {
                           const updated = [...data.socios]
@@ -240,7 +381,7 @@ export function ContratoSocialStep() {
                     <div className="space-y-1">
                       <Label className="text-xs">CPF</Label>
                       <Input
-                        placeholder="000.000.000-00"
+                        placeholder="Exemplo: 000.000.000-00"
                         value={socio.cpf}
                         onChange={(e) => {
                           const updated = [...data.socios]
@@ -250,13 +391,25 @@ export function ContratoSocialStep() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-xs">Participação (%)</Label>
+                      <Label className="text-xs">Participação (em porcentagem)</Label>
                       <Input
-                        placeholder="Ex: 50"
+                        placeholder="Exemplo: 50%"
                         value={socio.participacao}
                         onChange={(e) => {
                           const updated = [...data.socios]
                           updated[i].participacao = e.target.value
+                          set("socios", updated)
+                        }}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Função</Label>
+                      <Input
+                        placeholder="Exemplo: Sócio, Administrador, Sócio-Administrador"
+                        value={socio.funcao}
+                        onChange={(e) => {
+                          const updated = [...data.socios]
+                          updated[i].funcao = e.target.value
                           set("socios", updated)
                         }}
                       />
