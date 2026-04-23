@@ -1,18 +1,17 @@
 import { useState } from "react"
 import { StepTemplate } from "./StepTemplate"
 import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 
 // ─── COMPONENTE ───────────────────────────────────────────────────────────────
 
-export function AtualizacaoCnpjStep() {
+export function LicenciamentoStep() {
   const [checklist, setChecklist] = useState({
-    acessouSistema: false,
-    preencheuDbe: false,
-    informouDados: false,
-    enviouSolicitacao: false,
-    acompanhouStatus: false,
+    verificouAtividade: false,
+    consultouOrgaos: false,
+    solicitouLicencas: false,
+    separouDocumentos: false,
+    acompanhouAndamento: false,
   })
 
   const handleChecklistChange = (key: keyof typeof checklist) => {
@@ -22,21 +21,21 @@ export function AtualizacaoCnpjStep() {
   // ── HEADER ──────────────────────────────────────────────────────────────────
 
   const header = (
-    <Card className="border-l-4 border-red-500 bg-red-50 dark:bg-red-950/20">
+    <Card className="border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-950/20">
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-900 text-white font-bold text-lg">
-            5
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-amber-900 text-white font-bold text-lg">
+            6
           </div>
           <div className="flex-1">
-            <p className="font-bold text-lg text-red-900 dark:text-red-100">
-              Atualização do CNPJ
+            <p className="font-bold text-lg text-amber-900 dark:text-amber-100">
+              Licenciamento
             </p>
-            <p className="text-sm text-red-800 dark:text-red-200 mt-1">
-              Atenção, esta etapa ainda não foi iniciada por você.
+            <p className="text-sm text-amber-800 dark:text-amber-200 mt-1">
+              Atenção, você apenas iniciou esta etapa, mas não concluiu ela.
             </p>
-            <p className="text-xs text-red-700 dark:text-red-300 mt-2">
-              A atualização do CNPJ é o processo de alteração cadastral da empresa junto à Receita Federal, refletindo as mudanças realizadas durante a transição de MEI para Microempresa (ME).
+            <p className="text-xs text-amber-700 dark:text-amber-300 mt-2">
+              O licenciamento é o processo de obtenção das autorizações necessárias para que a empresa possa exercer suas atividades de forma legal, de acordo com sua área de atuação e localização.
             </p>
           </div>
         </div>
@@ -54,18 +53,18 @@ export function AtualizacaoCnpjStep() {
           content: (
             <div className="space-y-3">
               <p>
-                Essa etapa garante que os dados da sua empresa estejam atualizados nos registros oficiais. Sem essa atualização, a empresa pode ficar irregular e enfrentar dificuldades para operar legalmente.
+                Algumas atividades exigem licenças específicas para funcionamento. A ausência dessas autorizações pode resultar em multas, impedimentos ou até no fechamento do estabelecimento.
               </p>
               <p className="font-medium text-foreground">Motivos importantes:</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
                 <li>
-                  <span className="font-medium">Dados em Sincronia:</span> Evita que informações diferentes travem a emissão das suas notas fiscais.
+                  <span className="font-medium">Permissão de Uso:</span> Garante que seu negócio cumpre as normas de segurança e higiene da sua cidade.
                 </li>
                 <li>
-                  <span className="font-medium">Mais Crédito:</span> Com o cadastro atualizado, você libera acesso a limites de crédito e taxas melhores em cartão.
+                  <span className="font-medium">Proteção Ambiental:</span> Se aplicável, você consegue emitir Notas Fiscais de Serviço apoio o licenciamento.
                 </li>
                 <li>
-                  <span className="font-medium">Formalização:</span> Mantém a empresa regularizada, evitando bloqueios ou suspensões do CNPJ.
+                  <span className="font-medium">Proteção contra Multas:</span> Evita fiscalizações e penalidades por falta de licenciamento.
                 </li>
               </ul>
             </div>
@@ -77,13 +76,13 @@ export function AtualizacaoCnpjStep() {
           content: (
             <ul className="list-disc pl-5 space-y-2 text-sm">
               <li>
-                <span className="font-medium">Quando passa a valer:</span> Após o registro na Junta Comercial e antes de iniciar as atividades formais como Microempresa.
+                <span className="font-medium">Quando passa a valer:</span> Após a atualização do CNPJ e antes do início das atividades operacionais da empresa.
               </li>
               <li>
-                <span className="font-medium">No seu caso (Migração ou Faturamento):</span> A atualização dos dados no cartão CNPJ é rápida, mas a regra dos impostos segue que você já conhece.
+                <span className="font-medium">Fique atento:</span> Algumas atividades exigem licenças antes do CNPJ, o licenciamento geralmente tem um prazo de validade (anual ou bienal, dependendo da sua cidade).
               </li>
               <li>
-                <span className="font-medium">Excesso de até 20% de faturamento:</span> Você será ME retroativamente à 1ª de janeiro do ano que vem.
+                <span className="font-medium">Até 20% de excesso:</span> Você terá a documentação de ME em mãos, mas o pagará os impostos de Microempresa em 1º de janeiro do ano que vem.
               </li>
             </ul>
           ),
@@ -93,13 +92,16 @@ export function AtualizacaoCnpjStep() {
           title: "Qual é o processo?",
           content: (
             <div className="space-y-3">
-              <p className="font-medium text-foreground">Para atualizar seu CNPJ junto à Receita Federal:</p>
+              <p className="font-medium text-foreground">Para verificar e obter as licenças necessárias:</p>
               <ol className="list-decimal pl-5 space-y-2 text-sm">
-                <li>Acesse o sistema da Receita Federal (Coleta Web)</li>
-                <li>Preencha o Documento Básico de Entrada (DBE)</li>
-                <li>Informe os dados atualizados da empresa</li>
-                <li>Envie a solicitação</li>
-                <li>Acompanhe o andamento do processo</li>
+                <li>Identifique as licenças exigidas para sua atividade</li>
+                <li>Consulte a prefeitura do seu município</li>
+                <li>Verifique a necessidade de licenças estaduais ou sanitárias</li>
+                <li>Solicite as autorizações junto aos órgãos responsáveis</li>
+                <li>Acompanhe o andamento das solicitações</li>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Observação: As exigências podem variar de acordo com a cidade e tipo de atividade exercida.
+                </p>
               </ol>
             </div>
           ),
@@ -109,12 +111,11 @@ export function AtualizacaoCnpjStep() {
           title: "Do que você irá precisar?",
           content: (
             <div className="space-y-2">
-              <p className="font-medium text-foreground">Para atualizar o CNPJ, você precisará:</p>
+              <p className="font-medium text-foreground">O licenciamento varia de acordo com o tipo de atividade e localização da empresa. Em geral, você pode precisar de:</p>
               <ul className="list-disc pl-5 space-y-1 text-sm">
-                <li>Número do CNPJ</li>
-                <li>Dados atualizados da empresa</li>
-                <li>Informações do registro na Junta Comercial</li>
-                <li>Documento Básico de Entrada (DBE)</li>
+                <li>Endereço do estabelecimento</li>
+                <li>Atividades exercidas (CNAE)</li>
+                <li>Documentos específicos exigidos por cada órgão</li>
               </ul>
               <p className="text-xs text-muted-foreground mt-2">
                 Observação: estes documentos são os mesmos definidos anteriormente.
@@ -137,67 +138,67 @@ export function AtualizacaoCnpjStep() {
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <Checkbox
-                      id="acessou-sistema"
-                      checked={checklist.acessouSistema}
-                      onCheckedChange={() => handleChecklistChange("acessouSistema")}
+                      id="verificou-atividade"
+                      checked={checklist.verificouAtividade}
+                      onCheckedChange={() => handleChecklistChange("verificouAtividade")}
                     />
                     <label
-                      htmlFor="acessou-sistema"
+                      htmlFor="verificou-atividade"
                       className="text-sm cursor-pointer text-muted-foreground"
                     >
-                      Fiz o acesso ao sistema da Receita Federal
+                      Verifiquei se minha atividade exige licenciamento
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox
-                      id="preencheu-dbe"
-                      checked={checklist.preencheuDbe}
-                      onCheckedChange={() => handleChecklistChange("preencheuDbe")}
+                      id="consultou-orgaos"
+                      checked={checklist.consultouOrgaos}
+                      onCheckedChange={() => handleChecklistChange("consultouOrgaos")}
                     />
                     <label
-                      htmlFor="preencheu-dbe"
+                      htmlFor="consultou-orgaos"
                       className="text-sm cursor-pointer text-muted-foreground"
                     >
-                      Preenchimento do Documento Básico de Entrada (DBE)
+                      Consultei os órgãos responsáveis no meu município
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox
-                      id="informou-dados"
-                      checked={checklist.informouDados}
-                      onCheckedChange={() => handleChecklistChange("informouDados")}
+                      id="solicitou-licencas"
+                      checked={checklist.solicitouLicencas}
+                      onCheckedChange={() => handleChecklistChange("solicitouLicencas")}
                     />
                     <label
-                      htmlFor="informou-dados"
+                      htmlFor="solicitou-licencas"
                       className="text-sm cursor-pointer text-muted-foreground"
                     >
-                      Revisei os dados informados
+                      Solicitei as licenças necessárias
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox
-                      id="enviou-solicitacao"
-                      checked={checklist.enviouSolicitacao}
-                      onCheckedChange={() => handleChecklistChange("enviouSolicitacao")}
+                      id="separou-documentos"
+                      checked={checklist.separouDocumentos}
+                      onCheckedChange={() => handleChecklistChange("separouDocumentos")}
                     />
                     <label
-                      htmlFor="enviou-solicitacao"
+                      htmlFor="separou-documentos"
                       className="text-sm cursor-pointer text-muted-foreground"
                     >
-                      Enviei a solicitação
+                      Separei os documentos exigidos
                     </label>
                   </div>
                   <div className="flex items-center gap-3">
                     <Checkbox
-                      id="acompanhou-status"
-                      checked={checklist.acompanhouStatus}
-                      onCheckedChange={() => handleChecklistChange("acompanhouStatus")}
+                      id="acompanhou-andamento"
+                      checked={checklist.acompanhouAndamento}
+                      onCheckedChange={() => handleChecklistChange("acompanhouAndamento")}
                     />
                     <label
-                      htmlFor="acompanhou-status"
+                      htmlFor="acompanhou-andamento"
                       className="text-sm cursor-pointer text-muted-foreground"
                     >
-                      Acompanhei o status do processo
+                      Acompanhei o andamento das solicitações
                     </label>
                   </div>
                 </div>
@@ -216,24 +217,19 @@ export function AtualizacaoCnpjStep() {
                 </p>
                 <ul className="space-y-3 text-sm">
                   <li>
-                    Verifique se os dados estão corretos antes de enviar
+                    Nem todas as empresas precisam de licenciamento específico
                   </li>
                   <li>
-                    Inconsistências podem gerar rejeição do pedido
+                    Atividades relacionadas a alimentos, saúde ou produtos químicos costumam exigir autorizações
                   </li>
                   <li>
-                    Guarde o número do protocolo para acompanhamento
+                    Verifique sempre as exigências do seu município
                   </li>
                   <li>
-                    Em caso de dúvidas, considere buscar apoio de um contador
+                    Mantenha as licenças em dia e essencial para evitar problemas legais
                   </li>
                 </ul>
               </div>
-
-              {/* Botão de ação */}
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                Acessar a Receita Federal
-              </Button>
             </div>
           </div>
         ),
@@ -244,13 +240,13 @@ export function AtualizacaoCnpjStep() {
         content: (
           <div className="space-y-3 text-sm text-muted-foreground">
             <p>
-              Certifique-se de que todos os dados estão corretos antes de enviar a solicitação. Erros podem resultar em rejeição.
+              Nem todas as empresas precisam de licenciamento específico. Verifique com a prefeitura da sua cidade se sua atividade exige alguma autorização.
             </p>
             <p>
-              Guarde o número do protocolo gerado após o envio; ele é necessário para acompanhar o andamento da atualização.
+              Atividades relacionadas a alimentos, saúde ou produtos químicos costumam exigir autorizações. Sempre consulte os órgãos responsáveis.
             </p>
             <p>
-              Após a aprovação, você receberá a confirmação de atualização do CNPJ, que estará pronto para a próxima etapa do processo de formalização.
+              Mantenha as licenças em dia e essencial para evitar problemas legais e garantir o funcionamento regular do seu negócio.
             </p>
           </div>
         ),

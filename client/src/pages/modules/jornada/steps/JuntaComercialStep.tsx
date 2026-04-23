@@ -1,9 +1,8 @@
 import { useState } from "react"
 import { StepTemplate } from "./StepTemplate"
-
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
 // ─── DADOS POR ESTADO ────────────────────────────────────────────────────────
@@ -12,37 +11,36 @@ type JuntaInfo = {
   nome: string
   site: string
   telefone: string
-  instrucao: string
 }
 
 const JUNTAS: Record<string, JuntaInfo> = {
-  AC: { nome: "JUCEAC – Acre",             site: "https://www.juceac.ac.gov.br",          telefone: "(68) 3223-1937", instrucao: "Acesse o site da JUCEAC e faça o cadastro online" },
-  AL: { nome: "JUCEAL – Alagoas",           site: "https://www.juceal.al.gov.br",          telefone: "(82) 3315-4900", instrucao: "Acesse o site da JUCEAL e faça o cadastro online" },
-  AP: { nome: "JUCAP – Amapá",             site: "https://www.jucap.ap.gov.br",           telefone: "(96) 3212-6200", instrucao: "Acesse o site da JUCAP e faça o cadastro online" },
-  AM: { nome: "JUCEA – Amazonas",           site: "https://www.jucea.am.gov.br",           telefone: "(92) 3182-4600", instrucao: "Acesse o site da JUCEA e faça o cadastro online" },
-  BA: { nome: "JUCEB – Bahia",             site: "https://www.juceb.ba.gov.br",           telefone: "(71) 3116-9600", instrucao: "Acesse o site da JUCEB e faça o cadastro online" },
-  CE: { nome: "JUCEC – Ceará",             site: "https://www.jucec.ce.gov.br",           telefone: "(85) 3101-4600", instrucao: "Acesse o site da JUCEC e faça o cadastro online" },
-  DF: { nome: "JUCDF – Distrito Federal",  site: "https://www.jucdf.df.gov.br",           telefone: "(61) 3362-2700", instrucao: "Acesse o site da JUCDF e faça o cadastro online" },
-  ES: { nome: "JUCEES – Espírito Santo",   site: "https://www.jucees.es.gov.br",          telefone: "(27) 3636-1700", instrucao: "Acesse o site da JUCEES e faça o cadastro online" },
-  GO: { nome: "JUCEG – Goiás",             site: "https://www.juceg.go.gov.br",           telefone: "(62) 3201-8800", instrucao: "Acesse o site da JUCEG e faça o cadastro online" },
-  MA: { nome: "JUCEMA – Maranhão",         site: "https://www.jucema.ma.gov.br",          telefone: "(98) 3219-6900", instrucao: "Acesse o site da JUCEMA e faça o cadastro online" },
-  MT: { nome: "JUCEMAT – Mato Grosso",     site: "https://www.jucemat.mt.gov.br",         telefone: "(65) 3613-8000", instrucao: "Acesse o site da JUCEMAT e faça o cadastro online" },
-  MS: { nome: "JUCEMS – Mato Grosso do Sul", site: "https://www.jucems.ms.gov.br",        telefone: "(67) 3318-1900", instrucao: "Acesse o site da JUCEMS e faça o cadastro online" },
-  MG: { nome: "JUCEMG – Minas Gerais",    site: "https://www.jucemg.mg.gov.br",          telefone: "(31) 3915-9900", instrucao: "Acesse o site da JUCEMG e faça o cadastro online" },
-  PA: { nome: "JUCEPA – Pará",             site: "https://www.jucepa.pa.gov.br",          telefone: "(91) 3202-0600", instrucao: "Acesse o site da JUCEPA e faça o cadastro online" },
-  PB: { nome: "JUCEP – Paraíba",           site: "https://www.jucep.pb.gov.br",           telefone: "(83) 3208-7800", instrucao: "Acesse o site da JUCEP e faça o cadastro online" },
-  PR: { nome: "JUCEPAR – Paraná",          site: "https://www.jucepar.pr.gov.br",         telefone: "(41) 3200-4800", instrucao: "Acesse o site da JUCEPAR e faça o cadastro online" },
-  PE: { nome: "JUCEPE – Pernambuco",       site: "https://www.jucepe.pe.gov.br",          telefone: "(81) 3182-0900", instrucao: "Acesse o site da JUCEPE e faça o cadastro online" },
-  PI: { nome: "JUCEPI – Piauí",            site: "https://www.jucepi.pi.gov.br",          telefone: "(86) 3216-3600", instrucao: "Acesse o site da JUCEPI e faça o cadastro online" },
-  RJ: { nome: "JUCERJA – Rio de Janeiro", site: "https://www.jucerja.rj.gov.br",         telefone: "(21) 2332-9000", instrucao: "Acesse o site da JUCERJA e faça o cadastro online" },
-  RN: { nome: "JUCERN – Rio Grande do Norte", site: "https://www.jucern.rn.gov.br",      telefone: "(84) 3232-0200", instrucao: "Acesse o site da JUCERN e faça o cadastro online" },
-  RS: { nome: "JUCERGS – Rio Grande do Sul", site: "https://www.jucergs.rs.gov.br",      telefone: "(51) 3210-2000", instrucao: "Acesse o site da JUCERGS e faça o cadastro online" },
-  RO: { nome: "JUCER – Rondônia",          site: "https://www.jucer.ro.gov.br",           telefone: "(69) 3216-5400", instrucao: "Acesse o site da JUCER e faça o cadastro online" },
-  RR: { nome: "JUCERR – Roraima",          site: "https://www.jucerr.rr.gov.br",          telefone: "(95) 3623-3200", instrucao: "Acesse o site da JUCERR e faça o cadastro online" },
-  SC: { nome: "JUCESC – Santa Catarina",   site: "https://www.jucesc.sc.gov.br",          telefone: "(48) 3665-2900", instrucao: "Acesse o site da JUCESC e faça o cadastro online" },
-  SP: { nome: "JUCESP – São Paulo",        site: "https://www.institucional.jucesp.sp.gov.br", telefone: "(11) 3241-5000", instrucao: "Acesse o site da JUCESP e faça o cadastro online" },
-  SE: { nome: "JUCESE – Sergipe",          site: "https://www.jucese.se.gov.br",          telefone: "(79) 3226-3200", instrucao: "Acesse o site da JUCESE e faça o cadastro online" },
-  TO: { nome: "JUCETO – Tocantins",        site: "https://www.juceto.to.gov.br",          telefone: "(63) 3218-3500", instrucao: "Acesse o site da JUCETO e faça o cadastro online" },
+  AC: { nome: "JUCEAC – Acre",             site: "https://www.juceac.ac.gov.br",          telefone: "(68) 3223-1937" },
+  AL: { nome: "JUCEAL – Alagoas",           site: "https://www.juceal.al.gov.br",          telefone: "(82) 3315-4900" },
+  AP: { nome: "JUCAP – Amapá",             site: "https://www.jucap.ap.gov.br",           telefone: "(96) 3212-6200" },
+  AM: { nome: "JUCEA – Amazonas",           site: "https://www.jucea.am.gov.br",           telefone: "(92) 3182-4600" },
+  BA: { nome: "JUCEB – Bahia",             site: "https://www.juceb.ba.gov.br",           telefone: "(71) 3116-9600" },
+  CE: { nome: "JUCEC – Ceará",             site: "https://www.jucec.ce.gov.br",           telefone: "(85) 3101-4600" },
+  DF: { nome: "JUCDF – Distrito Federal",  site: "https://www.jucdf.df.gov.br",           telefone: "(61) 3362-2700" },
+  ES: { nome: "JUCEES – Espírito Santo",   site: "https://www.jucees.es.gov.br",          telefone: "(27) 3636-1700" },
+  GO: { nome: "JUCEG – Goiás",             site: "https://www.juceg.go.gov.br",           telefone: "(62) 3201-8800" },
+  MA: { nome: "JUCEMA – Maranhão",         site: "https://www.jucema.ma.gov.br",          telefone: "(98) 3219-6900" },
+  MT: { nome: "JUCEMAT – Mato Grosso",     site: "https://www.jucemat.mt.gov.br",         telefone: "(65) 3613-8000" },
+  MS: { nome: "JUCEMS – Mato Grosso do Sul", site: "https://www.jucems.ms.gov.br",        telefone: "(67) 3318-1900" },
+  MG: { nome: "JUCEMG – Minas Gerais",    site: "https://www.jucemg.mg.gov.br",          telefone: "(31) 3915-9900" },
+  PA: { nome: "JUCEPA – Pará",             site: "https://www.jucepa.pa.gov.br",          telefone: "(91) 3202-0600" },
+  PB: { nome: "JUCEP – Paraíba",           site: "https://www.jucep.pb.gov.br",           telefone: "(83) 3208-7800" },
+  PR: { nome: "JUCEPAR – Paraná",          site: "https://www.jucepar.pr.gov.br",         telefone: "(41) 3200-4800" },
+  PE: { nome: "JUCEPE – Pernambuco",       site: "https://www.jucepe.pe.gov.br",          telefone: "(81) 3182-0900" },
+  PI: { nome: "JUCEPI – Piauí",            site: "https://www.jucepi.pi.gov.br",          telefone: "(86) 3216-3600" },
+  RJ: { nome: "JUCERJA – Rio de Janeiro", site: "https://www.jucerja.rj.gov.br",         telefone: "(21) 2332-9000" },
+  RN: { nome: "JUCERN – Rio Grande do Norte", site: "https://www.jucern.rn.gov.br",      telefone: "(84) 3232-0200" },
+  RS: { nome: "JUCERGS – Rio Grande do Sul", site: "https://www.jucergs.rs.gov.br",      telefone: "(51) 3210-2000" },
+  RO: { nome: "JUCER – Rondônia",          site: "https://www.jucer.ro.gov.br",           telefone: "(69) 3216-5400" },
+  RR: { nome: "JUCERR – Roraima",          site: "https://www.jucerr.rr.gov.br",          telefone: "(95) 3623-3200" },
+  SC: { nome: "JUCESC – Santa Catarina",   site: "https://www.jucesc.sc.gov.br",          telefone: "(48) 3665-2900" },
+  SP: { nome: "JUCESP – São Paulo",        site: "https://www.institucional.jucesp.sp.gov.br", telefone: "(11) 3241-5000" },
+  SE: { nome: "JUCESE – Sergipe",          site: "https://www.jucese.se.gov.br",          telefone: "(79) 3226-3200" },
+  TO: { nome: "JUCETO – Tocantins",        site: "https://www.juceto.to.gov.br",          telefone: "(63) 3218-3500" },
 }
 
 const ESTADOS_LABEL: Record<string, string> = {
@@ -59,22 +57,38 @@ const ESTADOS_LABEL: Record<string, string> = {
 
 export function JuntaComercialStep() {
   const [estado, setEstado] = useState("SP")
-  const [protocolo, setProtocolo] = useState("")
-  const [protocoloSalvo, setProtocoloSalvo] = useState("")
+  const [checklist, setChecklist] = useState({
+    acessouPortal: false,
+    preencheuDados: false,
+    enviouDocumentos: false,
+    realizouPagamentos: false,
+    acompanhouStatus: false,
+  })
 
   const junta = JUNTAS[estado]
+
+  const handleChecklistChange = (key: keyof typeof checklist) => {
+    setChecklist((prev) => ({ ...prev, [key]: !prev[key] }))
+  }
 
   // ── HEADER ──────────────────────────────────────────────────────────────────
 
   const header = (
-    <Card className="border-l-4 border-primary">
+    <Card className="border-l-4 border-green-500 bg-green-50 dark:bg-green-950/20">
       <CardContent className="p-4">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">🏛</span>
-          <div>
-            <p className="font-medium text-sm">Registro na Junta Comercial</p>
-            <p className="text-xs text-muted-foreground">
-              Registre sua empresa na Junta Comercial do seu estado
+        <div className="flex items-start gap-3">
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-900 text-white font-bold text-lg">
+            4
+          </div>
+          <div className="flex-1">
+            <p className="font-bold text-lg text-green-900 dark:text-green-100">
+              Registro na Junta Comercial
+            </p>
+            <p className="text-sm text-green-800 dark:text-green-200 mt-1">
+              Parabéns! Esta etapa foi concluída!
+            </p>
+            <p className="text-xs text-green-700 dark:text-green-300 mt-2">
+              O registro na Junta Comercial é o processo que formaliza legalmente a existência da empresa. Em São Paulo, esse registro é realizado pela JUCESP (Junta Comercial do Estado de São Paulo).
             </p>
           </div>
         </div>
@@ -88,60 +102,88 @@ export function JuntaComercialStep() {
 
       sections={{
         whatIs: {
-          title: "O que é a Junta Comercial?",
+          title: "Por que isso é necessário?",
           content: (
-            <>
-              A Junta Comercial é o órgão estadual responsável pelo registro e
-              legalização de empresas. É obrigatório registrar sua empresa na Junta
-              do estado onde ela irá operar para que ela tenha existência legal.
-            </>
+            <div className="space-y-3">
+              <p>
+                Somente após o registro na Junta Comercial sua empresa passa a existir legalmente. Esse registro é necessário para obter o CNPJ e dar continuidade ao processo de formalização. E uma empresa sem registro é inválida legalmente.
+              </p>
+              <p className="font-medium text-foreground">Por que é importante?</p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                <li>
+                  <span className="font-medium">Proteção do Nome:</span> Garante que nenhuma outra empresa no seu estado possa usar o mesmo nome.
+                </li>
+                <li>
+                  <span className="font-medium">Credibilidade e Bancos:</span> Com o registro em mãos, você libera acesso a contas bancárias, benefícios empresariais e crédito para fornecedores.
+                </li>
+                <li>
+                  <span className="font-medium">Segurança Jurídica:</span> Protege você e seus sócios legalmente, transferindo responsabilidades para a empresa.
+                </li>
+              </ul>
+            </div>
           ),
         },
 
         why: {
-          title: "Por que isso é necessário?",
+          title: "Quando isso irá se aplicar?",
           content: (
-            <>
-              Sem o registro na Junta Comercial, sua empresa não possui CNPJ ativo
-              como Microempresa (ME) e não pode emitir notas fiscais, abrir conta
-              bancária empresarial ou celebrar contratos formais.
-            </>
+            <ul className="list-disc pl-5 space-y-2 text-sm">
+              <li>
+                <span className="font-medium">Quando passa a valer:</span> As novas definições da sua empresa (o novo Nome Empresarial e Capital Social) passam a valer imediatamente após a aprovação do processo pela Junta Comercial.
+              </li>
+              <li>
+                <span className="font-medium">No seu caso:</span> A mudança de "Cambio" na Junta é imediata, mas o impacto nos seus impostos segue a regra de faturamento que você já conhece.
+              </li>
+              <li>
+                <span className="font-medium">Até 20% de excesso:</span> Você terá o documento de ME em mãos, mas o pagará os impostos de Microempresa em 1º de janeiro do ano que vem.
+              </li>
+            </ul>
           ),
         },
 
         when: {
-          title: "Quando fazer?",
+          title: "Qual é o processo?",
           content: (
-            <>
-              O registro deve ser feito logo após a elaboração do Contrato Social.
-              O prazo de análise varia por estado — geralmente entre 3 e 15 dias úteis.
-              Após aprovado, você receberá o NIRE (Número de Identificação do Registro
-              de Empresa).
-            </>
+            <div className="space-y-3">
+              <p className="font-medium text-foreground">Para registrar sua empresa na Junta Comercial de São Paulo:</p>
+              <ol className="list-decimal pl-5 space-y-2 text-sm">
+                <li>Acesse o portal da JUCESP</li>
+                <li>Realize o cadastro (se necessário)</li>
+                <li>Preencha os dados da empresa</li>
+                <li>Anexe o contrato social e demais documentos</li>
+                <li>Efetue o pagamento das taxas</li>
+                <li>Acompanhe o status do processo</li>
+              </ol>
+            </div>
           ),
         },
 
         requirements: {
-          title: "O que você vai precisar?",
+          title: "Do que você irá precisar?",
           content: (
-            <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
-              <li>Contrato Social assinado por todos os sócios</li>
-              <li>RG e CPF de todos os sócios</li>
-              <li>Comprovante de endereço da sede da empresa</li>
-              <li>Requerimento de empresário (para empresário individual)</li>
-              <li>Declaração de desimpedimento dos sócios</li>
-            </ul>
+            <div className="space-y-2">
+              <p className="font-medium text-foreground">Para realizar o registro da empresa, você precisará:</p>
+              <ul className="list-disc pl-5 space-y-1 text-sm">
+                <li>Contrato social assinado</li>
+                <li>Dados dos sócios (se houver)</li>
+                <li>Dados da empresa</li>
+                <li>Pagamento das taxas de registro</li>
+              </ul>
+              <p className="text-xs text-muted-foreground mt-2">
+                Observação: estes documentos são os mesmos definidos anteriormente.
+              </p>
+            </div>
           ),
         },
       }}
 
       howTo={{
-        title: "Registro na Junta Comercial",
+        title: "Como fazer?",
         content: (
           <div className="space-y-5">
 
-            {/* Seletor de estado + instruções */}
-            <div className="grid md:grid-cols-2 gap-4">
+            {/* SELEÇÃO DE ESTADO E INFORMAÇÕES DE CONTATO */}
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label>Selecione seu Estado:</Label>
                 <select
@@ -155,22 +197,13 @@ export function JuntaComercialStep() {
                 </select>
               </div>
 
-              <div className="space-y-2">
-                <Label>Instruções Específicas:</Label>
-                <div className="flex h-10 items-center rounded-md border border-input bg-muted/40 px-3 text-sm text-muted-foreground">
-                  {junta.instrucao}
-                </div>
-              </div>
-            </div>
-
-            {/* Informações de contato */}
-            <div className="grid md:grid-cols-2 gap-4">
+              {/* Informações de Contato */}
               <div className="space-y-3">
-                <p className="font-medium text-sm">Informações de contato:</p>
+                <p className="font-medium text-sm text-foreground">Informações de contato:</p>
 
                 <div className="flex items-center gap-3 text-sm">
                   <span className="text-lg">🏛</span>
-                  <span>{junta.nome}</span>
+                  <span className="text-foreground">{junta.nome}</span>
                 </div>
 
                 <div className="flex items-center gap-3 text-sm">
@@ -187,49 +220,119 @@ export function JuntaComercialStep() {
 
                 <div className="flex items-center gap-3 text-sm">
                   <span className="text-lg">📞</span>
-                  <span>{junta.telefone}</span>
+                  <span className="text-foreground">{junta.telefone}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* CHECKLIST E RECOMENDAÇÕES */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Coluna Esquerda */}
+              <div className="space-y-4">
+                <div>
+                  <p className="font-medium text-sm text-foreground mb-3">
+                    Checklist desta etapa:
+                  </p>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="acessou-portal"
+                        checked={checklist.acessouPortal}
+                        onCheckedChange={() => handleChecklistChange("acessouPortal")}
+                      />
+                      <label
+                        htmlFor="acessou-portal"
+                        className="text-sm cursor-pointer text-muted-foreground"
+                      >
+                        Fiz o acesso ao Portal da Junta Comercial
+                      </label>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="preencheu-dados"
+                        checked={checklist.preencheuDados}
+                        onCheckedChange={() => handleChecklistChange("preencheuDados")}
+                      />
+                      <label
+                        htmlFor="preencheu-dados"
+                        className="text-sm cursor-pointer text-muted-foreground"
+                      >
+                        Fiz o preenchimento de dados da empresa
+                      </label>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="enviou-documentos"
+                        checked={checklist.enviouDocumentos}
+                        onCheckedChange={() => handleChecklistChange("enviouDocumentos")}
+                      />
+                      <label
+                        htmlFor="enviou-documentos"
+                        className="text-sm cursor-pointer text-muted-foreground"
+                      >
+                        Enviei os documentos necessários
+                      </label>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="realizou-pagamentos"
+                        checked={checklist.realizouPagamentos}
+                        onCheckedChange={() => handleChecklistChange("realizouPagamentos")}
+                      />
+                      <label
+                        htmlFor="realizou-pagamentos"
+                        className="text-sm cursor-pointer text-muted-foreground"
+                      >
+                        Realizei os pagamentos das taxas
+                      </label>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="acompanhou-status"
+                        checked={checklist.acompanhouStatus}
+                        onCheckedChange={() => handleChecklistChange("acompanhouStatus")}
+                      />
+                      <label
+                        htmlFor="acompanhou-status"
+                        className="text-sm cursor-pointer text-muted-foreground"
+                      >
+                        Acompanhei o status do registro
+                      </label>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Lembrete automático */}
-                <Card className="border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20 mt-2">
-                  <CardContent className="p-3 flex gap-2 items-start">
-                    <span className="text-yellow-500 text-base">🕐</span>
-                    <div>
-                      <p className="text-sm font-medium text-yellow-700 dark:text-yellow-400">
-                        Lembrete Automático
-                      </p>
-                      <p className="text-xs text-yellow-600 dark:text-yellow-500">
-                        Você receberá um lembrete 3 dias antes do prazo de vencimento.
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <p className="text-xs text-muted-foreground italic">
+                  Observação: O preenchimento de todos os itens acima indica que você está pronto para seguir para a próxima etapa.
+                </p>
               </div>
 
-              {/* Registrar protocolo */}
-              <div className="space-y-2">
-                <p className="font-medium text-sm">Registrar protocolo:</p>
-                <Label className="text-xs text-muted-foreground">Número do protocolo:</Label>
-                <Input
-                  placeholder="Exemplo: 2025123456789"
-                  value={protocolo}
-                  onChange={(e) => setProtocolo(e.target.value)}
-                />
-                <Button
-                  className="w-full bg-green-600 hover:bg-green-700 text-white mt-1"
-                  onClick={() => {
-                    if (protocolo.trim()) {
-                      setProtocoloSalvo(protocolo.trim())
-                    }
-                  }}
-                >
-                  Registrar Protocolo
-                </Button>
-                {protocoloSalvo && (
-                  <p className="text-xs text-green-600 dark:text-green-400">
-                    ✓ Protocolo {protocoloSalvo} registrado com sucesso.
+              {/* Coluna Direita */}
+              <div className="space-y-4">
+                <div>
+                  <p className="font-medium text-sm text-foreground mb-3">
+                    Recomendações e pontos de atenção
                   </p>
-                )}
+                  <ul className="space-y-3 text-sm">
+                    <li>
+                      Verifique se todos os dados estão corretos antes de enviar
+                    </li>
+                    <li>
+                      Erros no contrato social podem impedir a aprovação
+                    </li>
+                    <li>
+                      O prazo de análise pode variar
+                    </li>
+                    <li>
+                      Guarde o número do protocolo para acompanhamento
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Botão de ação */}
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                  Acessar o Portal
+                </Button>
               </div>
             </div>
 
@@ -240,19 +343,15 @@ export function JuntaComercialStep() {
       tips={{
         title: "Dicas importantes",
         content: (
-          <div className="space-y-2 text-muted-foreground">
+          <div className="space-y-3 text-sm text-muted-foreground">
             <p>
-              Verifique se o nome empresarial está disponível antes de protocolar —
-              consulte o sistema de viabilidade da Junta do seu estado.
+              Verifique se o nome empresarial está disponível antes de protocolar — consulte o sistema de viabilidade da Junta do seu estado.
             </p>
             <p>
-              Guarde o número do protocolo gerado após o envio; ele é necessário para
-              acompanhar o andamento do registro.
+              Guarde o número do protocolo gerado após o envio; ele é necessário para acompanhar o andamento do registro.
             </p>
             <p>
-              Após a aprovação, você receberá o <strong className="text-foreground">NIRE</strong> (Número de
-              Identificação do Registro de Empresa), necessário para a próxima etapa:
-              Atualização do CNPJ na Receita Federal.
+              Após a aprovação, você receberá o <strong className="text-foreground">NIRE</strong> (Número de Identificação do Registro de Empresa), necessário para a próxima etapa: Atualização do CNPJ na Receita Federal.
             </p>
           </div>
         ),

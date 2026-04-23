@@ -6,13 +6,13 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 // ─── COMPONENTE ───────────────────────────────────────────────────────────────
 
-export function ContratoSocialStep() {
+export function DefinicaoEmpresaStep() {
   const [checklist, setChecklist] = useState({
-    compreendeuContrato: false,
-    separacaoInformacoes: false,
-    usouModelo: false,
-    revisaoDocumento: false,
-    geracaoFinal: false,
+    tipoEmpresa: false,
+    possuidorSocios: false,
+    atividadesCnae: false,
+    informacoesSocios: false,
+    endereco: false,
   })
 
   const handleChecklistChange = (key: keyof typeof checklist) => {
@@ -22,21 +22,21 @@ export function ContratoSocialStep() {
   // ── HEADER ──────────────────────────────────────────────────────────────────
 
   const header = (
-    <Card className="border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-950/20">
+    <Card className="border-l-4 border-green-500 bg-green-50 dark:bg-green-950/20">
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-amber-900 text-white font-bold text-lg">
-            3
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-900 text-white font-bold text-lg">
+            2
           </div>
           <div className="flex-1">
-            <p className="font-bold text-lg text-amber-900 dark:text-amber-100">
-              Geração do Contrato Social
+            <p className="font-bold text-lg text-green-900 dark:text-green-100">
+              Definição da Nova Empresa
             </p>
-            <p className="text-sm text-amber-800 dark:text-amber-200 mt-1">
-              Atenção, seu contrato social está em andamento.
+            <p className="text-sm text-green-800 dark:text-green-200 mt-1">
+              Muito bom! Os dados da nova empresa estão definidos!
             </p>
-            <p className="text-xs text-amber-700 dark:text-amber-300 mt-2">
-              O contrato social é o documento que formaliza a criação da empresa, definindo suas regras de funcionamento, atividades, responsabilidades dos sócios e demais informações essenciais.
+            <p className="text-xs text-green-700 dark:text-green-300 mt-2">
+              Nesta etapa, você irá definir as informações básicas da sua nova empresa, como tipo jurídico, atividades exercidas e capital social. Esses dados serão utilizados nas próximas etapas do processo.
             </p>
           </div>
         </div>
@@ -54,18 +54,18 @@ export function ContratoSocialStep() {
           content: (
             <div className="space-y-3">
               <p>
-                Sem o contrato social, não é possível registrar a empresa na Junta Comercial. Ele é a base legal da empresa e será utilizado em diversas etapas do processo. Além disso, é fundamental.
+                As informações definidas aqui impactam diretamente na formalização da empresa. Elas são essenciais para as obrigações legais.
               </p>
-              <p className="font-medium text-foreground">Por que é importante?</p>
+              <p className="font-medium text-foreground">Por que cada é crucial?</p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
                 <li>
-                  <span className="font-medium">Identidade e Regras:</span> Serve como "RG" da empresa, definindo quem são os sócios e decisões são tomadas.
+                  <span className="font-medium">Tipo de Empresa:</span> Determina como sua empresa será constituída (SLU ou ME com sócios). Isso determinará como seu patrimônio pessoal está protegido.
                 </li>
                 <li>
-                  <span className="font-medium">Segurança Patrimonial:</span> Durante a separação legal entre seus bens pessoais (seus) e patrimônio da empresa.
+                  <span className="font-medium">Enquadramento Tributário:</span> Você poderá optar pelo Simples Nacional, garantindo alíquotas reduzidas, mas com regras diferentes das MEI.
                 </li>
                 <li>
-                  <span className="font-medium">Proteção Legal:</span> Define responsabilidades e direitos de cada sócio em caso de conflitos ou dissoluções.
+                  <span className="font-medium">Planejamento de Custos:</span> Cada escolha aqui influencia o valor dos impostos mensais e a necessidade de contáveis especializados.
                 </li>
               </ul>
             </div>
@@ -77,10 +77,13 @@ export function ContratoSocialStep() {
           content: (
             <ul className="list-disc pl-5 space-y-2 text-sm">
               <li>
-                <span className="font-medium">Quando passa a valer:</span> Será válido assim que for aprovado pela Junta Comercial. E esse registro que oficializa você como Microempresa (ME).
+                <span className="font-medium">Quando passa a valer:</span> A nova definição (nome empresarial, capital social, sócios) passa a valer a partir do registro na Junta Comercial do seu estado.
               </li>
               <li>
-                <span className="font-medium">No seu caso, Novos Impostos (Regra de Faturamento):</span> Vendeu até R$97.200: Você continua como MEI até dezembro. As novas regras e impostos só entram em 1º de janeiro do ano que vem.
+                <span className="font-medium">No seu caso:</span> Você deve um desenquadramento por quê? Enquanto isso, até 20% de excesso: a definição da nova empresa e os novos impostos passam a valer em 1º de janeiro do seguinte.
+              </li>
+              <li>
+                <span className="font-medium">Até 20% de excesso:</span> A validade é retroativa a 1º de janeiro do ano atual. O usuário "virá" ME retroativamente e precisa ajustar as contas do passado.
               </li>
             </ul>
           ),
@@ -90,15 +93,13 @@ export function ContratoSocialStep() {
           title: "Qual é o processo?",
           content: (
             <div className="space-y-3">
-              <p className="font-medium text-foreground">Para elaborar o contrato social:</p>
+              <p className="font-medium text-foreground">Para definir sua nova empresa, siga os passos abaixo:</p>
               <ol className="list-decimal pl-5 space-y-2 text-sm">
-                <li>Utilize um modelo de contrato adequado ao tipo de empresa</li>
-                <li>Preencha as informações da empresa e dos sócios</li>
-                <li>Revise todas as cláusulas do documento</li>
-                <li>Gere o documento final para assinatura</li>
-                <li>
-                  Observação: Você pode encontrar modelos de contrato social em sites oficiais, juntas comerciais ou contator funcionários.
-                </li>
+                <li>Escolha o tipo jurídico da empresa.</li>
+                <li>Defina se haverá sócios.</li>
+                <li>Determine o capital social.</li>
+                <li>Selecione as atividades que a empresa irá exercer (CNAE).</li>
+                <li>Informe o endereço da empresa.</li>
               </ol>
             </div>
           ),
@@ -108,18 +109,17 @@ export function ContratoSocialStep() {
           title: "Do que você irá precisar?",
           content: (
             <ul className="list-disc pl-5 space-y-2 text-sm">
-              <li>Dados dos sócios (se houver)</li>
-              <li>Dados da empresa (CNAE)</li>
-              <li>Atividades exercidas (CNAE)</li>
-              <li>Capital social</li>
-              <li>Endereço da empresa</li>
+              <li>Dados pessoais</li>
+              <li>Endereço da empresa (atualizado).</li>
+              <li>Atividades exercidas (CNAE) que sejam válidas.</li>
+              <li>Informações sobre sócios (se houver).</li>
             </ul>
           ),
         },
       }}
 
       howTo={{
-        title: "Como fazer?",
+        title: "Recomendações e pontos de atenção",
         content: (
           <div className="space-y-5">
             <div className="grid md:grid-cols-2 gap-6">
@@ -132,67 +132,67 @@ export function ContratoSocialStep() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <Checkbox
-                        id="compreendeu-contrato"
-                        checked={checklist.compreendeuContrato}
-                        onCheckedChange={() => handleChecklistChange("compreendeuContrato")}
+                        id="tipo-empresa"
+                        checked={checklist.tipoEmpresa}
+                        onCheckedChange={() => handleChecklistChange("tipoEmpresa")}
                       />
                       <label
-                        htmlFor="compreendeu-contrato"
+                        htmlFor="tipo-empresa"
                         className="text-sm cursor-pointer text-muted-foreground"
                       >
-                        Pude compreender o que é um Contrato Social
+                        A definição do tipo de empresa foi feita.
                       </label>
                     </div>
                     <div className="flex items-center gap-3">
                       <Checkbox
-                        id="separacao-informacoes"
-                        checked={checklist.separacaoInformacoes}
-                        onCheckedChange={() => handleChecklistChange("separacaoInformacoes")}
+                        id="possuidor-socios"
+                        checked={checklist.possuidorSocios}
+                        onCheckedChange={() => handleChecklistChange("possuidorSocios")}
                       />
                       <label
-                        htmlFor="separacao-informacoes"
+                        htmlFor="possuidor-socios"
                         className="text-sm cursor-pointer text-muted-foreground"
                       >
-                        Fiz a separação de informações necessárias
+                        A definição de possuir sócios ou não foi feita.
                       </label>
                     </div>
                     <div className="flex items-center gap-3">
                       <Checkbox
-                        id="usou-modelo"
-                        checked={checklist.usouModelo}
-                        onCheckedChange={() => handleChecklistChange("usouModelo")}
+                        id="atividades-cnae"
+                        checked={checklist.atividadesCnae}
+                        onCheckedChange={() => handleChecklistChange("atividadesCnae")}
                       />
                       <label
-                        htmlFor="usou-modelo"
+                        htmlFor="atividades-cnae"
                         className="text-sm cursor-pointer text-muted-foreground"
                       >
-                        Fiz uso de um modelo adequado
+                        As atividades (CNAE) foram definidas.
                       </label>
                     </div>
                     <div className="flex items-center gap-3">
                       <Checkbox
-                        id="revisao-documento"
-                        checked={checklist.revisaoDocumento}
-                        onCheckedChange={() => handleChecklistChange("revisaoDocumento")}
+                        id="informacoes-socios"
+                        checked={checklist.informacoesSocios}
+                        onCheckedChange={() => handleChecklistChange("informacoesSocios")}
                       />
                       <label
-                        htmlFor="revisao-documento"
+                        htmlFor="informacoes-socios"
                         className="text-sm cursor-pointer text-muted-foreground"
                       >
-                        Fiz a revisão do documento
+                        O endereço atualizado foi definido.
                       </label>
                     </div>
                     <div className="flex items-center gap-3">
                       <Checkbox
-                        id="geracao-final"
-                        checked={checklist.geracaoFinal}
-                        onCheckedChange={() => handleChecklistChange("geracaoFinal")}
+                        id="endereco"
+                        checked={checklist.endereco}
+                        onCheckedChange={() => handleChecklistChange("endereco")}
                       />
                       <label
-                        htmlFor="geracao-final"
+                        htmlFor="endereco"
                         className="text-sm cursor-pointer text-muted-foreground"
                       >
-                        Pude fazer a geração do contrato final
+                        O endereço atualizado foi definido.
                       </label>
                     </div>
                   </div>
@@ -211,16 +211,16 @@ export function ContratoSocialStep() {
                   </p>
                   <ul className="space-y-3 text-sm">
                     <li>
-                      Revise atentamente os dados antes de finalizar
+                      <span className="font-medium text-foreground">CNAE:</span> Escolha com atenção para evitar multas fiscais.
                     </li>
                     <li>
-                      Erros no contrato podem impedir o registro da empresa
+                      <span className="font-medium text-foreground">Tipo Jurídico:</span> Define responsabilidades legais. Se estiver sozinho, a SLU é a melhor opção para proteger seus bens pessoais.
                     </li>
                     <li>
-                      Defina claramente as responsabilidades dos sócios
+                      <span className="font-medium text-foreground">Capital Social:</span> Defina um valor real e compatível com seu investimento e atividades escolhidas.
                     </li>
                     <li>
-                      Sempre que possível, conte com apoio de um contador
+                      <span className="font-medium text-foreground">Contador:</span> É obrigatório por lei. Um bom profissional evita que você pague impostos desnecessários.
                     </li>
                   </ul>
                 </div>
@@ -241,7 +241,7 @@ export function ContratoSocialStep() {
               Guarde o número do protocolo gerado após o envio; ele é necessário para acompanhar o andamento do registro.
             </p>
             <p>
-              Após a aprovação, você receberá o <strong className="text-foreground">NIRE</strong> (Número de Identificação do Registro de Empresa), necessário para a próxima etapa: Registro na Junta Comercial.
+              Após a aprovação, você receberá o <strong className="text-foreground">NIRE</strong> (Número de Identificação do Registro de Empresa), necessário para a próxima etapa: Geração do Contrato Social.
             </p>
           </div>
         ),
