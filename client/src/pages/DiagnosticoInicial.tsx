@@ -407,10 +407,10 @@ export function DiagInicial() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className='max-w-2xl max-h-[80vh] overflow-y-auto'>
           <DialogHeader>
-            <DialogTitle className='text-gray-900'>
+            <DialogTitle className='text-primary'>
               Resultado do Diagnóstico
             </DialogTitle>
-            <p className='text-sm text-gray-600'>
+            <p className='text-sm text-muted-foreground'>
               O usuário está{" "}
               <span
                 className={`font-semibold text-sm ${analise?.status === "APTO" ? "text-[#49af50]" : "text-red-700"}`}
@@ -422,17 +422,17 @@ export function DiagInicial() {
           </DialogHeader>
 
           <div className='mt-4'>
-            <DialogDescription className='text-gray-600'>
+            <DialogDescription className='text-muted-foreground'>
               {analise?.analise}.
             </DialogDescription>
           </div>
 
           {analise?.motivos && analise.motivos.length > 0 && (
             <div className='space-y-2 '>
-              <p className='font-semibold text-gray-800'>Regras violadas:</p>
+              <p className='font-semibold text-primary'>Regras violadas:</p>
               <ul className='list-disc pl-4 space-y-1'>
                 {analise.motivos.map((motivo, i) => (
-                  <li key={i} className='text-sm text-gray-700'>
+                  <li key={i} className='text-sm text-muted-foreground'>
                     {motivo.regra}
                   </li>
                 ))}
