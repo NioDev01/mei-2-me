@@ -10,6 +10,7 @@ import { SimuladorRegimesModule } from './modules/simulador-regimes/simulador-re
 import { JornadaModule } from './modules/jornada/jornada.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChecklistDocumentosModule } from './modules/checklist-documentos/checklist-documentos.module';
+import { AiModule } from './modules/ai/ai.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ChecklistDocumentosModule } from './modules/checklist-documentos/checkl
     SimuladorRegimesModule,
     ChecklistDocumentosModule,
     JornadaModule,
+    AiModule,
   ],
   providers: [ReceitawsApiService],
 })
