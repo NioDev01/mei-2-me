@@ -161,6 +161,7 @@ export function Checklist() {
     null,
   );
   const [isInitialized, setIsInitialized] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   const form = useForm<ChecklistFormData>({
     resolver: zodResolver(checklistSchema),
@@ -184,6 +185,21 @@ export function Checklist() {
 
   const watchedValues = watch();
 
+  const checklistFields = [
+    watchedValues.possui_rg,
+    watchedValues.possui_cpf,
+    watchedValues.possui_comprovante_residencia,
+    watchedValues.possui_cartao_cnpj,
+    watchedValues.comunicacao_desenquadramento_simei,
+    watchedValues.formulario_capa_marrom,
+    watchedValues.requerimento_desenquadramento,
+    watchedValues.comprovante_pagamento_dare,
+    watchedValues.contrato_social,
+    watchedValues.possui_ccmei,
+    watchedValues.possui_cadesp,
+    watchedValues.comprovante_situacao_simples_nacional,
+  ];
+
   const totalDocs = documents.length;
   const checkedDocs = Object.entries(watchedValues).filter(
     ([key, value]) => key !== "id_mei" && value === true,
@@ -193,10 +209,10 @@ export function Checklist() {
   const onSubmit = async (values: ChecklistFormData) => {
     try {
       await api.post("checklist-documentos", values);
-      toast("Checklist salvo com sucesso!");
+      if (hasInteracted) toast.success("Checklist salvo com sucesso!");
     } catch (err) {
       console.error(`Erro ao salvar o checklist: ${err}`);
-      toast("Ocorreu um erro ao tentar salvar o checklist");
+      toast.error("Ocorreu um erro ao tentar salvar o checklist");
     }
   };
 
@@ -214,6 +230,7 @@ export function Checklist() {
 
     if (fieldName) {
       const currentValue = watchedValues[fieldName];
+      setHasInteracted(true);
       setValue(fieldName, !currentValue, {
         shouldValidate: true,
         shouldDirty: true,
@@ -249,7 +266,7 @@ export function Checklist() {
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [watchedValues, isInitialized]);
+  }, [isInitialized, ...checklistFields]);
 
   return (
     <div className='w-full space-y-8 pt-3'>
@@ -296,6 +313,7 @@ export function Checklist() {
                     </CardDescription>
                   </div>
                   <Button
+                    type='button'
                     variant='ghost'
                     size='icon'
                     onClick={() => toggleDocument(doc.id)}
