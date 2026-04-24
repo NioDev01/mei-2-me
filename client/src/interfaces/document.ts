@@ -6,4 +6,5 @@ export interface Document {
   howToObtain: string;
   hasTemplate: boolean;
   templateUrl?: string;
+  isExternal?: boolean;
 }

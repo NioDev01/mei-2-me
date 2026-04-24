@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Circle, CheckCircle, Info, Download, FileText } from "lucide-react";
+import {
+  Circle,
+  CheckCircle,
+  Info,
+  Download,
+  FileText,
+  ExternalLink,
+} from "lucide-react";
 
 import {
   Card,
@@ -86,7 +93,10 @@ const documents: Document[] = [
       "É o procedimento pelo qual o Microempreendedor Individual (MEI) informa à Receita Federal que não se enquadra mais nas condições do Sistema de Recolhimento em Valores Fixos Mensais dos Tributos abrangidos pelo Simples Nacional (SIMEI).",
     purpose: "Formalizar a saída do regime MEI.",
     howToObtain: "Simples Nacional",
-    hasTemplate: false,
+    hasTemplate: true,
+    templateUrl:
+      "https://www8.receita.fazenda.gov.br/SimplesNacional/Default.aspx",
+    isExternal: true,
   },
   {
     id: "6",
@@ -96,7 +106,7 @@ const documents: Document[] = [
     purpose: "Padronizar a coleta de informações para processos na JUCESP.",
     howToObtain: "JUCESP - Preenchimento MEI",
     hasTemplate: true,
-    templateUrl: "@/docs/formulario-capa-marrom.pdf",
+    templateUrl: "/docs/formulario-capa-marrom.pdf",
   },
   {
     id: "7",
@@ -106,7 +116,7 @@ const documents: Document[] = [
     purpose: "Formalizar o desenquadramento do MEI.",
     howToObtain: "JUCESP - Preenchimento MEI",
     hasTemplate: true,
-    templateUrl: "@/docs/mei_desenquadramento.pdf",
+    templateUrl: "/docs/mei_desenquadramento.pdf",
   },
   {
     id: "8",
@@ -115,7 +125,9 @@ const documents: Document[] = [
       "Recibo que atesta o recolhimento de tributos e receitas estaduais.",
     purpose: "Comprovar o pagamento de tributos estaduais.",
     howToObtain: "JUCESP - Emissão na JUCESP",
-    hasTemplate: false,
+    hasTemplate: true,
+    templateUrl: "https://www.jucesponline.sp.gov.br/",
+    isExternal: true,
   },
   {
     id: "9",
@@ -132,7 +144,10 @@ const documents: Document[] = [
     description: "Certificado da Condição de Microempreendedor Individual.",
     purpose: "Comprovar a condição do MEI.",
     howToObtain: "gov.br",
-    hasTemplate: false,
+    hasTemplate: true,
+    templateUrl:
+      "https://mei.receita.economia.gov.br/certificado/login?nextRoute=%2Fconsulta",
+    isExternal: true,
   },
   {
     id: "11",
@@ -152,6 +167,7 @@ const documents: Document[] = [
     hasTemplate: true,
     templateUrl:
       "https://www8.receita.fazenda.gov.br/simplesnacional/aplicacoes.aspx?id=21",
+    isExternal: true,
   },
 ];
 
@@ -339,26 +355,36 @@ export function Checklist() {
                     <Info className='h-4 w-4 mr-1' />
                     Info
                   </Button>
-                  {doc.hasTemplate && (
-                    <Button
-                      type='button'
-                      size='sm'
-                      onClick={() =>
-                        handleDownload(
-                          doc.templateUrl!,
-                          `${doc.name
-                            .toLowerCase()
-                            .replace(
-                              /\s+/g,
-                              "-",
-                            )}.${doc.templateUrl?.split(".").pop()}`,
-                        )
-                      }
-                    >
-                      <Download className='h-4 w-4 mr-1' />
-                      Modelo
-                    </Button>
-                  )}
+                  {doc.hasTemplate &&
+                    (doc.isExternal ? (
+                      <Button
+                        type='button'
+                        size='sm'
+                        onClick={() => window.open(doc.templateUrl!, "_blank")}
+                      >
+                        Ir para o site
+                        <ExternalLink />
+                      </Button>
+                    ) : (
+                      <Button
+                        type='button'
+                        size='sm'
+                        onClick={() =>
+                          handleDownload(
+                            doc.templateUrl!,
+                            `${doc.name
+                              .toLowerCase()
+                              .replace(
+                                /\s+/g,
+                                "-",
+                              )}.${doc.templateUrl?.split(".").pop()}`,
+                          )
+                        }
+                      >
+                        <Download className='h-4 w-4 mr-1' />
+                        Modelo
+                      </Button>
+                    ))}
                 </CardContent>
               </Card>
             );
@@ -397,19 +423,29 @@ export function Checklist() {
               </div>
 
               <div className='flex gap-2 pt-4'>
-                {selectedDocument.hasTemplate && (
-                  <Button
-                    onClick={() =>
-                      handleDownload(
-                        selectedDocument.templateUrl!,
-                        `${selectedDocument.name.toLowerCase().replace(/\s+/g, "-")}.${selectedDocument.templateUrl?.split(".").pop()}`,
-                      )
-                    }
-                  >
-                    <Download className='h-4 w-4 mr-1' />
-                    Modelo
-                  </Button>
-                )}
+                {selectedDocument.hasTemplate &&
+                  (selectedDocument.isExternal ? (
+                    <Button
+                      onClick={() =>
+                        window.open(selectedDocument.templateUrl!, "_blank")
+                      }
+                    >
+                      Ir para o site
+                      <ExternalLink />
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() =>
+                        handleDownload(
+                          selectedDocument.templateUrl!,
+                          `${selectedDocument.name.toLowerCase().replace(/\s+/g, "-")}.${selectedDocument.templateUrl?.split(".").pop()}`,
+                        )
+                      }
+                    >
+                      <Download className='h-4 w-4 mr-1' />
+                      Modelo
+                    </Button>
+                  ))}
               </div>
             </>
           )}
