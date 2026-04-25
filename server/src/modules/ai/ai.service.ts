@@ -78,6 +78,17 @@ export class AiService {
         steps.find((s) => s.status === 'available')?.step ||
         'não definido';
 
+      const nextStep =
+        steps.find((s) => s.status === 'available')?.step || 'não definido';
+
+      const completedSteps = steps
+        .filter((s) => s.status === 'completed')
+        .map((s) => s.step);
+
+      const availableSteps = steps
+        .filter((s) => s.status === 'available')
+        .map((s) => s.step);
+
       const contextText = `
         MÓDULO: ${context?.module || 'painel'}
 
@@ -93,6 +104,9 @@ export class AiService {
         JORNADA:
         - Progresso: ${context?.jornada?.progress ?? 0}%
         - Etapa atual: ${currentStep}
+        - Próxima etapa: ${nextStep}
+        - Etapas disponíveis: ${availableSteps.length ? availableSteps.join(', ') : 'nenhuma'}
+        - Etapas concluídas: ${completedSteps.length ? completedSteps.join(', ') : 'nenhuma'}
 
         SIMULADOR:
         - Faturamento: ${context?.simulador?.faturamento_12m ?? 'não informado'}
