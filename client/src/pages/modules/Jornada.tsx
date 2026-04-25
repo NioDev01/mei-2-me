@@ -16,23 +16,6 @@ export function Jornada() {
     init()
   }, [])
 
-  useEffect(() => {
-    function handleExternalNavigation(event: any) {
-      const step = event.detail?.step
-
-      if (!step) return
-
-      setSelectedStep(step)
-      setView("step")
-    }
-
-    window.addEventListener("navigate-step", handleExternalNavigation)
-
-    return () => {
-      window.removeEventListener("navigate-step", handleExternalNavigation)
-    }
-  }, [])
-
   async function loadSummary() {
     const data = await getJornadaSummary()
     setSummary(data)
