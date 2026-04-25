@@ -3,6 +3,8 @@ import { sendMessageToAI, getAIHistory } from "@/services/ai.service"
 import { getJornadaSummary } from "@/services/jornada.service"
 import { getSimulador } from "@/services/simulador.service"
 import { getChecklistDocumentos } from "@/services/checklist.service"
+import { getDiagnostico } from "@/services/diagnostico.service"
+import { useAuth } from "@/context/AuthContext"
 import { createPortal } from "react-dom"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -41,6 +43,8 @@ const quickSuggestions: Record<string, string[]> = {
 }
 
 export function ContAIChat({ onClose }: { onClose: () => void }) {
+  const { user } = useAuth()
+
   const [messages, setMessages] = useState<Message[]>([])
   const [position, setPosition] = useState<Position>("bottom-right")
   const [input, setInput] = useState("")
@@ -106,7 +110,24 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
       const simulador = await getSimulador()
       const checklist = await getChecklistDocumentos()
 
-      return { jornada, simulador, checklist }
+      let diagnostico = null
+
+      if (user?.cnpj) {
+        try {
+          const raw = await getDiagnostico(user.cnpj)
+
+          diagnostico = {
+            status: raw?.status || null,
+            resumo: raw?.analise || null,
+            principaisMotivos:
+              raw?.motivos?.slice(0, 3).map((m: any) => m.regra) || [],
+          }
+        } catch {
+          diagnostico = null
+        }
+      }
+
+      return { jornada, simulador, checklist, diagnostico }
     } catch {
       return null
     }
@@ -132,6 +153,7 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
             .filter(([_, v]) => v === false)
             .map(([k]) => k)
         : [],
+      diagnostico: raw.diagnostico || undefined,
     }
   }
 

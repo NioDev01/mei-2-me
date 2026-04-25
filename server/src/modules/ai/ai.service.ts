@@ -81,16 +81,25 @@ export class AiService {
       const contextText = `
         MÓDULO: ${context?.module || 'painel'}
 
+        DIAGNÓSTICO:
+        - Status: ${context?.diagnostico?.status || 'não informado'}
+        - Resumo: ${context?.diagnostico?.resumo || 'não disponível'}
+        - Principais motivos: ${
+          context?.diagnostico?.principaisMotivos?.length
+            ? context.diagnostico.principaisMotivos.join(', ')
+            : 'nenhum'
+        }
+
         JORNADA:
-        - Progresso: ${context?.jornada?.progress || 0}%
+        - Progresso: ${context?.jornada?.progress ?? 0}%
         - Etapa atual: ${currentStep}
 
         SIMULADOR:
-        - Faturamento: ${context?.simulador?.faturamento_12m || 'não informado'}
-        - Recomendação: ${context?.simulador?.recomendacao || 'não definida'}
+        - Faturamento: ${context?.simulador?.faturamento_12m ?? 'não informado'}
+        - Recomendação: ${context?.simulador?.recomendacao ?? 'não definida'}
 
         CHECKLIST PENDENTE:
-        ${(context?.checklist || []).join(', ') || 'nenhum'}
+        ${context?.checklist?.length ? context.checklist.join(', ') : 'nenhum'}
       `;
 
       // =========================
