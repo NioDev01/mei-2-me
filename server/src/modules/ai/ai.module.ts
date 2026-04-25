@@ -5,7 +5,7 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ConfigModule], // 👈 importante
+  imports: [ConfigModule],
   controllers: [AiController],
   providers: [AiService, PrismaService],
 })
