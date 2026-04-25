@@ -5,7 +5,7 @@ import {
   toggleItem,
   completeStep,
   startStep,
-} from "@/pages/modules/jornada/services/jornada.service"
+} from "@/services/jornada.service"
 
 import { stepComponentMap } from "@/pages/modules/jornada/steps"
 

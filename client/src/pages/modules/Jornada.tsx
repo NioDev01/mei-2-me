@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { getJornadaSummary } from "@/pages/modules/jornada/services/jornada.service"
+import { getJornadaSummary } from "@/services/jornada.service"
 
 import { JornadaOverview } from "@/pages/modules/jornada/pages/JornadaOverview"
 import { JornadaStep } from "@/pages/modules/jornada/pages/JornadaStep"

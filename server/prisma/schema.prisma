@@ -7,12 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Mensagem {
-  id       Int      @id @default(autoincrement())
-  conteudo String
-  criadoEm DateTime @default(now())
-}
-
 model Mei {
   id_mei                  Int             @id @default(autoincrement())
   cnpj_mei                String          @unique @db.VarChar(18)
@@ -134,6 +128,8 @@ model Usuario {
   reset_token_expires DateTime?
   mei                 Mei?      @relation(fields: [id_mei], references: [id_mei])
 
+  messages ChatMessage[]
+
   @@map("Usuario")
 }
 
@@ -154,4 +150,16 @@ model DocumentosMei {
   criado_em                             DateTime @default(now())
   atualizado_em                         DateTime @updatedAt
   Mei                                   Mei      @relation(fields: [id_mei], references: [id_mei])
+}
+
+model ChatMessage {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  role       String   // "user" | "bot" | "system"
+  content    String
+  created_at DateTime @default(now())
+
+  user Usuario @relation(fields: [user_id], references: [id_user])
+
+  @@index([user_id])
 }

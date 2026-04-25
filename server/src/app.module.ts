@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { MessageModule } from './modules/message/message.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ReceitawsApiService } from './integrations/receitaws-api/receitaws-api.service';
 import { HttpModule } from '@nestjs/axios';
@@ -18,7 +17,6 @@ import { AiModule } from './modules/ai/ai.module';
       isGlobal: true,
     }),
     PrismaModule,
-    MessageModule,
     HttpModule,
     AnaliseMigracaoModule,
     DiagnosticoInicialModule,

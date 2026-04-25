@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { StepTemplate } from "./StepTemplate"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { getSimulador } from "@/pages/modules/jornada/services/simulador.service"
+import { getSimulador } from "@/services/simulador.service"
 
 type Simulador = {
   faturamento_12m: number
