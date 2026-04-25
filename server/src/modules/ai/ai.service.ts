@@ -10,7 +10,11 @@ export class AiService {
     private configService: ConfigService,
   ) {}
 
-  async ask(userId: number, message: string, context?: any): Promise<string> {
+  async ask(
+    userId: number,
+    message: string,
+    context?: any,
+  ): Promise<{ text: string }> {
     try {
       const apiKey = this.configService.get<string>('GEMINI_API_KEY');
 
@@ -21,7 +25,33 @@ export class AiService {
       }
 
       // =========================
-      // 🔹 Buscar histórico
+      // 🔹 Plataforma
+      // =========================
+      const platformContext = `
+        SOBRE A PLATAFORMA MEI2ME:
+
+        O MEI2ME é uma plataforma que auxilia microempreendedores individuais (MEI) no processo de transição para microempresa (ME).
+
+        A plataforma guia o usuário através de uma jornada estruturada, que inclui:
+        - desenquadramento do MEI
+        - definição da nova empresa
+        - elaboração do contrato social
+        - registro na junta comercial
+        - obtenção de CNPJ
+        - licenciamento
+        - escolha do regime tributário
+        - organização das obrigações fiscais
+
+        Além disso, o sistema oferece:
+        - simulador de regime tributário
+        - checklist de documentos
+        - acompanhamento do progresso da jornada
+
+        Seu papel é ajudar o usuário a entender esse processo e avançar com segurança, sempre com foco no próximo passo.
+      `;
+
+      // =========================
+      // 🔹 Histórico
       // =========================
       const historyDb = await this.prisma.chatMessage.findMany({
         where: { user_id: userId },
@@ -33,12 +63,13 @@ export class AiService {
         .slice(-6)
         .map((msg) => {
           const role = msg.role === 'user' ? 'Usuário' : 'ContAI';
-          return `${role}: ${msg.content}`;
+          const content = msg.content?.slice(0, 500) || '';
+          return `${role}: ${content}`;
         })
         .join('\n');
 
       // =========================
-      // 🔹 Jornada
+      // 🔹 Contexto
       // =========================
       const steps = context?.jornada?.steps || [];
 
@@ -47,21 +78,12 @@ export class AiService {
         steps.find((s) => s.status === 'available')?.step ||
         'não definido';
 
-      const completedSteps = steps
-        .filter((s) => s.status === 'completed')
-        .map((s) => s.step);
-
-      const nextStep =
-        steps.find((s) => s.status === 'available')?.step || 'não definido';
-
       const contextText = `
         MÓDULO: ${context?.module || 'painel'}
 
         JORNADA:
         - Progresso: ${context?.jornada?.progress || 0}%
         - Etapa atual: ${currentStep}
-        - Próxima etapa: ${nextStep}
-        - Etapas concluídas: ${completedSteps.join(', ') || 'nenhuma'}
 
         SIMULADOR:
         - Faturamento: ${context?.simulador?.faturamento_12m || 'não informado'}
@@ -74,37 +96,23 @@ export class AiService {
       // =========================
       // 🔹 Instruções por módulo
       // =========================
-      let moduleInstructions = '';
-
-      switch (context?.module) {
-        case 'jornada':
-          moduleInstructions = `
-            - Oriente o próximo passo da jornada
-            - Seja direto e prático
-          `;
-          break;
-
-        case 'simulador':
-          moduleInstructions = `
-            - Explique os resultados financeiros
-            - Ajude na decisão entre regimes
-          `;
-          break;
-
-        case 'checklist':
-          moduleInstructions = `
-            - Foque apenas no que falta
-            - Não liste documentos já concluídos
-            - Seja objetivo
-          `;
-          break;
-
-        default:
-          moduleInstructions = `
-            - Ajude com dúvidas gerais
-            - Dê visão geral quando necessário
-          `;
-      }
+      const moduleInstructions = {
+        jornada: `
+        - Oriente o próximo passo da jornada
+        - Seja direto e prático
+        `,
+        simulador: `
+        - Explique os resultados financeiros
+        - Ajude na decisão entre regimes
+        `,
+        checklist: `
+        - Foque apenas no que falta
+        - Seja objetivo
+        `,
+        default: `
+        - Ajude com dúvidas gerais
+        `,
+      }[context?.module || 'default'];
 
       // =========================
       // 🔹 Prompt
@@ -112,33 +120,53 @@ export class AiService {
       const prompt = `
         Você é o ContAI, um assistente especializado na transição de MEI para ME.
 
+        Seu objetivo é orientar o usuário de forma prática, clara e confiável.
+
         HISTÓRICO:
         ${historyText}
 
         CONTEXTO:
         ${contextText}
 
-        INSTRUÇÕES:
+        INSTRUÇÕES POR MÓDULO:
         ${moduleInstructions}
 
-        REGRAS:
-        - Responda em português do Brasil
-        - Não se apresente múltiplas vezes
-        - Não exponha termos técnicos da aplicação
-        - Não peça para repetir informações
-        - Seja claro e simples
-        - Use contexto para personalizar
-        - Sugira próximos passos
+        ESTILO DE RESPOSTA:
+        - Seja gentil, prestativo e profissional
+        - Escreva como um humano explicando para outro humano (sem formalidade excessiva)
+        - Seja claro e didático, mas sem alongar desnecessariamente
+        - Prefira frases curtas e fáceis de entender
+        - Evite jargões técnicos ou termos internos da aplicação
+
+        COMPORTAMENTO:
+        - Responda exatamente o que foi perguntado (sem fugir do tema)
+        - Use o contexto para personalizar a resposta
+        - Não peça informações que já estão no contexto
+        - Não repita informações óbvias ou já ditas
+        - Se o usuário já concluiu algo, apenas reconheça brevemente
+
+        FOCO:
+        - Priorize sempre orientar o próximo passo do usuário
+        - Quando fizer sentido, sugira uma ação prática
+        - Evite explicações longas se não forem necessárias
+
+        FORMATO:
+        - Use no máximo 5 parágrafos curtos
+        - Pode usar listas simples quando ajudar na clareza
+        - Se a pergunta for simples, responda em 1 ou 2 parágrafos.
+
+        RESTRIÇÕES:
         - Não invente informações
-        - Evite redundância
-        - Máximo 5 parágrafos curtos
+        - Não exponha termos técnicos da aplicação
+        - Não se apresente novamente após a primeira interação
+        - Não se aprofunde em assuntos que fogem do escopo da sua especialização
 
         PERGUNTA:
         ${message}
       `;
 
       // =========================
-      // 🔹 Salvar mensagem do usuário
+      // 🔹 Salvar pergunta
       // =========================
       await this.prisma.chatMessage.create({
         data: {
@@ -152,7 +180,7 @@ export class AiService {
       // 🔹 Chamada Gemini
       // =========================
       const response = await axios.post(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+        'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent',
         {
           contents: [{ parts: [{ text: prompt }] }],
         },
@@ -164,22 +192,22 @@ export class AiService {
         },
       );
 
-      const responseText =
-        response.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      const text =
+        response.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
         'Não consegui gerar uma resposta.';
 
       // =========================
-      // 🔹 Salvar resposta da IA
+      // 🔹 Salvar resposta
       // =========================
       await this.prisma.chatMessage.create({
         data: {
           user_id: userId,
           role: 'bot',
-          content: responseText,
+          content: text,
         },
       });
 
-      return responseText;
+      return { text };
     } catch (error: any) {
       console.error(
         'Erro Gemini:',
@@ -196,7 +224,7 @@ export class AiService {
     return this.prisma.chatMessage.findMany({
       where: { user_id: userId },
       orderBy: { created_at: 'asc' },
-      take: 50, // limite de segurança
+      take: 50,
     });
   }
 }

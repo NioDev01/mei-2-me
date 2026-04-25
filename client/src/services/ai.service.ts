@@ -1,7 +1,7 @@
 import { api } from "@/lib/api";
 
 export type ChatMessage = {
-  role: "user" | "bot" | "system";
+  role: "user" | "bot";
   content: string;
   timestamp?: number;
 };
@@ -23,17 +23,21 @@ export type AIContext = {
 };
 
 // 🔹 Enviar mensagem
-export async function sendMessageToAI(message: string, context?: AIContext) {
+export async function sendMessageToAI(
+  message: string,
+  context?: AIContext,
+): Promise<{ text: string }> {
   const { data } = await api.post("/ai/chat", {
     message,
     context,
   });
 
-  return data.response;
+  return data; // { text }
 }
 
 // 🔹 Buscar histórico
-export async function getAIHistory() {
+export async function getAIHistory(): Promise<ChatMessage[]> {
   const { data } = await api.get("/ai/history");
-  return data.messages;
+
+  return data;
 }

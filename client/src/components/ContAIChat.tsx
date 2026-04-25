@@ -6,10 +6,10 @@ import { getChecklistDocumentos } from "@/services/checklist.service"
 import { createPortal } from "react-dom"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import { Bot, User } from "lucide-react"
+import { Bot, User, Volume1, Square } from "lucide-react"
 
 type Message = {
-  role: "user" | "bot" | "system"
+  role: "user" | "bot"
   content: string
   timestamp?: number
 }
@@ -33,12 +33,20 @@ function formatTime(ts?: number) {
   })
 }
 
+const quickSuggestions: Record<string, string[]> = {
+  painel: ["O que é MEI?", "Vale a pena virar ME?"],
+  jornada: ["Qual meu próximo passo?", "O que fazer agora?"],
+  simulador: ["Qual regime é melhor?", "Explique o resultado"],
+  checklist: ["O que falta?", "Quais documentos são obrigatórios?"],
+}
+
 export function ContAIChat({ onClose }: { onClose: () => void }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [position, setPosition] = useState<Position>("bottom-right")
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
+  const [isSpeaking, setIsSpeaking] = useState(false)
 
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -67,7 +75,6 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
   // =========================
   // HISTÓRICO
   // =========================
-
   useEffect(() => {
     async function loadHistory() {
       try {
@@ -93,7 +100,6 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
   // =========================
   // CONTEXTO
   // =========================
-
   async function fetchContext() {
     try {
       const jornada = await getJornadaSummary()
@@ -130,18 +136,36 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
   }
 
   // =========================
+  // VOZ
+  // =========================
+  function speak(text: string) {
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel()
+      setIsSpeaking(false)
+      return
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.lang = "pt-BR"
+
+    utterance.onstart = () => setIsSpeaking(true)
+    utterance.onend = () => setIsSpeaking(false)
+
+    speechSynthesis.speak(utterance)
+  }
+
+  // =========================
   // ENVIO
   // =========================
+  const sendMessage = async (customMessage?: string) => {
+    const messageToSend = customMessage || input
 
-  const sendMessage = async () => {
-    if (!input.trim() || loading) return
-
-    const now = Date.now()
+    if (!messageToSend.trim() || loading) return
 
     const userMessage: Message = {
       role: "user",
-      content: input,
-      timestamp: now,
+      content: messageToSend,
+      timestamp: Date.now(),
     }
 
     setMessages((prev) => [...prev, userMessage])
@@ -152,13 +176,13 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
       const freshContext = await fetchContext()
 
       const response = await sendMessageToAI(
-        input,
+        messageToSend,
         buildContext(freshContext)
       )
 
       const botMessage: Message = {
         role: "bot",
-        content: response,
+        content: response.text,
         timestamp: Date.now(),
       }
 
@@ -187,7 +211,6 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
   // =========================
   // UI
   // =========================
-
   const chatUI = (
     <div
       className={`fixed ${positionClasses[position]} w-[380px] h-[560px] bg-background border rounded-2xl shadow-2xl z-[9999] flex flex-col`}
@@ -199,7 +222,9 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
         </span>
 
         <div className="flex gap-2">
-          <button onClick={cyclePosition} className="text-xs">Mover</button>
+          <button onClick={cyclePosition} className="text-xs">
+            Mover
+          </button>
           <button onClick={onClose}>✕</button>
         </div>
       </div>
@@ -209,9 +234,23 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
         {initialLoading ? (
           <p className="text-muted-foreground">Carregando...</p>
         ) : messages.length === 0 ? (
-          <p className="text-muted-foreground">
-            Comece uma conversa com o ContAI 👋
-          </p>
+          <>
+            <p className="text-muted-foreground">
+              Comece uma conversa com o ContAI 👋
+            </p>
+
+            <div className="flex flex-wrap gap-2 mt-2">
+              {(quickSuggestions[getCurrentModule()] || []).map((s, i) => (
+                <button
+                  key={i}
+                  onClick={() => sendMessage(s)}
+                  className="px-3 py-1 text-xs border rounded-full hover:bg-muted"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </>
         ) : (
           messages.map((msg, index) => {
             const isUser = msg.role === "user"
@@ -219,7 +258,7 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
             return (
               <div
                 key={index}
-                className={`flex items-end gap-2 animate-in fade-in slide-in-from-bottom-2 ${
+                className={`flex items-end gap-2 ${
                   isUser ? "justify-end" : "justify-start"
                 }`}
               >
@@ -239,6 +278,16 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {msg.content}
                   </ReactMarkdown>
+
+                  {!isUser && (
+                    <button
+                      onClick={() => speak(msg.content)}
+                      className="text-[10px] mt-1 opacity-70 flex items-center gap-1"
+                    >
+                      {isSpeaking ? <Square size={14} /> : <Volume1 size={14} />}
+                      {isSpeaking ? "Parar" : "Ouvir"}
+                    </button>
+                  )}
 
                   <div className="text-[10px] opacity-60 mt-1">
                     {formatTime(msg.timestamp)}
@@ -282,7 +331,7 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
         />
 
         <button
-          onClick={sendMessage}
+          onClick={() => sendMessage()}
           className="bg-primary text-white px-4 rounded-md"
         >
           Enviar
