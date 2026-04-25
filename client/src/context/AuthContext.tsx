@@ -1,73 +1,85 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { api } from '@/lib/api'
-import { setAccessToken } from '@/lib/auth'
+import { createContext, useContext, useEffect, useState } from "react";
+import { api } from "@/lib/api";
+import { setAccessToken } from "@/lib/auth";
 
 type AuthContextType = {
-  isAuthenticated: boolean
-  loading: boolean
-  user: User | null
-  logout: () => Promise<void>
-  login: (accessToken: string) => void
-}
+  isAuthenticated: boolean;
+  loading: boolean;
+  user: User | null;
+  logout: () => Promise<void>;
+  login: (accessToken: string) => void;
+  refreshUser: () => Promise<void>;
+};
 
 type User = {
-  id_user: number
-  id_mei: number
-  email: string
-  cnpj: string
-}
+  id_user: number;
+  id_mei: number;
+  email: string;
+  cnpj: string;
+};
 
-const AuthContext = createContext({} as AuthContextType)
+const AuthContext = createContext({} as AuthContextType);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  async function loadUser() {
-  try {
-    const res = await api.post('/auth/refresh')
+    async function loadUser() {
+      try {
+        const res = await api.post("/auth/refresh");
 
-    setAccessToken(res.data.accessToken)
+        setAccessToken(res.data.accessToken);
 
-    const me = await api.get('/auth/me')
-    setUser(me.data)
+        const me = await api.get("/auth/me");
+        setUser(me.data);
 
-    setIsAuthenticated(true)
-  } catch {
-    setIsAuthenticated(false)
-    setUser(null)
-  } finally {
-    setLoading(false)
-  }
-}
+        setIsAuthenticated(true);
+      } catch {
+        setIsAuthenticated(false);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-  loadUser()
-  }, [])
+    loadUser();
+  }, []);
 
   const login: (accessToken: string) => Promise<void> = async (accessToken) => {
-  setAccessToken(accessToken)
+    setAccessToken(accessToken);
 
-  try {
-    const me = await api.get('/auth/me')
-    setUser(me.data)
-    setIsAuthenticated(true)
-  } catch {
-    setUser(null)
-    setIsAuthenticated(false)
-  }
-}
+    try {
+      const me = await api.get("/auth/me");
+      setUser(me.data);
+      setIsAuthenticated(true);
+    } catch {
+      setUser(null);
+      setIsAuthenticated(false);
+    }
+  };
 
   const logout = async () => {
-  try {
-    await api.post('/auth/logout')
-  } catch {}
+    try {
+      await api.post("/auth/logout");
+    } catch {}
 
-  setIsAuthenticated(false)
-  setUser(null)
-  setAccessToken('')
-}
+    setIsAuthenticated(false);
+    setUser(null);
+    setAccessToken("");
+  };
+
+  const refreshUser = async () => {
+    try {
+      const me = await api.get("/auth/me");
+      setUser(me.data);
+      setIsAuthenticated(true);
+    } catch {
+      setUser(null);
+      setIsAuthenticated(false);
+    }
+  };
 
   return (
     <AuthContext.Provider
@@ -76,12 +88,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         user,
         logout,
-        login
+        login,
+        refreshUser,
       }}
     >
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
 
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => useContext(AuthContext);

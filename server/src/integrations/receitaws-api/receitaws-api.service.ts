@@ -23,6 +23,8 @@ export interface CNPJApi {
   municipio: string;
   uf: string;
   natureza_juridica: string;
+  status?: string;
+  message?: string;
 }
 
 @Injectable()

@@ -1,4 +1,6 @@
 import {
+  BadGatewayException,
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -146,5 +148,32 @@ export class DiagnosticoInicialService {
 
   async findOne(cnpj: string, userId: number) {
     return this.analiseUseCase.execute(cnpj, userId);
+  }
+
+  async findCnpjData(cnpj: string) {
+    const normalizedCnpj = cnpj.replace(/\D/g, '');
+
+    if (!/^\d{14}$/.test(normalizedCnpj)) {
+      throw new BadRequestException('CNPJ inválido.');
+    }
+
+    try {
+      const apiData = await this.receitawsAPIService.findOne(normalizedCnpj);
+
+      if (!apiData || apiData.status === 'ERROR') {
+        throw new NotFoundException(`CNPJ ${cnpj} não encontrado ou inválido.`);
+      }
+
+      return {
+        razao_social: apiData.nome,
+        nome_fantasia: apiData.fantasia,
+        uf: apiData.uf,
+        municipio: apiData.municipio,
+      };
+    } catch (err) {
+      console.error(`Erro ao consultar ReceitaWs: ${err}`);
+
+      throw new BadGatewayException('Erro ao consultar serviço externo');
+    }
   }
 }

@@ -14,12 +14,12 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('diagnostico-inicial')
 @ApiTags('Diagnóstico Inicial')
+@UseGuards(JwtAuthGuard)
 export class DiagnosticoInicialController {
   constructor(
     private readonly diagnosticoInicialService: DiagnosticoInicialService,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   @ApiOperation({
     summary: 'Cria diagnóstico inicial.',
@@ -44,8 +44,33 @@ export class DiagnosticoInicialController {
     );
   }
 
+  @Get('cnpj/:cnpj')
+  @ApiOperation({
+    summary: 'Consulta dados de CNPJ.',
+    description:
+      'Endpoint responsável por consultar e retornar os dados de um CNPJ informado.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Dados do CNPJ retornados com sucesso!',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Erro ao tentar consultar os dados do CNPJ.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Nenhum dado encontrado para o CNPJ informado.',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Erro interno ao consultar os dados do CNPJ.',
+  })
+  async findCnpjData(@Param('cnpj') cnpj: string) {
+    return this.diagnosticoInicialService.findCnpjData(cnpj);
+  }
+
   @Get(':cnpj')
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Retorna diagnóstico inicial do usuário.',
     description:
