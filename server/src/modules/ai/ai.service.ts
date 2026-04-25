@@ -55,16 +55,16 @@ export class AiService {
       // =========================
       const historyDb = await this.prisma.chatMessage.findMany({
         where: { user_id: userId },
-        orderBy: { created_at: 'asc' },
+        orderBy: { created_at: 'desc' },
         take: 20,
       });
 
       const historyText = historyDb
-        .slice(-6)
+        .slice(0, 6)
+        .reverse()
         .map((msg) => {
           const role = msg.role === 'user' ? 'Usuário' : 'ContAI';
-          const content = msg.content?.slice(0, 500) || '';
-          return `${role}: ${content}`;
+          return `${role}: ${msg.content}`;
         })
         .join('\n');
 
@@ -81,14 +81,6 @@ export class AiService {
       const nextStep =
         steps.find((s) => s.status === 'available')?.step || 'não definido';
 
-      const completedSteps = steps
-        .filter((s) => s.status === 'completed')
-        .map((s) => s.step);
-
-      const availableSteps = steps
-        .filter((s) => s.status === 'available')
-        .map((s) => s.step);
-
       const contextText = `
         MÓDULO: ${context?.module || 'painel'}
 
@@ -103,10 +95,10 @@ export class AiService {
 
         JORNADA:
         - Progresso: ${context?.jornada?.progress ?? 0}%
+        - Etapas (ordem + status):
+        ${steps.map((s) => `  - ${s.step}: ${s.status}`).join('\n')}
         - Etapa atual: ${currentStep}
         - Próxima etapa: ${nextStep}
-        - Etapas disponíveis: ${availableSteps.length ? availableSteps.join(', ') : 'nenhuma'}
-        - Etapas concluídas: ${completedSteps.length ? completedSteps.join(', ') : 'nenhuma'}
 
         SIMULADOR:
         - Faturamento: ${context?.simulador?.faturamento_12m ?? 'não informado'}
@@ -150,6 +142,13 @@ export class AiService {
 
         CONTEXTO:
         ${contextText}
+
+        INTERPRETAÇÃO DA JORNADA:
+      - A lista de etapas está em ordem cronológica
+      - Cada etapa possui um status: completed, in_progress, available ou locked
+      - Sempre respeite essa ordem ao orientar o usuário
+      - Nunca sugira etapas fora da sequência
+      - Priorize sempre a próxima etapa disponível ou em andamento
 
         INSTRUÇÕES POR MÓDULO:
         ${moduleInstructions}
@@ -244,10 +243,12 @@ export class AiService {
   }
 
   async getHistory(userId: number) {
-    return this.prisma.chatMessage.findMany({
+    const messages = await this.prisma.chatMessage.findMany({
       where: { user_id: userId },
-      orderBy: { created_at: 'asc' },
+      orderBy: { created_at: 'desc' },
       take: 50,
     });
+
+    return messages.reverse();
   }
 }
