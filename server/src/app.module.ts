@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { MessageModule } from './modules/message/message.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ReceitawsApiService } from './integrations/receitaws-api/receitaws-api.service';
 import { HttpModule } from '@nestjs/axios';
@@ -10,6 +9,7 @@ import { SimuladorRegimesModule } from './modules/simulador-regimes/simulador-re
 import { JornadaModule } from './modules/jornada/jornada.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChecklistDocumentosModule } from './modules/checklist-documentos/checklist-documentos.module';
+import { AiModule } from './modules/ai/ai.module';
 
 @Module({
   imports: [
@@ -17,7 +17,6 @@ import { ChecklistDocumentosModule } from './modules/checklist-documentos/checkl
       isGlobal: true,
     }),
     PrismaModule,
-    MessageModule,
     HttpModule,
     AnaliseMigracaoModule,
     DiagnosticoInicialModule,
@@ -25,6 +24,7 @@ import { ChecklistDocumentosModule } from './modules/checklist-documentos/checkl
     SimuladorRegimesModule,
     ChecklistDocumentosModule,
     JornadaModule,
+    AiModule,
   ],
   providers: [ReceitawsApiService],
 })

@@ -4,7 +4,7 @@ import { StepTemplate } from "./StepTemplate"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
-import { getDiagnostico } from "@/pages/modules/jornada/services/diagnostico.service"
+import { getDiagnostico } from "@/services/diagnostico.service"
 import { useAuth } from "@/context/AuthContext";
 
 type Motivo = {

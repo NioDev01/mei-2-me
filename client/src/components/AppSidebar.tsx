@@ -38,6 +38,7 @@ import {
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
+import { ContAIChat } from "@/components/ContAIChat"
 
 // Módulos
 const items = [
@@ -49,6 +50,7 @@ const items = [
 
 export function AppSidebar() {
   const [activeHash, setActiveHash] = useState("painel")
+  const [openChat, setOpenChat] = useState(false)
 
   const navigate = useNavigate()
   const { logout } = useAuth()
@@ -128,10 +130,14 @@ export function AppSidebar() {
       <Separator />
       <SidebarFooter>
         <div className="flex items-center">
-          <Button><BotMessageSquare/>ContAI</Button>
+          <Button onClick={() => setOpenChat(true)}>
+            <BotMessageSquare />
+            ContAI
+          </Button>
         </div>
         © {new Date().getFullYear()} MEI2ME
       </SidebarFooter>
+      {openChat && <ContAIChat onClose={() => setOpenChat(false)} />}
     </Sidebar>
   )
 }

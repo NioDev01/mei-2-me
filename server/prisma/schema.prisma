@@ -7,37 +7,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Mensagem {
-  id       Int      @id @default(autoincrement())
-  conteudo String
-  criadoEm DateTime @default(now())
-}
-
 model Mei {
-  id_mei                  Int             @id @default(autoincrement())
-  cnpj_mei                String          @unique @db.VarChar(18)
-  data_abertura           DateTime        @db.Date
-  uf_mei                  String          @db.Char(2)
-  razao_social            String          @db.VarChar(255)
-  nome_fantasia           String          @db.VarChar(255)
-  municipio_mei           String          @db.VarChar(255)
+  id_mei                  Int                    @id @default(autoincrement())
+  cnpj_mei                String                 @unique @db.VarChar(18)
+  data_abertura           DateTime               @db.Date
+  uf_mei                  String                 @db.Char(2)
+  razao_social            String                 @db.VarChar(255)
+  nome_fantasia           String                 @db.VarChar(255)
+  municipio_mei           String                 @db.VarChar(255)
   cnae_principal          Json
   cnae_secundario         Json?
-  natureza_juridica       String          @db.VarChar(255)
+  natureza_juridica       String                 @db.VarChar(255)
   possui_filial           Boolean
   qtd_funcionario         Int
   paga_acima_piso         Boolean
   participa_outra_empresa Boolean
-  faturamento_12m         Decimal         @db.Decimal(8, 2)
-  compras_12m             Decimal         @db.Decimal(8, 2)
+  faturamento_12m         Decimal                @db.Decimal(8, 2)
+  compras_12m             Decimal                @db.Decimal(8, 2)
   exporta_acima_limite    Boolean
   importacao_direta       Boolean
   CalculoRegime           CalculoRegime?
   diagnostico             Diagnostico?
-  usuarios                Usuario?
-  documentosMeis          DocumentosMei[]
-  JornadaSteps            JornadaStepProgress[]
+  documentosMeis          DocumentosMei?
   JornadaChecklist        JornadaChecklistItem[]
+  JornadaSteps            JornadaStepProgress[]
+  usuarios                Usuario?
 
   @@map("Mei")
 }
@@ -88,51 +82,48 @@ model CalculoRegime {
 }
 
 model JornadaStepProgress {
-  id        Int     @id @default(autoincrement())
-  id_mei    Int
-  step      String
-  started   Boolean @default(false)
-  completed Boolean @default(false)
-
+  id         Int      @id @default(autoincrement())
+  id_mei     Int
+  step       String
+  started    Boolean  @default(false)
+  completed  Boolean  @default(false)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
-  mei Mei @relation(fields: [id_mei], references: [id_mei])
+  mei        Mei      @relation(fields: [id_mei], references: [id_mei])
 
   @@unique([id_mei, step])
   @@map("JornadaStepProgress")
 }
 
 model JornadaChecklistItem {
-  id         Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   id_mei     Int
   step       String
   item_id    String
-  is_checked Boolean @default(false)
-
+  is_checked Boolean  @default(false)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
-  mei Mei @relation(fields: [id_mei], references: [id_mei])
+  mei        Mei      @relation(fields: [id_mei], references: [id_mei])
 
   @@unique([id_mei, step, item_id])
   @@map("JornadaChecklistItem")
 }
 
 model Usuario {
-  id_user             Int       @id @default(autoincrement())
-  id_mei              Int?      @unique
+  id_user             Int           @id @default(autoincrement())
+  id_mei              Int?          @unique
   nome_user           String
-  email_user          String    @unique
-  cnpj_user           String    @unique @db.VarChar(18)
+  email_user          String        @unique
+  cnpj_user           String        @unique @db.VarChar(18)
   senha_user          String
-  celular_user        String    @unique @db.VarChar(14)
-  created_at          DateTime  @default(now())
-  updated_at          DateTime  @updatedAt
+  celular_user        String        @unique @db.VarChar(14)
+  created_at          DateTime      @default(now())
+  updated_at          DateTime      @updatedAt
   refresh_token       String?
   reset_token         String?
   reset_token_expires DateTime?
-  mei                 Mei?      @relation(fields: [id_mei], references: [id_mei])
+  messages            ChatMessage[]
+  mei                 Mei?          @relation(fields: [id_mei], references: [id_mei])
 
   @@map("Usuario")
 }
@@ -143,7 +134,6 @@ model DocumentosMei {
   possui_cpf                            Boolean  @default(false)
   possui_comprovante_residencia         Boolean  @default(false)
   possui_cartao_cnpj                    Boolean  @default(false)
-  comunicacao_desenquadramento_simei    Boolean  @default(false)
   formulario_capa_marrom                Boolean  @default(false)
   requerimento_desenquadramento         Boolean  @default(false)
   comprovante_pagamento_dare            Boolean  @default(false)
@@ -153,5 +143,17 @@ model DocumentosMei {
   comprovante_situacao_simples_nacional Boolean  @default(false)
   criado_em                             DateTime @default(now())
   atualizado_em                         DateTime @updatedAt
+  comunicacao_desenquadramento_simei    Boolean  @default(false)
   Mei                                   Mei      @relation(fields: [id_mei], references: [id_mei])
+}
+
+model ChatMessage {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  role       String
+  content    String
+  created_at DateTime @default(now())
+  user       Usuario  @relation(fields: [user_id], references: [id_user])
+
+  @@index([user_id])
 }
