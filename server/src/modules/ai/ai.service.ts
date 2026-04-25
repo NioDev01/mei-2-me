@@ -137,6 +137,9 @@ export class AiService {
 
         Seu objetivo é orientar o usuário de forma prática, clara e confiável.
 
+        PLATAFORMA:
+        ${platformContext}
+
         HISTÓRICO:
         ${historyText}
 
