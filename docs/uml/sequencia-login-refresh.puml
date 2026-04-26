@@ -1,0 +1,33 @@
+@startuml
+autonumber
+
+actor "MEI" as User
+participant "Frontend" as FE
+participant "AuthController" as AC
+participant "AuthService" as AS
+participant "PrismaService" as DB
+
+== Login ==
+User -> FE : Informa email/senha
+FE -> AC : POST /auth/login
+AC -> AS : login(dto)
+AS -> DB : Busca usuário por email
+DB --> AS : Dados do usuário
+AS --> AC : accessToken + refreshToken
+AC --> FE : 200 + accessToken\nSet-Cookie(refreshToken)
+
+== Refresh ==
+FE -> AC : POST /auth/refresh\n(cookie refreshToken)
+AC -> AS : refresh(refreshToken)
+AS -> DB : Valida refresh token do usuário
+DB --> AS : Usuário válido
+AS --> AC : Novo accessToken
+AC --> FE : 200 + accessToken
+
+== Logout ==
+FE -> AC : POST /auth/logout
+AC -> AS : logout(refreshToken)
+AS -> DB : Invalida refresh token
+DB --> AS : OK
+AC --> FE : 200 + clear cookie
+@enduml
