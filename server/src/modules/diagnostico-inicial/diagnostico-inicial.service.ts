@@ -180,10 +180,23 @@ export class DiagnosticoInicialService {
   async findByUser(userId: number) {
     const usuario = await this.prisma.usuario.findUnique({
       where: { id_user: userId },
-      include: {
+      select: {
         mei: {
-          include: {
-            diagnostico: true,
+          select: {
+            razao_social: true,
+            nome_fantasia: true,
+            cnpj_mei: true,
+            municipio_mei: true,
+            uf_mei: true,
+            qtd_funcionario: true,
+            faturamento_12m: true,
+            compras_12m: true,
+            diagnostico: {
+              select: {
+                resultado_diag: true,
+                motivos_resultado: true,
+              },
+            },
           },
         },
       },
