@@ -218,7 +218,9 @@ export class SimuladorRegimesService {
       },
     });
 
-    if (!registroCalculo) return null;
+    if (!registroCalculo) {
+      throw new NotFoundException('Simulação não encontrada para este MEI.');
+    }
 
     return {
       faturamento_12m: infosMei?.faturamento_12m

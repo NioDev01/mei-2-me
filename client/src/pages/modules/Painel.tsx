@@ -69,7 +69,6 @@ export function Painel() {
       api
         .get("diagnostico-inicial")
         .then((r) => {
-          console.log("diag: ", r.data);
           setDiagnostico(r.data);
         })
         .catch(() => null),
@@ -82,7 +81,11 @@ export function Painel() {
       api
         .get("simulador-regimes")
         .then((r) => setSimulador(r.data))
-        .catch(() => null),
+        .catch((err) => {
+          if (err.response?.status === 404) {
+            setSimulador(null);
+          }
+        }),
 
       api
         .get("jornada/summary")
@@ -157,7 +160,7 @@ export function Painel() {
           {getMetricas(mei, marked, totalDocs, fmt).map((m) => (
             <div
               key={m.id}
-              className='bg-muted/50 border-1 border-gray-500/10 rounded-lg p-4'
+              className='bg-muted/50 border border-gray-500/10 rounded-lg p-4'
             >
               <div
                 className={`w-8 h-8 rounded-md flex items-center justify-center mb-3 ${m.iconClassName}`}
