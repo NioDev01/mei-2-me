@@ -176,4 +176,43 @@ export class DiagnosticoInicialService {
       throw new BadGatewayException('Erro ao consultar serviço externo');
     }
   }
+
+  async findByUser(userId: number) {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id_user: userId },
+      include: {
+        mei: {
+          include: {
+            diagnostico: true,
+          },
+        },
+      },
+    });
+
+    if (!usuario?.mei) return null;
+
+    const { mei } = usuario;
+
+    return {
+      mei: {
+        razao_social: mei.razao_social,
+        nome_fantasia: mei.nome_fantasia,
+        cnpj_mei: mei.cnpj_mei,
+        municipio_mei: mei.municipio_mei,
+        uf_mei: mei.uf_mei,
+        qtd_funcionario: mei.qtd_funcionario,
+        faturamento_12m: Number(mei.faturamento_12m),
+        compras_12m: Number(mei.compras_12m),
+      },
+      analise: mei.diagnostico
+        ? {
+            status: mei.diagnostico.resultado_diag.includes('deve realizar')
+              ? 'APTO'
+              : 'NÃO APTO',
+            analise: mei.diagnostico.resultado_diag,
+            motivos: mei.diagnostico.motivos_resultado,
+          }
+        : null,
+    };
+  }
 }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -28,6 +28,7 @@ export class CreateDiagnosticoInicialDto {
   possui_filial!: boolean;
 
   @IsNumber({}, { message: 'A quantidade de funcionários deve ser um número.' })
+  @Type(() => Number)
   @Min(0)
   @IsNotEmpty({ message: 'O número de funcionários não pode estar em branco.' })
   @ApiProperty()
@@ -42,6 +43,7 @@ export class CreateDiagnosticoInicialDto {
   participa_outra_empresa!: boolean;
 
   @IsNumber({}, { message: 'O faturamento anual deve ser um número.' })
+  @Type(() => Number)
   @Min(0, {
     message: 'O faturamento anual não pode ser um número negativo.',
   })
@@ -50,6 +52,7 @@ export class CreateDiagnosticoInicialDto {
   faturamento_12m!: number;
 
   @IsNumber({}, { message: 'O total de compras anuais deve ser um número.' })
+  @Type(() => Number)
   @Min(0, {
     message: 'O total de compras anuais não pode ser um número negativo.',
   })

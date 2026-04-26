@@ -89,4 +89,22 @@ export class DiagnosticoInicialController {
 
     return this.diagnosticoInicialService.findOne(cnpj, userId);
   }
+
+  @Get()
+  @ApiOperation({
+    summary: 'Retorna o diagnóstico inicial por usuário.',
+    description:
+      'Endpoint responsável por criar o diagnóstico inicial do usuário.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Diagnóstico inicial retornado com sucesso!',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Ocorreu um erro ao tentar retornar o diagnóstico inicial.',
+  })
+  async findByUser(@Request() req) {
+    return this.diagnosticoInicialService.findByUser(req.user.id_user);
+  }
 }
