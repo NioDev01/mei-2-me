@@ -11,11 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Calculator,
-  BanknoteArrowUp,
-  BanknoteArrowDown,
-} from "lucide-react";
+import { Calculator, BanknoteArrowUp, BanknoteArrowDown } from "lucide-react";
 import { NumericFormat } from "react-number-format";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -67,7 +63,9 @@ export function RegimeForm({
 
     form.reset({
       receitas_financeiras: Number(dadosIniciais.receitas_financeiras ?? 0),
-      receitas_nao_operacionais: Number(dadosIniciais.receitas_nao_operacionais ?? 0),
+      receitas_nao_operacionais: Number(
+        dadosIniciais.receitas_nao_operacionais ?? 0,
+      ),
       despesas_financeiras: Number(dadosIniciais.despesas_financeiras ?? 0),
     });
   }, [dadosIniciais, form]);
@@ -78,7 +76,7 @@ export function RegimeForm({
     try {
       const response = await api.post(
         `${import.meta.env.VITE_API_URL}/simulador-regimes`,
-        data
+        data,
       );
 
       toast.success("Simulação realizada com sucesso!");
@@ -87,13 +85,14 @@ export function RegimeForm({
 
       form.reset({
         receitas_financeiras: Number(response.data.receitas_financeiras ?? 0),
-        receitas_nao_operacionais: Number(response.data.receitas_nao_operacionais ?? 0),
+        receitas_nao_operacionais: Number(
+          response.data.receitas_nao_operacionais ?? 0,
+        ),
         despesas_financeiras: Number(response.data.despesas_financeiras ?? 0),
       });
     } catch (error: any) {
       const message =
-        error.response?.data?.message ||
-        "Erro ao realizar simulação.";
+        error.response?.data?.message || "Erro ao realizar simulação.";
 
       toast.error(message);
     } finally {
@@ -101,46 +100,52 @@ export function RegimeForm({
     }
   }
 
-  const faturamento = dadosIniciais?.faturamento_12m ? Number(dadosIniciais.faturamento_12m) : FALLBACK_FATURAMENTO;
+  // const faturamento = dadosIniciais?.faturamento_12m ? Number(dadosIniciais.faturamento_12m) : FALLBACK_FATURAMENTO;
+
+  const faturamento = dadosIniciais?.faturamento_12m
+    ? Number(dadosIniciais.faturamento_12m)
+    : null;
 
   return (
     <div>
-      <Toaster position="top-center" />
+      <Toaster position='top-center' />
 
-      <p className="mb-4">
+      <p className='mb-4'>
         Faturamento:{" "}
         <b>
-          R$ {faturamento.toLocaleString("pt-BR", {
-            minimumFractionDigits: 2,
-          })}{" "}
-          / ano
+          {faturamento !== null
+            ? faturamento.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+                minimumFractionDigits: 2,
+              }) + " / ano"
+            : "Aguardando diagnóstico inicial..."}
         </b>
       </p>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="grid md:grid-cols-3 gap-4 mb-4">
-
+          <div className='grid md:grid-cols-3 gap-4 mb-4'>
             {/* Receitas Financeiras */}
             <FormField
               control={form.control}
-              name="receitas_financeiras"
+              name='receitas_financeiras'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Receitas Financeiras</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <BanknoteArrowUp className="absolute left-3 top-3 h-4 w-4 text-green-600" />
+                    <div className='relative'>
+                      <BanknoteArrowUp className='absolute left-3 top-3 h-4 w-4 text-green-600' />
 
                       <NumericFormat
                         value={field.value ?? 0}
-                        thousandSeparator="."
-                        decimalSeparator=","
-                        prefix="R$ "
+                        thousandSeparator='.'
+                        decimalSeparator=','
+                        prefix='R$ '
                         decimalScale={2}
                         fixedDecimalScale
                         allowNegative={false}
-                        className="pl-10 border rounded-md h-10 w-full"
+                        className='pl-10 border rounded-md h-10 w-full'
                         onValueChange={(values) => {
                           field.onChange(values.floatValue ?? 0);
                         }}
@@ -155,23 +160,23 @@ export function RegimeForm({
             {/* Receitas Não Operacionais */}
             <FormField
               control={form.control}
-              name="receitas_nao_operacionais"
+              name='receitas_nao_operacionais'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Receitas Não Operacionais</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <BanknoteArrowUp className="absolute left-3 top-3 h-4 w-4 text-green-600" />
+                    <div className='relative'>
+                      <BanknoteArrowUp className='absolute left-3 top-3 h-4 w-4 text-green-600' />
 
                       <NumericFormat
                         value={field.value ?? 0}
-                        thousandSeparator="."
-                        decimalSeparator=","
-                        prefix="R$ "
+                        thousandSeparator='.'
+                        decimalSeparator=','
+                        prefix='R$ '
                         decimalScale={2}
                         fixedDecimalScale
                         allowNegative={false}
-                        className="pl-10 border rounded-md h-10 w-full"
+                        className='pl-10 border rounded-md h-10 w-full'
                         onValueChange={(values) => {
                           field.onChange(values.floatValue ?? 0);
                         }}
@@ -186,23 +191,23 @@ export function RegimeForm({
             {/* Despesas */}
             <FormField
               control={form.control}
-              name="despesas_financeiras"
+              name='despesas_financeiras'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Despesas Financeiras</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <BanknoteArrowDown className="absolute left-3 top-3 h-4 w-4 text-red-600" />
+                    <div className='relative'>
+                      <BanknoteArrowDown className='absolute left-3 top-3 h-4 w-4 text-red-600' />
 
                       <NumericFormat
                         value={field.value ?? 0}
-                        thousandSeparator="."
-                        decimalSeparator=","
-                        prefix="R$ "
+                        thousandSeparator='.'
+                        decimalSeparator=','
+                        prefix='R$ '
                         decimalScale={2}
                         fixedDecimalScale
                         allowNegative={false}
-                        className="pl-10 border rounded-md h-10 w-full"
+                        className='pl-10 border rounded-md h-10 w-full'
                         onValueChange={(values) => {
                           field.onChange(values.floatValue ?? 0);
                         }}
@@ -216,12 +221,12 @@ export function RegimeForm({
           </div>
 
           <Button
-            type="submit"
-            size="lg"
-            className="w-full text-lg"
+            type='submit'
+            size='lg'
+            className='w-full text-lg'
             disabled={isSubmitting}
           >
-            <Calculator className="mr-2" />
+            <Calculator className='mr-2' />
             {isSubmitting ? "Calculando..." : "Calcular"}
           </Button>
         </form>
