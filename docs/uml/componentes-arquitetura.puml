@@ -1,0 +1,50 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+actor "MEI" as user
+
+node "Frontend (React + Vite)" as FE {
+  component "Rotas\n(Home/Login/Diagnóstico/AppHub)" as FE_ROUTES
+  component "Módulos\nPainel/Jornada/Checklist/Simulador" as FE_MODULES
+  component "ContAIChat" as FE_CHAT
+  component "AuthContext" as FE_AUTH
+}
+
+node "Backend (NestJS)" as BE {
+  component "AuthModule" as AUTH
+  component "DiagnosticoInicialModule" as DIAG
+  component "AnaliseMigracaoModule" as ANALISE
+  component "SimuladorRegimesModule" as SIM
+  component "ChecklistDocumentosModule" as CHECK
+  component "JornadaModule" as JORNADA
+  component "AiModule" as AI
+  component "ReceitawsApiService" as RECEITA_SVC
+  component "PrismaModule" as PRISMA
+}
+
+database "PostgreSQL" as DB
+cloud "ReceitaWS API" as RECEITA_API
+cloud "Gemini API" as GEMINI_API
+
+user --> FE_ROUTES
+FE_MODULES --> FE_AUTH
+FE_ROUTES --> BE
+FE_MODULES --> BE
+FE_CHAT --> BE
+
+BE --> PRISMA
+PRISMA --> DB
+
+DIAG --> ANALISE
+DIAG --> RECEITA_SVC
+RECEITA_SVC --> RECEITA_API
+AI --> GEMINI_API
+
+AUTH --> PRISMA
+DIAG --> PRISMA
+SIM --> PRISMA
+CHECK --> PRISMA
+JORNADA --> PRISMA
+AI --> PRISMA
+@enduml

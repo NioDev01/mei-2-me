@@ -1,0 +1,36 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "MEI (Usuário)" as MEI
+actor "Serviço Externo\nReceitaWS" as RECEITA
+actor "Serviço Externo\nGemini API" as GEMINI
+
+rectangle "MEI2ME" {
+  usecase "Cadastrar conta" as UC_REGISTER
+  usecase "Autenticar (login)" as UC_LOGIN
+  usecase "Recuperar senha" as UC_RECOVER
+  usecase "Preencher diagnóstico\ninicial" as UC_DIAG
+  usecase "Consultar CNPJ" as UC_CNPJ
+  usecase "Visualizar painel" as UC_DASH
+  usecase "Gerenciar checklist\nde documentos" as UC_CHECK
+  usecase "Executar simulação\nde regime" as UC_SIM
+  usecase "Acompanhar jornada\nde migração" as UC_JORNADA
+  usecase "Conversar com ContAI" as UC_CHAT
+}
+
+MEI --> UC_REGISTER
+MEI --> UC_LOGIN
+MEI --> UC_RECOVER
+MEI --> UC_DIAG
+MEI --> UC_DASH
+MEI --> UC_CHECK
+MEI --> UC_SIM
+MEI --> UC_JORNADA
+MEI --> UC_CHAT
+
+UC_DIAG .> UC_CNPJ : <<include>>
+RECEITA --> UC_CNPJ
+GEMINI --> UC_CHAT
+@enduml
