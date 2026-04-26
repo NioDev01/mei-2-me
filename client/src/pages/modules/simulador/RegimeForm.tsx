@@ -27,8 +27,6 @@ const formSchema = z.object({
   despesas_financeiras: z.coerce.number().nonnegative(),
 });
 
-const FALLBACK_FATURAMENTO = "Aguardando cálculo...";
-
 // function handleMoneyChange(
 //   value: string,
 //   onChange: (v: number) => void
@@ -99,8 +97,6 @@ export function RegimeForm({
       setIsSubmitting(false);
     }
   }
-
-  // const faturamento = dadosIniciais?.faturamento_12m ? Number(dadosIniciais.faturamento_12m) : FALLBACK_FATURAMENTO;
 
   const faturamento = dadosIniciais?.faturamento_12m
     ? Number(dadosIniciais.faturamento_12m)
