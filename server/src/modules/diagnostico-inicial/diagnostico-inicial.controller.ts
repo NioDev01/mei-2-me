@@ -94,7 +94,7 @@ export class DiagnosticoInicialController {
   @ApiOperation({
     summary: 'Retorna o diagnóstico inicial por usuário.',
     description:
-      'Endpoint responsável por criar o diagnóstico inicial do usuário.',
+      'Endpoint responsável por retornar o diagnóstico inicial do usuário.',
   })
   @ApiResponse({
     status: 200,
