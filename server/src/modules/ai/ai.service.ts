@@ -176,7 +176,7 @@ export class AiService {
         - Evite explicações longas se não forem necessárias
 
         FORMATO:
-        - Use no máximo 5 parágrafos curtos
+        - Use no máximo 4 parágrafos curtos
         - Pode usar listas simples quando ajudar na clareza
         - Se a pergunta for simples, responda em 1 ou 2 parágrafos.
 
