@@ -1,0 +1,144 @@
+@startuml
+!theme plain
+hide methods
+hide stereotypes
+
+entity Mei {
+  +id_mei : Int <<PK>>
+  --
+  cnpj_mei : String <<U>>
+  data_abertura : Date
+  uf_mei : String
+  razao_social : String
+  nome_fantasia : String
+  municipio_mei : String
+  cnae_principal : Json
+  cnae_secundario : Json
+  natureza_juridica : String
+  possui_filial : Boolean
+  qtd_funcionario : Int
+  paga_acima_piso : Boolean
+  participa_outra_empresa : Boolean
+  faturamento_12m : Decimal
+  compras_12m : Decimal
+  exporta_acima_limite : Boolean
+  importacao_direta : Boolean
+}
+
+entity Diagnostico {
+  +id_mei : Int <<PK>>
+  --
+  resultado_diag : String
+  atualizado_em : DateTime
+  motivos_resultado : Json
+}
+
+entity Cnae {
+  +id_cnae : Int <<PK>>
+  --
+  cnae : String
+  ocupacao_cnae : String
+  descricao_subclasse : String
+  iss_cnae : String
+  icms_cnae : String
+  lucrop_aliq_csll : Decimal
+  lucrop_aliq_irpj : Decimal
+  setor_cnae : String
+  simples_anexo : String
+  simples_fatorr : String
+}
+
+entity CalculoRegime {
+  +id_mei : Int <<PK>>
+  --
+  receitas_financeiras : Decimal
+  receitas_nao_operacionais : Decimal
+  despesas_financeiras : Decimal
+  tributos_simples : Decimal
+  tributos_lucrop : Decimal
+  atualizado_em : DateTime
+  aliq_efetiva_lucrop : Decimal
+  aliq_efetiva_simples : Decimal
+  lucro_liq_lucrop : Decimal
+  lucro_liq_simples : Decimal
+  recomendacao : String
+}
+
+entity JornadaStepProgress {
+  +id : Int <<PK>>
+  --
+  id_mei : Int <<FK>>
+  step : String
+  started : Boolean
+  completed : Boolean
+  created_at : DateTime
+  updated_at : DateTime
+}
+
+entity JornadaChecklistItem {
+  +id : Int <<PK>>
+  --
+  id_mei : Int <<FK>>
+  step : String
+  item_id : String
+  is_checked : Boolean
+  created_at : DateTime
+  updated_at : DateTime
+}
+
+entity Usuario {
+  +id_user : Int <<PK>>
+  --
+  id_mei : Int <<FK>>
+  nome_user : String
+  email_user : String <<U>>
+  cnpj_user : String <<U>>
+  senha_user : String
+  celular_user : String <<U>>
+  created_at : DateTime
+  updated_at : DateTime
+  refresh_token : String
+  reset_token : String
+  reset_token_expires : DateTime
+}
+
+entity DocumentosMei {
+  +id_mei : Int <<PK>>
+  --
+  possui_rg : Boolean
+  possui_cpf : Boolean
+  possui_comprovante_residencia : Boolean
+  possui_cartao_cnpj : Boolean
+  formulario_capa_marrom : Boolean
+  requerimento_desenquadramento : Boolean
+  comprovante_pagamento_dare : Boolean
+  contrato_social : Boolean
+  possui_ccmei : Boolean
+  possui_cadesp : Boolean
+  comprovante_situacao_simples_nacional : Boolean
+  comunicacao_desenquadramento_simei : Boolean
+  criado_em : DateTime
+  atualizado_em : DateTime
+}
+
+entity ChatMessage {
+  +id : Int <<PK>>
+  --
+  user_id : Int <<FK>>
+  role : String
+  content : String
+  created_at : DateTime
+}
+
+' ================= RELACIONAMENTOS =================
+
+Mei ||--|| Diagnostico
+Mei ||--|| CalculoRegime
+Mei ||--|| DocumentosMei
+Mei ||--o{ JornadaStepProgress
+Mei ||--o{ JornadaChecklistItem
+Mei ||--|| Usuario
+
+Usuario ||--o{ ChatMessage
+
+@enduml
