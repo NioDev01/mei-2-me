@@ -7,7 +7,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarFooter
+  SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import {
   DropdownMenu,
@@ -24,23 +25,22 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
-import { 
-  PanelsLeftBottom, 
-  Route, 
-  Calculator, 
-  ListChecks, 
+import {
+  PanelsLeftBottom,
+  Route,
+  Calculator,
+  ListChecks,
   BotMessageSquare,
   User,
   Settings,
   LogOut,
 } from "lucide-react"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Fragment } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
 import { ContAIChat } from "@/components/ContAIChat"
 
-// Módulos
 const items = [
   { title: "Painel MEI", icon: PanelsLeftBottom, hash: "painel" },
   { title: "Checklist de Documentos", icon: ListChecks, hash: "checklist" },
@@ -48,29 +48,21 @@ const items = [
   { title: "Simulador de Regime", icon: Calculator, hash: "simulador" },
 ]
 
-export function AppSidebar() {
-  const [activeHash, setActiveHash] = useState("painel")
-  const [openChat, setOpenChat] = useState(false)
+function SidebarInner({
+  activeHash,
+  onOpenChat,
+  onLogout,
+}: {
+  activeHash: string
+  onOpenChat: () => void
+  onLogout: () => void
+}) {
+  const { setOpenMobile } = useSidebar()
 
-  const navigate = useNavigate()
-  const { logout } = useAuth()
-
-  const handleLogout = async () => {
-    await logout()
-    navigate("/login")
+  const handleOpenChat = () => {
+    setOpenMobile(false)
+    onOpenChat()
   }
-
-  // Atualiza estado sempre que o hash mudar
-  useEffect(() => {
-    const updateHash = () => {
-      const hash = window.location.hash.replace("#", "") || "painel"
-      setActiveHash(hash)
-    }
-
-    updateHash() // executa na primeira carga
-    window.addEventListener("hashchange", updateHash)
-    return () => window.removeEventListener("hashchange", updateHash)
-  }, [])
 
   return (
     <Sidebar variant="sidebar">
@@ -85,11 +77,11 @@ export function AppSidebar() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="start">
               <DropdownMenuGroup>
-                <DropdownMenuItem><User/>Dados da Conta</DropdownMenuItem>
-                <DropdownMenuItem><Settings/>Configurações</DropdownMenuItem>
+                <DropdownMenuItem><User />Dados da Conta</DropdownMenuItem>
+                <DropdownMenuItem><Settings />Configurações</DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
+              <DropdownMenuItem onClick={onLogout}>
                 <LogOut />
                 Sair
               </DropdownMenuItem>
@@ -111,8 +103,8 @@ export function AppSidebar() {
                       <a
                         href={`#${item.hash}`}
                         className={`flex items-center w-full rounded-md px-2 py-1.5 transition-colors
-                          ${isActive 
-                            ? "bg-accent text-accent-foreground" 
+                          ${isActive
+                            ? "bg-accent text-accent-foreground"
                             : "hover:bg-muted"
                           }`}
                       >
@@ -130,14 +122,47 @@ export function AppSidebar() {
       <Separator />
       <SidebarFooter>
         <div className="flex items-center">
-          <Button onClick={() => setOpenChat(true)}>
+          <Button onClick={handleOpenChat}>
             <BotMessageSquare />
             ContAI
           </Button>
         </div>
         © {new Date().getFullYear()} MEI2ME
       </SidebarFooter>
-      {openChat && <ContAIChat onClose={() => setOpenChat(false)} />}
     </Sidebar>
+  )
+}
+
+export function AppSidebar() {
+  const [activeHash, setActiveHash] = useState("painel")
+  const [openChat, setOpenChat] = useState(false)
+
+  const navigate = useNavigate()
+  const { logout } = useAuth()
+
+  const handleLogout = async () => {
+    await logout()
+    navigate("/login")
+  }
+
+  useEffect(() => {
+    const updateHash = () => {
+      const hash = window.location.hash.replace("#", "") || "painel"
+      setActiveHash(hash)
+    }
+    updateHash()
+    window.addEventListener("hashchange", updateHash)
+    return () => window.removeEventListener("hashchange", updateHash)
+  }, [])
+
+  return (
+    <Fragment>
+      <SidebarInner
+        activeHash={activeHash}
+        onOpenChat={() => setOpenChat(true)}
+        onLogout={handleLogout}
+      />
+      {openChat && <ContAIChat onClose={() => setOpenChat(false)} />}
+    </Fragment>
   )
 }
