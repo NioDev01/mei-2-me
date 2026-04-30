@@ -64,38 +64,38 @@ export const JORNADA_CHECKLISTS: Record<JornadaStep, JornadaChecklistItem[]> = {
     },
   ],
 
-  [JornadaStep.CONTRATO_SOCIAL]: [
+  [JornadaStep.ATO_CONSTITUTIVO]: [
     {
       id: 'compreendi-contrato',
-      step: JornadaStep.CONTRATO_SOCIAL,
+      step: JornadaStep.ATO_CONSTITUTIVO,
       label: 'Pude compreender o que é um Contrato Social',
       isChecked: false,
       required: true,
     },
     {
       id: 'separei-infos-necessarias',
-      step: JornadaStep.CONTRATO_SOCIAL,
+      step: JornadaStep.ATO_CONSTITUTIVO,
       label: 'Fiz a separação de informações necessárias',
       isChecked: false,
       required: true,
     },
     {
       id: 'usei-modelo-adequado',
-      step: JornadaStep.CONTRATO_SOCIAL,
+      step: JornadaStep.ATO_CONSTITUTIVO,
       label: 'Fiz uso de um modelo adequado',
       isChecked: false,
       required: true,
     },
     {
       id: 'revisei-documento',
-      step: JornadaStep.CONTRATO_SOCIAL,
+      step: JornadaStep.ATO_CONSTITUTIVO,
       label: 'Fiz a revisão do documento',
       isChecked: false,
       required: true,
     },
     {
       id: 'gerei-contrato-final',
-      step: JornadaStep.CONTRATO_SOCIAL,
+      step: JornadaStep.ATO_CONSTITUTIVO,
       label: 'Pude fazer a geração do contrato final',
       isChecked: false,
       required: true,

@@ -35,6 +35,8 @@ export function JornadaStep({
 
   const StepComponent = stepComponentMap[step]
 
+  console.log("Renderizando etapa:", step)
+
   useEffect(() => {
     load()
   }, [step])

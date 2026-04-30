@@ -23,8 +23,8 @@ export const stepConfig: Record<
     description: "Informações da empresa",
     icon: Building2,
   },
-  contrato_social: {
-    label: "Contrato Social",
+  ato_constitutivo: {
+    label: "Ato Constitutivo",
     description: "Base legal da empresa",
     icon: FileText,
   },

@@ -35,7 +35,7 @@ export class AiService {
         A plataforma guia o usuário através de uma jornada estruturada, que inclui:
         - desenquadramento do MEI
         - definição da nova empresa
-        - elaboração do contrato social
+        - elaboração do ato constitutivo
         - registro na junta comercial
         - obtenção de CNPJ
         - licenciamento

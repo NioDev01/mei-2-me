@@ -1,7 +1,7 @@
 export enum JornadaStep {
   DESENQUADRAMENTO = 'desenquadramento',
   DEFINICAO_EMPRESA = 'definicao_empresa',
-  CONTRATO_SOCIAL = 'contrato_social',
+  ATO_CONSTITUTIVO = 'ato_constitutivo',
   JUNTA_COMERCIAL = 'junta_comercial',
   CNPJ = 'cnpj',
   LICENCIAMENTO = 'licenciamento',

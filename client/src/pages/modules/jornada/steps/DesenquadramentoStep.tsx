@@ -98,17 +98,24 @@ export function DesenquadramentoStep() {
       header={header}
       sections={{
         whatIs: {
-          title: "O que é o desenquadramento",
+          title: "O que é o Desenquadramento?",
           content: (
             <>
-              O desenquadramento é o processo de saída do regime MEI para outro tipo de empresa, como Microempresa (ME). 
-              Após isso, sua empresa passa a ter novas obrigações fiscais e tributárias.
+              <p>
+                O desenquadramento é o processo de saída do regime de <b>Microempreendedor Individual (MEI)</b> para outro tipo de empresa, como a <b>Microempresa (ME)</b>.
+                Na prática, isso significa que sua empresa deixa de seguir as regras simplificadas do MEI e passa a ter novas obrigações, como:
+              </p>
+              <ul className="list-disc pl-5 mt-2 text-muted-foreground">
+                  <li>pagamento de impostos de forma diferente</li>
+                  <li>envio de declarações mais completas</li>
+                  <li>possível necessidade de contador</li>
+              </ul>
             </>
           ),
         },
 
         why: {
-          title: "Por que isso é necessário?",
+          title: "Por que isso é necessário no seu caso?",
           content: (
             <>
               <p>{data.analise}</p>
@@ -133,7 +140,7 @@ export function DesenquadramentoStep() {
         },
 
         when: {
-          title: "Quando isso acontece?",
+          title: "Quando isso acontece no seu caso?",
           content: (
             <>
               O desenquadramento pode ocorrer automaticamente ou por solicitação.
@@ -151,14 +158,16 @@ export function DesenquadramentoStep() {
           title: "O que você vai precisar?",
           content: (
             <>
-            <ul className="list-disc pl-5 mt-1 text-muted-foreground">
-              <li>CNPJ.</li>
-              <li>Possuir uma conta gov.br (o nível básico já é suficiente).</li>
-              <li>Ter acesso ao Portal do Simples Nacional.</li>
               <ul className="list-disc pl-5 mt-1 text-muted-foreground">
-                <li>Observação: lembre-se de marcar os documentos necessários no menu de Checklist de Documentos.</li>
+                <li>CNPJ.</li>
+                <li>Possuir uma conta gov.br (o nível básico já é suficiente).</li>
+                <li>Ter acesso ao Portal do Simples Nacional.</li>
+                <ul className="list-disc pl-5 mt-1 text-muted-foreground">
+                  <li>Observação: lembre-se de marcar os documentos necessários no menu de Checklist de Documentos.</li>
+                </ul>
               </ul>
-            </ul>
+              <br />
+              <p>Em alguns casos, você não precisa enviar documentos, apenas informar o motivo do desenquadramento dentro do sistema. </p>
             </>
           ),
         },
@@ -168,13 +177,30 @@ export function DesenquadramentoStep() {
         title: "Como fazer?",
         content: (
           <>
-            <p>Passo a passo:</p>
-            <ol className="list-decimal pl-5 mt-2 text-muted-foreground">
-              <li>Acesse o Portal do Simples Nacional com sua conta gov.br.</li>
-              <li>Vá em “Desenquadramento do SIMEI”.</li>
-              <li>Selecione o motivo do desenquadramento.</li>
-              <li>Confirme e envie a solicitação.</li>
-            </ol>
+            <p>O processo pode acontecer de duas formas:</p>
+
+            <p><b>Caso 1: Automático (você não precisa fazer nada) </b></p>
+            <p>O desenquadramento acontece automaticamente quando:</p>
+
+            <ul className="list-disc pl-5 mt-2 text-muted-foreground">
+              <li>você ultrapassa o limite de faturamento anual do MEI</li>
+              <li>ou exerce uma atividade não permitida</li>
+            </ul>
+
+            <p>Nesses casos, a própria Receita Federal realiza o desenquadramento.</p>
+
+            <p><b>Caso 2: Manual (você precisa solicitar)</b></p>
+
+            <p>Se o desenquadramento não for automático, siga este passo a passo:</p>
+
+            <ul className="list-disc pl-5 mt-2 text-muted-foreground">
+              <li>Acesse o Portal do Simples Nacional</li>
+              <li>Entre na opção “Desenquadramento do SIMEI”</li>
+              <li>Informe o motivo do desenquadramento</li>
+              <li>Confirme a solicitação</li>
+            </ul>
+
+            <p>Após isso, o sistema registra sua saída do MEI.</p>
 
             <Button variant="secondary" className="mt-2" onClick={() => window.open('https://www8.receita.fazenda.gov.br/SimplesNacional/Servicos/Grupo.aspx?grp=t&area=2', '_blank')}>
               Acessar Portal
