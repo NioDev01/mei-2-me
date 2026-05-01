@@ -4,6 +4,8 @@ import {
   IsNumber,
   IsString,
   IsNotEmpty,
+  IsOptional,
+  IsArray,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { NaturezaJuridica } from '../enums/natureza-juridica.enums';
@@ -26,6 +28,7 @@ class LtdaInputDto {
   @Type(() => PessoaDto)
   titular!: PessoaDto;
 
+  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => PessoaDto)
   socios!: PessoaDto[];
@@ -37,13 +40,16 @@ class EiInputDto {
 }
 
 export class GenerateFromMeiDto {
+  @IsOptional()
   @IsEnum(NaturezaJuridica)
-  naturezaJuridica!: NaturezaJuridica;
+  naturezaJuridica?: NaturezaJuridica;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => EiInputDto)
   eiData?: EiInputDto;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => LtdaInputDto)
   ltdaData?: LtdaInputDto;
