@@ -7,6 +7,7 @@ export function buildLtdaDocument(data: GenerateLtdaDto): Document {
       {
         children: [
           buildTitle(),
+          ...buildIdentificacaoEmpresa(data),
           ...buildSocios(data),
           ...buildObjeto(data),
           ...buildCapital(data),
@@ -37,6 +38,39 @@ function buildTitle(): Paragraph {
 }
 
 // ===============================
+// IDENTIFICAÇÃO DA EMPRESA
+// ===============================
+
+function buildIdentificacaoEmpresa(data: GenerateLtdaDto): Paragraph[] {
+  return [
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: `Nome Empresarial: ${data.nomeEmpresarial}`,
+        }),
+      ],
+    }),
+
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: `CNPJ: ${data.cnpj}`,
+        }),
+      ],
+    }),
+
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: `Endereço: ${data.endereco}`,
+        }),
+      ],
+      spacing: { after: 200 },
+    }),
+  ];
+}
+
+// ===============================
 // SÓCIOS
 // ===============================
 
@@ -49,7 +83,7 @@ function buildSocios(data: GenerateLtdaDto): Paragraph[] {
       new Paragraph({
         children: [
           new TextRun({
-            text: `O titular ${titular.nome}, inscrito no CPF ${titular.cpf}, constitui uma Sociedade Limitada Unipessoal sob o nome empresarial ${data.nomeEmpresarial}.`,
+            text: `O titular ${titular.nome}, inscrito no CPF ${titular.cpf}, constitui uma Sociedade Limitada Unipessoal.`,
           }),
         ],
         spacing: { after: 200 },
@@ -62,7 +96,7 @@ function buildSocios(data: GenerateLtdaDto): Paragraph[] {
     new Paragraph({
       children: [
         new TextRun({
-          text: `Os sócios abaixo identificados resolvem constituir uma sociedade limitada sob o nome empresarial ${data.nomeEmpresarial}:`,
+          text: `Os sócios abaixo identificados resolvem constituir uma sociedade limitada:`,
         }),
       ],
       spacing: { after: 200 },

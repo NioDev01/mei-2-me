@@ -20,6 +20,10 @@ export class PessoaDto {
 export class GenerateLtdaDto {
   @IsString()
   @IsNotEmpty()
+  cnpj!: string;
+
+  @IsString()
+  @IsNotEmpty()
   nomeEmpresarial!: string;
 
   @IsString()
