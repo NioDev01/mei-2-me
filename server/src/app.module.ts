@@ -10,6 +10,7 @@ import { JornadaModule } from './modules/jornada/jornada.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChecklistDocumentosModule } from './modules/checklist-documentos/checklist-documentos.module';
 import { AiModule } from './modules/ai/ai.module';
+import { AtoConstitutivoModule } from './modules/ato-constitutivo/ato-constitutivo.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AiModule } from './modules/ai/ai.module';
     ChecklistDocumentosModule,
     JornadaModule,
     AiModule,
+    AtoConstitutivoModule,
   ],
   providers: [ReceitawsApiService],
 })
