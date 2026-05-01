@@ -9,40 +9,39 @@ import { GenerateFromMeiDto } from './dto/generate-from-mei.dto';
 
 import { buildEIDocument } from './builders/ei.builder';
 import { buildLtdaDocument } from './builders/ltda.builder';
+import { EmpresaTransicaoResponseDto } from './dto/empresa-transicao-response.dto';
 
 @Injectable()
 export class AtoConstitutivoService {
   constructor(private readonly prisma: PrismaService) {}
 
   // ===============================
-  // ENTRYPOINT PRINCIPAL
+  // VALIDAÇÕES
   // ===============================
 
-  async generateSmart(
-    id_mei: number,
-    payload?: GenerateFromMeiDto,
-  ): Promise<Buffer> {
-    const mei = await this.prisma.mei.findUnique({
-      where: { id_mei },
-    });
+  private validateBusinessRules(payload: GenerateFromMeiDto) {
+    if (!payload.naturezaJuridica) return;
 
-    if (!mei) {
-      throw new BadRequestException('MEI não encontrado');
+    if (
+      payload.naturezaJuridica === NaturezaJuridica.LTDA &&
+      (payload.ltdaData?.socios?.length ?? 0) === 0
+    ) {
+      throw new BadRequestException('LTDA deve possuir pelo menos um sócio');
     }
 
-    if (payload?.naturezaJuridica) {
-      await this.saveEmpresaTransicao(id_mei, payload);
-      return this.generateAto(this.mapMeiToAto(mei, payload));
+    if (
+      payload.naturezaJuridica === NaturezaJuridica.SLU &&
+      (payload.ltdaData?.socios?.length ?? 0) > 0
+    ) {
+      throw new BadRequestException('SLU não pode ter sócios adicionais');
     }
-
-    return this.generateFromTransicao(id_mei);
   }
 
   // ===============================
   // GERAÇÃO A PARTIR DA TRANSIÇÃO
   // ===============================
 
-  private async generateFromTransicao(id_mei: number): Promise<Buffer> {
+  async generateFromTransicao(id_mei: number): Promise<Buffer> {
     const mei = await this.prisma.mei.findUnique({
       where: { id_mei },
     });
@@ -64,51 +63,6 @@ export class AtoConstitutivoService {
   // MAPPERS
   // ===============================
 
-  private mapMeiToAto(mei: any, payload: GenerateFromMeiDto): GenerateAtoDto {
-    if (!payload.naturezaJuridica) {
-      throw new BadRequestException(
-        'Natureza jurídica é obrigatória para geração inicial',
-      );
-    }
-
-    const endereco = `${mei.municipio_mei}/${mei.uf_mei}`;
-
-    const atividade =
-      Array.isArray(mei.cnae_principal) && mei.cnae_principal.length > 0
-        ? mei.cnae_principal[0].text
-        : 'Atividade não informada';
-
-    if (payload.naturezaJuridica === NaturezaJuridica.EI) {
-      return {
-        naturezaJuridica: NaturezaJuridica.EI,
-        eiData: {
-          nomeEmpresarial: mei.razao_social,
-          cnpj: mei.cnpj_mei,
-          endereco,
-          atividade,
-          capitalSocial: payload.eiData?.capitalSocial ?? 0,
-        },
-      };
-    }
-
-    if (!payload.ltdaData) {
-      throw new BadRequestException('Dados de LTDA/SLU não fornecidos');
-    }
-
-    return {
-      naturezaJuridica: payload.naturezaJuridica,
-      ltdaData: {
-        cnpj: mei.cnpj_mei,
-        nomeEmpresarial: mei.razao_social,
-        endereco,
-        atividade,
-        capitalSocial: payload.ltdaData.capitalSocial ?? 0,
-        titular: payload.ltdaData.titular,
-        socios: payload.ltdaData.socios ?? [],
-      },
-    };
-  }
-
   private mapTransicaoToAto(mei: any, transicao: any): GenerateAtoDto {
     const endereco = `${mei.municipio_mei}/${mei.uf_mei}`;
 
@@ -116,6 +70,15 @@ export class AtoConstitutivoService {
       Array.isArray(mei.cnae_principal) && mei.cnae_principal.length > 0
         ? mei.cnae_principal[0].text
         : 'Atividade não informada';
+
+    if (
+      transicao.natureza_juridica === NaturezaJuridica.SLU &&
+      transicao.socios?.length > 0
+    ) {
+      throw new BadRequestException(
+        'Dados inconsistentes: SLU não pode ter sócios',
+      );
+    }
 
     if (transicao.natureza_juridica === NaturezaJuridica.EI) {
       return {
@@ -187,15 +150,15 @@ export class AtoConstitutivoService {
   // PERSISTÊNCIA
   // ===============================
 
-  private async saveEmpresaTransicao(
-    id_mei: number,
-    payload: GenerateFromMeiDto,
-  ) {
+  async saveEmpresaTransicao(id_mei: number, payload: GenerateFromMeiDto) {
     if (!payload.naturezaJuridica) {
       throw new BadRequestException(
         'Natureza jurídica é obrigatória para salvar a transição',
       );
     }
+
+    this.validateBusinessRules(payload);
+
     const socios =
       payload.ltdaData?.socios?.map((s) => ({
         nome: s.nome,
@@ -222,5 +185,50 @@ export class AtoConstitutivoService {
         socios,
       },
     });
+  }
+
+  // ===============================
+  // CONSULTA TRANSIÇÃO
+  // ===============================
+
+  async getEmpresaTransicao(
+    id_mei: number,
+  ): Promise<EmpresaTransicaoResponseDto> {
+    const transicao = await this.prisma.empresaTransicao.findUnique({
+      where: { id_mei },
+    });
+
+    if (!transicao) {
+      throw new BadRequestException(
+        'Dados da nova empresa ainda não definidos',
+      );
+    }
+
+    if (transicao.natureza_juridica === NaturezaJuridica.EI) {
+      return {
+        naturezaJuridica: NaturezaJuridica.EI,
+        eiData: {
+          capitalSocial: Number(transicao.capital_social),
+        },
+      };
+    }
+
+    const natureza = transicao.natureza_juridica as NaturezaJuridica;
+
+    if (!Object.values(NaturezaJuridica).includes(natureza)) {
+      throw new BadRequestException('Natureza jurídica inválida no banco');
+    }
+
+    return {
+      naturezaJuridica: natureza,
+      ltdaData: {
+        capitalSocial: Number(transicao.capital_social),
+        titular: {
+          nome: transicao.titular_nome,
+          cpf: transicao.titular_cpf,
+        },
+        socios: (transicao.socios as any[]) ?? [],
+      },
+    };
   }
 }

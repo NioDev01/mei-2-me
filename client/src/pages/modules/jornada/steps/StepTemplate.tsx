@@ -17,6 +17,7 @@ type Props = {
     why: Section
     when: Section
     requirements: Section
+    form?: Section
   }
   howTo: Section
   tips: Section
@@ -74,6 +75,18 @@ export function StepTemplate({
         </Card>
 
       </div>
+
+      {/* 🔹 FORM (SE EXISTIR) */}
+      {sections.form && (
+        <Card className="border-primary">
+          <CardHeader>
+            <CardTitle>{sections.form.title}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {sections.form.content}
+          </CardContent>
+        </Card>
+      )}
 
       {/* 🔹 COMO FAZER */}
       <Card className="border-primary">
