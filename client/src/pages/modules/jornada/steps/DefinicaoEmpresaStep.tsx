@@ -64,70 +64,134 @@ const formatCpf = (value: string) =>
 // SCHEMA
 // ===============================
 
-const formSchema = z.object({
-  naturezaJuridica: z.enum(["EI", "LTDA", "SLU"]),
+const formSchema = z
+  .object({
+    naturezaJuridica: z.enum(["EI", "LTDA", "SLU"]),
 
-  capitalSocial: z
-    .number()
-    .positive("O capital social deve ser maior que zero"),
+    capitalSocial: z
+      .number()
+      .positive("O capital social deve ser maior que zero"),
 
-  titularNome: z.string().max(100).optional(),
+    titularNome: z
+      .string()
+      .max(100, "Máximo de 100 caracteres")
+      .optional(),
 
-  titularCpf: z
-    .string()
-    .regex(cpfRegex, "CPF inválido")
-    .refine(isValidCPF, "CPF inválido")
-    .optional(),
-
-  socios: z
-    .array(
-      z.object({
-        nome: z.string().min(1).max(100),
-        cpf: z
-          .string()
-          .regex(cpfRegex, "CPF inválido")
-          .refine(isValidCPF, "CPF inválido"),
+    titularCpf: z
+      .string()
+      .optional()
+      .refine((cpf) => !cpf || cpfRegex.test(cpf), {
+        message: "CPF inválido",
       })
-    )
-    .default([]),
-})
-.superRefine((data, ctx) => {
-  if (data.naturezaJuridica === "LTDA") {
-    if (!data.titularNome) {
-      ctx.addIssue({
-        path: ["titularNome"],
-        message: "Nome do titular obrigatório",
-        code: z.ZodIssueCode.custom,
-      })
+      .refine((cpf) => !cpf || isValidCPF(cpf), {
+        message: "CPF inválido",
+      }),
+
+    socios: z
+      .array(
+        z.object({
+          nome: z
+            .string()
+            .min(1, "Nome obrigatório")
+            .max(100, "Máximo de 100 caracteres"),
+
+          cpf: z
+            .string()
+            .refine((cpf) => cpfRegex.test(cpf), {
+              message: "CPF inválido",
+            })
+            .refine((cpf) => isValidCPF(cpf), {
+              message: "CPF inválido",
+            }),
+        })
+      )
+      .default([]),
+  })
+  .superRefine((data, ctx) => {
+    const { naturezaJuridica, titularNome, titularCpf, socios } = data
+
+    // ===============================
+    // LTDA
+    // ===============================
+    if (naturezaJuridica === "LTDA") {
+      if (!titularNome) {
+        ctx.addIssue({
+          path: ["titularNome"],
+          message: "Nome do titular obrigatório",
+          code: z.ZodIssueCode.custom,
+        })
+      }
+
+      if (!titularCpf) {
+        ctx.addIssue({
+          path: ["titularCpf"],
+          message: "CPF do titular obrigatório",
+          code: z.ZodIssueCode.custom,
+        })
+      }
+
+      if (socios.length === 0) {
+        ctx.addIssue({
+          path: ["socios"],
+          message: "LTDA deve possuir pelo menos um sócio",
+          code: z.ZodIssueCode.custom,
+        })
+      }
     }
 
-    if (!data.titularCpf) {
-      ctx.addIssue({
-        path: ["titularCpf"],
-        message: "CPF do titular obrigatório",
-        code: z.ZodIssueCode.custom,
-      })
+    // ===============================
+    // SLU
+    // ===============================
+    if (naturezaJuridica === "SLU") {
+      if (!titularNome) {
+        ctx.addIssue({
+          path: ["titularNome"],
+          message: "Nome do titular obrigatório",
+          code: z.ZodIssueCode.custom,
+        })
+      }
+
+      if (!titularCpf) {
+        ctx.addIssue({
+          path: ["titularCpf"],
+          message: "CPF do titular obrigatório",
+          code: z.ZodIssueCode.custom,
+        })
+      }
     }
 
-    if (data.socios.length === 0) {
-      ctx.addIssue({
-        path: ["socios"],
-        message: "LTDA deve possuir pelo menos um sócio",
-        code: z.ZodIssueCode.custom,
-      })
-    }
-  }
+    // ===============================
+    // VALIDAÇÕES AVANÇADAS
+    // ===============================
 
-  if (data.naturezaJuridica === "SLU") {
-    if (!data.titularNome || !data.titularCpf) {
-      ctx.addIssue({
-        path: ["titularNome"],
-        message: "Titular obrigatório na SLU",
-        code: z.ZodIssueCode.custom,
+    // 🔹 CPFs duplicados entre sócios
+    const cpfSet = new Set<string>()
+
+    socios.forEach((s, index) => {
+      if (cpfSet.has(s.cpf)) {
+        ctx.addIssue({
+          path: ["socios", index, "cpf"],
+          message: "CPF duplicado entre sócios",
+          code: z.ZodIssueCode.custom,
+        })
+      }
+
+      cpfSet.add(s.cpf)
+    })
+
+    // 🔹 Sócio com mesmo CPF do titular
+    if (titularCpf) {
+      socios.forEach((s, index) => {
+        if (s.cpf === titularCpf) {
+          ctx.addIssue({
+            path: ["socios", index, "cpf"],
+            message: "Sócio não pode ter o mesmo CPF do titular",
+            code: z.ZodIssueCode.custom,
+          })
+        }
       })
     }
-  }
-})
+  })
 
 type FormData = z.infer<typeof formSchema>
 
