@@ -24,14 +24,14 @@ export class AtoConstitutivoController {
     return req.user.id_mei;
   }
 
-  // 🔹 GET → carregar dados salvos
+  // GET → carregar dados salvos
   @Get()
   async get(@Req() req: any): Promise<EmpresaTransicaoResponseDto> {
     const id_mei = this.getMeiId(req);
     return this.service.getEmpresaTransicao(id_mei);
   }
 
-  // 🔹 POST → persistir dados (SEM gerar)
+  // POST → persistir dados (SEM gerar)
   @Post()
   @HttpCode(200)
   async save(@Req() req: any, @Body() body: GenerateFromMeiDto) {
@@ -42,7 +42,7 @@ export class AtoConstitutivoController {
     return { message: 'Dados da empresa salvos com sucesso' };
   }
 
-  // 🔹 POST → gerar documento (SEM salvar)
+  // POST → gerar documento (SEM salvar)
   @Post('generate')
   @HttpCode(200)
   async generate(@Req() req: any, @Res() res: Response) {

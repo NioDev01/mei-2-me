@@ -162,7 +162,7 @@ const formSchema = z
     // VALIDAÇÕES AVANÇADAS
     // ===============================
 
-    // 🔹 CPFs duplicados entre sócios
+    // CPFs duplicados entre sócios
     const cpfSet = new Set<string>()
 
     socios.forEach((s, index) => {
@@ -177,7 +177,7 @@ const formSchema = z
       cpfSet.add(s.cpf)
     })
 
-    // 🔹 Sócio com mesmo CPF do titular
+    // Sócio com mesmo CPF do titular
     if (titularCpf) {
       socios.forEach((s, index) => {
         if (s.cpf === titularCpf) {
@@ -507,7 +507,6 @@ export function DefinicaoEmpresaStep() {
               </div>
             ))}
 
-            {/* 🔥 ERRO INLINE */}
             {sociosError && (
               <FormMessage>
                 {form.formState.errors.socios?.message as string}

@@ -22,7 +22,7 @@ export type AIContext = {
   checklist?: string[];
 };
 
-// 🔹 Enviar mensagem
+// Enviar mensagem
 export async function sendMessageToAI(
   message: string,
   context?: AIContext,
@@ -35,7 +35,7 @@ export async function sendMessageToAI(
   return data; // { text }
 }
 
-// 🔹 Buscar histórico
+// Buscar histórico
 export async function getAIHistory(): Promise<ChatMessage[]> {
   const { data } = await api.get("/ai/history");
 
