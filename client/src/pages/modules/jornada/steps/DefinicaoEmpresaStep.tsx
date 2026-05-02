@@ -534,119 +534,181 @@ export function DefinicaoEmpresaStep() {
             title: "O que é a Definição da Nova Empresa?",
             content: (
               <>
-                <p>Nesta etapa, você precisa definir as informações básicas da sua nova empresa, como:</p>
+                <p>
+                  Nesta etapa, você vai definir a <b>estrutura jurídica da sua nova empresa</b>,
+                  ou seja, como ela será formalizada após sair do MEI.
+                </p>
 
-                <ul className="list-disc pl-5 mt-2 mb-2">
-                  <li>tipo de empresa (natureza jurídica)</li>
-                  <li>atividades que ela irá exercer</li>
-                  <li>capital inicial</li>
-                  <li>e, se houver, participação de sócios</li>
-                </ul>
+                <div className="mt-3 space-y-2 text-muted-foreground">
+                  <p>Você irá informar diretamente no formulário:</p>
 
-                <p>Essas definições servem como base para toda a formalização da empresa nas próximas etapas.</p>
+                  <ul className="list-disc pl-5">
+                    <li>o tipo de empresa (natureza jurídica)</li>
+                    <li>o capital social</li>
+                    <li>os dados do titular</li>
+                    <li>os sócios (se houver)</li>
+                  </ul>
+                </div>
+
+                <div className="mt-4 border-l-4 border-primary pl-3 text-sm text-muted-foreground">
+                  <b>Importante:</b> informações como atividades (CNAE), CNPJ e localização
+                  já foram obtidas automaticamente do seu cadastro como MEI e serão reutilizadas na geração do documento.
+                </div>
+
+                <p className="mt-3">
+                  Você poderá revisar e ajustar essas informações posteriormente no documento final, se necessário.
+                </p>
               </>
             ),
           },
+
           why: {
             title: "Por que isso é importante?",
             content: (
               <>
-                <p>As escolhas feitas aqui impactam diretamente em:</p>
+                <p>As decisões tomadas aqui definem a base legal da sua empresa.</p>
 
-                <ul className="list-disc pl-5 mt-2 mb-2">
-                  <li>como sua empresa será registrada</li>
-                  <li>quais serão suas obrigações legais</li>
-                  <li>como os impostos serão aplicados</li>
-                  <li>e o nível de responsabilidade dos sócios (se houver)</li>
-                </ul>
+                <div className="mt-3 grid md:grid-cols-2 gap-3 text-sm text-muted-foreground">
+                  <div className="border rounded-md p-3">
+                    <p className="font-medium text-foreground">Impacto jurídico</p>
+                    <ul className="list-disc pl-4 mt-1">
+                      <li>responsabilidade sobre dívidas</li>
+                      <li>separação de patrimônio</li>
+                    </ul>
+                  </div>
 
-                <p>Em outras palavras: essa etapa define “como a sua empresa vai funcionar” do ponto de vista legal e fiscal.</p>
+                  <div className="border rounded-md p-3">
+                    <p className="font-medium text-foreground">Impacto operacional</p>
+                    <ul className="list-disc pl-4 mt-1">
+                      <li>estrutura da empresa</li>
+                      <li>relação entre sócios</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <p className="mt-3">
+                  Essas definições serão usadas automaticamente na geração do <b>Ato Constitutivo</b>.
+                </p>
               </>
             ),
           },
+
           when: {
             title: "Quando isso é necessário?",
             content: (
               <>
-                <p>Essa etapa acontece após o desenquadramento do MEI e antes da formalização da nova empresa.</p>
-                <br />
-                <p>É nesse momento que você estrutura sua empresa antes de registrá-la oficialmente.</p>
+                <p>
+                  Essa etapa acontece <b>após o desenquadramento do MEI</b> e antes da
+                  formalização da nova empresa.
+                </p>
+
+                <div className="mt-3 border-l-4 border-primary pl-3 text-sm text-muted-foreground">
+                  Aqui você define a estrutura da empresa antes de gerar os documentos oficiais.
+                </div>
               </>
             ),
           },
+
           requirements: {
-            title: "O que você vai precisar?",
+            title: "O que você precisa definir?",
             content: (
               <>
-                <p>Para definir sua nova empresa, você deve ter uma ideia clara sobre:</p>
+                <p>Para preencher esta etapa, você deve decidir:</p>
 
-                <ul className="list-disc pl-5 mt-2 mb-2">
-                  <li>quais atividades sua empresa irá exercer</li>
-                  <li>onde ela irá funcionar</li>
-                  <li>se você terá sócios ou atuará sozinho</li>
-                  <li>quanto pretende investir inicialmente (capital social)</li>
+                <ul className="list-disc pl-5 mt-2 text-muted-foreground">
+                  <li>se irá atuar sozinho ou com sócios</li>
+                  <li>qual nível de proteção patrimonial deseja</li>
+                  <li>quanto pretende investir inicialmente</li>
                 </ul>
 
-                <p>Algumas dessas informações podem já ter sido informadas anteriormente na plataforma.</p>
+                <div className="mt-4 border rounded-md p-3 text-sm text-muted-foreground">
+                  <p className="font-medium text-foreground mb-1">📌 Dados já preenchidos automaticamente</p>
+                  <ul className="list-disc pl-4">
+                    <li>CNPJ</li>
+                    <li>Razão social</li>
+                    <li>Atividades (CNAE)</li>
+                    <li>Município/UF</li>
+                  </ul>
+                </div>
               </>
             ),
           },
-          form: { title: "Defina sua empresa", content: formContent },
+
+          form: {
+            title: "Defina sua nova empresa",
+            content: formContent,
+          },
         }}
+
         howTo={{
-          title: "Entendendo as opções de tipo de empresa (natureza jurídica)",
+          title: "Escolha o tipo de empresa",
           content: (
-            <>
-              <div className='grid md:grid-cols-3 gap-6'>
-                <div className="space-y-2">
-                  <p className="font-bold">Empresário Individual (EI)</p>
+            <div className="grid md:grid-cols-3 gap-4">
 
-                  <ul className="list-disc pl-5 mt-1 text-muted-foreground">
-                    <li>Indicado para quem quer continuar atuando sozinho</li>
-                    <li>Não há separação entre o patrimônio da empresa e o pessoal</li>
-                    <li>Estrutura mais simples</li>
-                  </ul>
+              <div className="border rounded-lg p-4 space-y-2">
+                <p className="font-bold text-lg">Empresário Individual</p>
+                <p className="text-xs text-muted-foreground">EI</p>
 
-                  <p>Pode ser uma opção para negócios menores ou com menor risco</p>
-                </div>
+                <ul className="list-disc pl-4 text-sm text-muted-foreground">
+                  <li>Atuação individual</li>
+                  <li>Estrutura simples</li>
+                  <li>Sem separação de patrimônio</li>
+                </ul>
 
-                <div className="space-y-2">
-                  <p className="font-bold">Sociedade Limitada (LTDA)</p>
-
-                  <ul className="list-disc pl-5 mt-1 text-muted-foreground">
-                    <li>Utilizada quando há dois ou mais sócios</li>
-                    <li>Define responsabilidades e participação de cada sócio</li>
-                    <li>O patrimônio pessoal dos sócios é, em geral, separado do da empresa</li>
-                  </ul>
-                  
-                  <p>É um dos modelos mais comuns no Brasil</p>
-                </div>
-
-                <div className="space-y-2">
-                  <p className="font-bold">Sociedade Limitada Unipessoal (SLU)</p>
-
-                  <ul className="list-disc pl-5 mt-1 text-muted-foreground">
-                    <li>Permite abrir uma empresa sozinho, com características de uma LTDA</li>
-                    <li>Há separação entre patrimônio pessoal e empresarial</li>
-                    <li>Não exige sócios</li>
-                  </ul>
-
-                  <p>É uma alternativa moderna para quem quer empreender sozinho com mais proteção</p>
+                <div className="text-xs text-muted-foreground">
+                  👉 Mais simples, porém com maior risco pessoal
                 </div>
               </div>
-            </>
+
+              <div className="border rounded-lg p-4 space-y-2">
+                <p className="font-bold text-lg">Sociedade Limitada</p>
+                <p className="text-xs text-muted-foreground">LTDA</p>
+
+                <ul className="list-disc pl-4 text-sm text-muted-foreground">
+                  <li>Dois ou mais sócios</li>
+                  <li>Divisão de responsabilidades</li>
+                  <li>Proteção patrimonial</li>
+                </ul>
+
+                <div className="text-xs text-muted-foreground">
+                  👉 Ideal para negócios em parceria
+                </div>
+              </div>
+
+              <div className="border rounded-lg p-4 space-y-2 border-primary">
+                <p className="font-bold text-lg">Sociedade Unipessoal</p>
+                <p className="text-xs text-muted-foreground">SLU</p>
+
+                <ul className="list-disc pl-4 text-sm text-muted-foreground">
+                  <li>Atuação individual</li>
+                  <li>Proteção patrimonial</li>
+                  <li>Sem necessidade de sócios</li>
+                </ul>
+
+                <div className="text-xs text-muted-foreground">
+                  👉 Melhor opção para quem quer segurança sem sócios
+                </div>
+              </div>
+
+            </div>
           ),
         }}
+
         tips={{
-          title: "Dicas e cuidados",
+          title: "Dicas importantes",
           content: (
             <>
-              <ul className="list-disc pl-5 mt-2 mb-2">
-                <li>A escolha da natureza jurídica impacta diretamente na responsabilidade sobre dívidas da empresa</li>
-                <li>Definir corretamente as atividades (CNAE) evita problemas fiscais futuros</li>
-                <li>O capital social deve ser compatível com a realidade do negócio</li>
-                <li>Em caso de dúvida, o apoio de um contador pode ajudar na escolha mais adequada</li>
-              </ul>
+              <div className="space-y-2 text-muted-foreground">
+
+                <p>✔ Você não precisa se preocupar com CNAE neste momento — já utilizamos os dados do seu MEI</p>
+                <p>✔ Revise os dados antes de gerar o documento final</p>
+                <p>✔ Escolha a natureza jurídica pensando no crescimento do seu negócio</p>
+
+                <div className="mt-3 border-l-4 border-yellow-500 pl-3 text-sm">
+                  Em caso de dúvida, um contador pode ajudar a validar sua escolha.
+                </div>
+
+              </div>
             </>
           ),
         }}
