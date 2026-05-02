@@ -4,6 +4,7 @@ import { getJornadaSummary } from "@/services/jornada.service"
 import { getSimulador } from "@/services/simulador.service"
 import { getChecklistDocumentos } from "@/services/checklist.service"
 import { getDiagnostico } from "@/services/diagnostico.service"
+import { getEmpresaTransicao } from "@/services/ato-constitutivo.service"
 import { useAuth } from "@/context/AuthContext"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { createPortal } from "react-dom"
@@ -117,7 +118,22 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
         } catch { diagnostico = null }
       }
 
-      return { jornada, simulador, checklist, diagnostico }
+      let atoConstitutivo = null
+      try {
+        const raw = await getEmpresaTransicao()
+        if (raw) {
+          const ltdaData = raw.ltdaData
+          const eiData = raw.eiData
+          atoConstitutivo = {
+            naturezaJuridica: raw.naturezaJuridica || null,
+            capitalSocial: ltdaData?.capitalSocial ?? eiData?.capitalSocial ?? null,
+            titular: ltdaData?.titular || null,
+            socios: ltdaData?.socios || [],
+          }
+        }
+      } catch { atoConstitutivo = null }
+
+      return { jornada, simulador, checklist, diagnostico, atoConstitutivo }
     } catch { return null }
   }
 
@@ -133,6 +149,7 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
         ? Object.entries(raw.checklist).filter(([_, v]) => v === false).map(([k]) => k)
         : [],
       diagnostico: raw.diagnostico || undefined,
+      atoConstitutivo: raw.atoConstitutivo || undefined,
     }
   }
 

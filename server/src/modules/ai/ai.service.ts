@@ -25,7 +25,7 @@ export class AiService {
       }
 
       // =========================
-      // 🔹 Plataforma
+      // Plataforma
       // =========================
       const platformContext = `
         SOBRE A PLATAFORMA MEI2ME:
@@ -46,12 +46,13 @@ export class AiService {
         - simulador de regime tributário
         - checklist de documentos
         - acompanhamento do progresso da jornada
+        - gerador de ato constitutivo personalizado
 
         Seu papel é ajudar o usuário a entender esse processo e avançar com segurança, sempre com foco no próximo passo.
       `;
 
       // =========================
-      // 🔹 Histórico
+      // Histórico
       // =========================
       const historyDb = await this.prisma.chatMessage.findMany({
         where: { user_id: userId },
@@ -69,7 +70,7 @@ export class AiService {
         .join('\n');
 
       // =========================
-      // 🔹 Contexto
+      // Contexto
       // =========================
       const steps = context?.jornada?.steps || [];
 
@@ -81,10 +82,38 @@ export class AiService {
       const nextStep =
         steps.find((s) => s.status === 'available')?.step || 'não definido';
 
+      // =========================
+      // Ato Constitutivo
+      // =========================
+      const ato = context?.atoConstitutivo;
+
+      let atoConstitutivoText = 'não informado';
+      if (ato) {
+        const natureza = ato.naturezaJuridica || 'não definida';
+        const capital =
+          ato.capitalSocial != null
+            ? `R$ ${Number(ato.capitalSocial).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+            : 'não informado';
+
+        const titular = ato.titular?.nome
+          ? `${ato.titular.nome} (CPF: ${ato.titular.cpf || 'não informado'})`
+          : 'não informado';
+
+        const socios = ato.socios?.length
+          ? ato.socios.map((s: any) => `${s.nome} (CPF: ${s.cpf})`).join(', ')
+          : 'nenhum';
+
+        atoConstitutivoText = `
+        - Natureza jurídica: ${natureza}
+        - Capital social: ${capital}
+        - Titular: ${titular}
+        - Sócios: ${socios}`;
+      }
+
       const contextText = `
         MÓDULO: ${context?.module || 'painel'}
 
-        DIAGNÓSTICO:
+        DIAGNÓSTICO: Informa se o MEI está apto para transição, quais os principais motivos e um resumo da situação atual.
         - Status: ${context?.diagnostico?.status || 'não informado'}
         - Resumo: ${context?.diagnostico?.resumo || 'não disponível'}
         - Principais motivos: ${
@@ -93,23 +122,26 @@ export class AiService {
             : 'nenhum'
         }
 
-        JORNADA:
+        JORNADA: Conduz o MEI pelos passos necessários para a transição, liberando cada etapa conforme o progresso do usuário.
         - Progresso: ${context?.jornada?.progress ?? 0}%
         - Etapas (ordem + status):
         ${steps.map((s) => `  - ${s.step}: ${s.status}`).join('\n')}
         - Etapa atual: ${currentStep}
         - Próxima etapa: ${nextStep}
 
-        SIMULADOR:
+        SIMULADOR: Realiza uma simulação simplificada dos valores referentes aos regimes tributários (Simples Nacional e Lucro Presumido), ajudando o usuário a escolher o melhor enquadramento para sua nova empresa.
         - Faturamento: ${context?.simulador?.faturamento_12m ?? 'não informado'}
         - Recomendação: ${context?.simulador?.recomendacao ?? 'não definida'}
 
-        CHECKLIST PENDENTE:
+        CHECKLIST PENDENTE: Auxilia o MEI na organização dos documentos necessários para a jornada de transição, registrando quais documentos o MEI já possui e quais ainda faltam.
         ${context?.checklist?.length ? context.checklist.join(', ') : 'nenhum'}
+
+        ATO CONSTITUTIVO: Gera um ato constitutivo personalizado para a nova empresa do usuário, com base na natureza jurídica escolhida (Contrato Social para SLU e LTDA, Requerimento de Empresário para EI). O documento gerado deve ser revisado e editado pelo usuário, pois tem cunho educativo e serve como um guia para a elaboração do documento final.
+        ${atoConstitutivoText}
       `;
 
       // =========================
-      // 🔹 Instruções por módulo
+      // Instruções por módulo
       // =========================
       const moduleInstructions = {
         jornada: `
@@ -130,7 +162,7 @@ export class AiService {
       }[context?.module || 'default'];
 
       // =========================
-      // 🔹 Prompt
+      // Prompt
       // =========================
       const prompt = `
         Você é o ContAI, um assistente especializado na transição de MEI para ME.
@@ -191,7 +223,7 @@ export class AiService {
       `;
 
       // =========================
-      // 🔹 Salvar pergunta
+      // Salvar pergunta
       // =========================
       await this.prisma.chatMessage.create({
         data: {
@@ -202,7 +234,7 @@ export class AiService {
       });
 
       // =========================
-      // 🔹 Chamada Gemini
+      // Chamada Gemini
       // =========================
       const response = await axios.post(
         'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent',
@@ -222,7 +254,7 @@ export class AiService {
         'Não consegui gerar uma resposta.';
 
       // =========================
-      // 🔹 Salvar resposta
+      // Salvar resposta
       // =========================
       await this.prisma.chatMessage.create({
         data: {

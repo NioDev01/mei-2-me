@@ -6,6 +6,13 @@ export type ChatMessage = {
   timestamp?: number;
 };
 
+export type AtoConstitutivoContext = {
+  naturezaJuridica?: string;
+  capitalSocial?: number;
+  titular?: { nome?: string; cpf?: string };
+  socios?: { nome?: string; cpf?: string }[];
+};
+
 export type AIContext = {
   module?: string;
   jornada?: {
@@ -20,6 +27,7 @@ export type AIContext = {
     recomendacao?: string;
   };
   checklist?: string[];
+  atoConstitutivo?: AtoConstitutivoContext;
 };
 
 // Enviar mensagem
