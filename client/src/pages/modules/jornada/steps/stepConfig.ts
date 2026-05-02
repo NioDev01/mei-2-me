@@ -19,7 +19,7 @@ export const stepConfig: Record<
     icon: Route,
   },
   definicao_empresa: {
-    label: "Definição da empresa",
+    label: "Definição da Empresa",
     description: "Informações da empresa",
     icon: Building2,
   },
