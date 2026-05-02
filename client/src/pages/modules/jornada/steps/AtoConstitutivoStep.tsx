@@ -1,8 +1,5 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { StepTemplate } from "./StepTemplate"
-import { stepConfig } from "./stepConfig"
 
 import { getEmpresaTransicao } from "@/services/ato-constitutivo.service"
 import { generateAtoConstitutivo } from "@/services/ato-constitutivo.service"
@@ -247,17 +244,6 @@ export function AtoConstitutivoStep() {
 
   return (
     <StepTemplate
-        header={
-            <div className="space-y-2">
-            <h2 className="text-2xl font-bold">
-                {stepConfig.ato_constitutivo.label}
-            </h2>
-            <p className="text-sm text-muted-foreground">
-                {stepConfig.ato_constitutivo.description}
-            </p>
-            </div>
-        }
-
         sections={{
             whatIs: {
             title: "O que é o Ato Constitutivo?",
