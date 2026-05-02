@@ -296,7 +296,10 @@ export function DefinicaoEmpresaStep() {
   // ===============================
 
   useEffect(() => {
-    if (!data) return
+    if (!data) {
+      setIsHydrated(true)
+      return
+    }
 
     form.reset({
       naturezaJuridica: data.naturezaJuridica,
