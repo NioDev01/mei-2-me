@@ -17,6 +17,7 @@ type Props = {
     why: Section
     when: Section
     requirements: Section
+    form?: Section
   }
   howTo: Section
   tips: Section
@@ -31,10 +32,10 @@ export function StepTemplate({
   return (
     <div className="w-full space-y-8 pt-3">
 
-      {/* 🔹 HEADER CUSTOM */}
+      {/* HEADER CUSTOM */}
       {header}
 
-      {/* 🔹 GRID PRINCIPAL */}
+      {/* GRID PRINCIPAL */}
       <div className="grid md:grid-cols-2 gap-4">
 
         <Card>
@@ -75,7 +76,19 @@ export function StepTemplate({
 
       </div>
 
-      {/* 🔹 COMO FAZER */}
+      {/* FORM (SE EXISTIR) */}
+      {sections.form && (
+        <Card className="border-primary">
+          <CardHeader>
+            <CardTitle>{sections.form.title}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {sections.form.content}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* COMO FAZER */}
       <Card className="border-primary">
         <CardHeader>
           <CardTitle>{howTo.title}</CardTitle>
@@ -85,7 +98,7 @@ export function StepTemplate({
         </CardContent>
       </Card>
 
-      {/* 🔹 DICAS */}
+      {/* DICAS */}
       <Card>
         <CardHeader>
           <CardTitle>{tips.title}</CardTitle>

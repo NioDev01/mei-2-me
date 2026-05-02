@@ -31,6 +31,7 @@ model Mei {
   documentosMeis          DocumentosMei?
   JornadaChecklist        JornadaChecklistItem[]
   JornadaSteps            JornadaStepProgress[]
+  EmpresaTransicao        EmpresaTransicao?
   usuarios                Usuario?
 
   @@map("Mei")
@@ -107,6 +108,26 @@ model JornadaChecklistItem {
 
   @@unique([id_mei, step, item_id])
   @@map("JornadaChecklistItem")
+}
+
+model EmpresaTransicao {
+  id                 Int      @id @default(autoincrement())
+  id_mei             Int      @unique
+
+  natureza_juridica  String
+  capital_social     Decimal  @db.Decimal(12, 2)
+
+  titular_nome       String
+  titular_cpf        String
+
+  socios             Json?
+
+  criado_em          DateTime @default(now())
+  atualizado_em      DateTime @updatedAt
+
+  mei                Mei      @relation(fields: [id_mei], references: [id_mei])
+
+  @@map("EmpresaTransicao")
 }
 
 model Usuario {
