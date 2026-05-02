@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { StepTemplate } from "./StepTemplate"
 
 import {
@@ -62,6 +62,18 @@ const formatCpf = (value: string) =>
 // SCHEMA
 // ===============================
 
+const socioSchema = z.object({
+  nome: z
+    .string()
+    .min(1, "Nome obrigatório")
+    .max(100, "Máximo de 100 caracteres"),
+
+  cpf: z
+    .string()
+    .refine((cpf) => cpfRegex.test(cpf), { message: "CPF inválido" })
+    .refine((cpf) => isValidCPF(cpf), { message: "CPF inválido" }),
+})
+
 const formSchema = z
   .object({
     naturezaJuridica: z.enum(["EI", "LTDA", "SLU"]),
@@ -78,32 +90,10 @@ const formSchema = z
     titularCpf: z
       .string()
       .optional()
-      .refine((cpf) => !cpf || cpfRegex.test(cpf), {
-        message: "CPF inválido",
-      })
-      .refine((cpf) => !cpf || isValidCPF(cpf), {
-        message: "CPF inválido",
-      }),
+      .refine((cpf) => !cpf || cpfRegex.test(cpf), { message: "CPF inválido" })
+      .refine((cpf) => !cpf || isValidCPF(cpf), { message: "CPF inválido" }),
 
-    socios: z
-      .array(
-        z.object({
-          nome: z
-            .string()
-            .min(1, "Nome obrigatório")
-            .max(100, "Máximo de 100 caracteres"),
-
-          cpf: z
-            .string()
-            .refine((cpf) => cpfRegex.test(cpf), {
-              message: "CPF inválido",
-            })
-            .refine((cpf) => isValidCPF(cpf), {
-              message: "CPF inválido",
-            }),
-        })
-      )
-      .default([]),
+    socios: z.array(socioSchema),
   })
   .superRefine((data, ctx) => {
     const { naturezaJuridica, titularNome, titularCpf, socios } = data
@@ -201,7 +191,6 @@ export function DefinicaoEmpresaStep() {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isHydrated, setIsHydrated] = useState(false)
 
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean
@@ -211,10 +200,9 @@ export function DefinicaoEmpresaStep() {
     nextValue: null,
   })
 
-  const [novoSocio, setNovoSocio] = useState({
-    nome: "",
-    cpf: "",
-  })
+  const [novoSocio, setNovoSocio] = useState({ nome: "", cpf: "" })
+
+  const isHydrating = useRef(false)
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -243,10 +231,7 @@ export function DefinicaoEmpresaStep() {
   // ===============================
 
   function handleNatureChange(value: string) {
-    if (!isHydrated) {
-      form.setValue("naturezaJuridica", value as any)
-      return
-    }
+    if (isHydrating.current) return
 
     const current = form.getValues("naturezaJuridica")
     const socios = form.getValues("socios")
@@ -256,14 +241,17 @@ export function DefinicaoEmpresaStep() {
       return
     }
 
-    form.setValue("naturezaJuridica", value as any)
+    form.setValue("naturezaJuridica", value as FormData["naturezaJuridica"])
   }
 
   function confirmChange() {
     if (!confirmDialog.nextValue) return
 
     form.setValue("socios", [])
-    form.setValue("naturezaJuridica", confirmDialog.nextValue as any)
+    form.setValue(
+      "naturezaJuridica",
+      confirmDialog.nextValue as FormData["naturezaJuridica"]
+    )
 
     setConfirmDialog({ open: false, nextValue: null })
   }
@@ -296,24 +284,22 @@ export function DefinicaoEmpresaStep() {
   // ===============================
 
   useEffect(() => {
-    if (!data) {
-      setIsHydrated(true)
-      return
-    }
+    if (!data) return
+
+    isHydrating.current = true
 
     form.reset({
       naturezaJuridica: data.naturezaJuridica,
       capitalSocial:
-        data.eiData?.capitalSocial ||
-        data.ltdaData?.capitalSocial ||
-        0,
-      titularNome: data.ltdaData?.titular?.nome || "",
-      titularCpf: data.ltdaData?.titular?.cpf || "",
-      socios: data.ltdaData?.socios || [],
+        data.eiData?.capitalSocial ?? data.ltdaData?.capitalSocial ?? 0,
+      titularNome: data.ltdaData?.titular?.nome ?? "",
+      titularCpf: data.ltdaData?.titular?.cpf ?? "",
+      socios: data.ltdaData?.socios ?? [],
     })
 
-    setTimeout(() => setIsHydrated(true), 0)
-
+    setTimeout(() => {
+      isHydrating.current = false
+    }, 0)
   }, [data])
 
   // ===============================
@@ -327,7 +313,7 @@ export function DefinicaoEmpresaStep() {
       const payload =
         values.naturezaJuridica === "EI"
           ? {
-              naturezaJuridica: "EI",
+              naturezaJuridica: "EI" as const,
               eiData: { capitalSocial: values.capitalSocial },
             }
           : {
@@ -335,8 +321,8 @@ export function DefinicaoEmpresaStep() {
               ltdaData: {
                 capitalSocial: values.capitalSocial,
                 titular: {
-                  nome: values.titularNome,
-                  cpf: values.titularCpf,
+                  nome: values.titularNome ?? "",
+                  cpf: values.titularCpf ?? "",
                 },
                 socios: values.socios,
               },
@@ -396,9 +382,7 @@ export function DefinicaoEmpresaStep() {
                   fixedDecimalScale
                   allowNegative={false}
                   className="border rounded-md h-10 w-full px-3"
-                  onValueChange={(v) =>
-                    field.onChange(v.floatValue || 0)
-                  }
+                  onValueChange={(v) => field.onChange(v.floatValue ?? 0)}
                 />
               </FormControl>
               <FormMessage />
@@ -479,9 +463,7 @@ export function DefinicaoEmpresaStep() {
                   return
                 }
 
-                if (
-                  fields.some((s) => s.cpf === novoSocio.cpf)
-                ) {
+                if (fields.some((s) => s.cpf === novoSocio.cpf)) {
                   toast.error("CPF duplicado")
                   return
                 }
@@ -512,7 +494,7 @@ export function DefinicaoEmpresaStep() {
 
             {sociosError && (
               <FormMessage>
-                {form.formState.errors.socios?.message as string}
+                {sociosError}
               </FormMessage>
             )}
           </div>
