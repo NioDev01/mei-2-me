@@ -8,6 +8,7 @@ import { SignIn } from "@/pages/SignIn";
 import { AppHub } from "@/pages/AppHub";
 import { PrivateRoute } from "@/routes/PrivateRoute";
 import { OnboardingRoute } from "./onboarding-route";
+import { DadosConta } from "@/pages/DadosConta";
 
 export function AppRoutes() {
   return (
@@ -31,6 +32,14 @@ export function AppRoutes() {
           <OnboardingRoute>
             <AppHub />
           </OnboardingRoute>
+        }
+      />
+      <Route
+        path='/conta'
+        element={
+          <PrivateRoute>
+            <DadosConta />
+          </PrivateRoute>
         }
       />
     </Routes>
