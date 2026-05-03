@@ -16,6 +16,8 @@ type User = {
   id_mei: number;
   email: string;
   cnpj: string;
+  nome: string;
+  celular?: string;
 };
 
 const AuthContext = createContext({} as AuthContextType);
