@@ -100,7 +100,7 @@ export function DesenquadramentoStep() {
   sections={{
 
     whatIs: {
-      title: "O que é o desenquadramento do MEI?",
+      title: "O que é o Desenquadramento do MEI?",
       content: (
         <>
           <p>

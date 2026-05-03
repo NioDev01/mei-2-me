@@ -12,7 +12,7 @@ export function AtualizacaoCnpjStep() {
 
       sections={{
         whatIs: {
-          title: "O que é a atualização do CNPJ?",
+          title: "O que é a Atualização do CNPJ?",
           content: (
             <>
               <p>

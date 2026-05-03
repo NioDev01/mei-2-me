@@ -64,7 +64,7 @@ export function RegimeTributarioStep() {
       <StepTemplate
         sections={{
           whatIs: {
-            title: "O que é o regime tributário?",
+            title: "O que é o Regime Tributário?",
             content: (
               <>
                 <p>
@@ -188,7 +188,7 @@ export function RegimeTributarioStep() {
 
       sections={{
         whatIs: {
-          title: "O que é o regime tributário?",
+          title: "O que é o Regime Tributário?",
           content: (
             <>
               <p>

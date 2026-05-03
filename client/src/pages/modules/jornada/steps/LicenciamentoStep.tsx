@@ -9,7 +9,7 @@ export function LicenciamentoStep() {
 
       sections={{
         whatIs: {
-          title: "O que é o licenciamento?",
+          title: "O que é o Licenciamento?",
           content: (
             <>
               <p>

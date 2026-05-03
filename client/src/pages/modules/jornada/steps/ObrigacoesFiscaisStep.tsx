@@ -10,7 +10,7 @@ export function ObrigacoesFiscaisStep() {
       sections={{
 
         whatIs: {
-          title: "O que são obrigações fiscais?",
+          title: "O que são Obrigações Fiscais?",
           content: (
             <>
               <p>
