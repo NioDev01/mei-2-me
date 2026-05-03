@@ -76,12 +76,12 @@ export function DesenquadramentoStep() {
 
   const motivos: Motivo[] = data.motivos ?? []
 
-  // 🔹 DEDUPLICAÇÃO DE RISCOS
+  // DEDUPLICAÇÃO DE RISCOS
   const riscosUnicos = Array.from(
     new Set(motivos.flatMap((m) => m.riscos ?? []))
   )
 
-  // 🔹 HEADER (SEMÁFORO)
+  // HEADER (SEMÁFORO)
   const header = (
     <Card className={`border-l-4 ${statusConfig.borderClass}`}>
       <CardContent className="flex items-center gap-4 p-4">
@@ -95,154 +95,202 @@ export function DesenquadramentoStep() {
 
   return (
     <StepTemplate
-      header={header}
-      sections={{
-        whatIs: {
-          title: "O que é o Desenquadramento?",
-          content: (
-            <>
-              <p>
-                O desenquadramento é o processo de saída do regime de <b>Microempreendedor Individual (MEI)</b> para outro tipo de empresa, como a <b>Microempresa (ME)</b>.
-                Na prática, isso significa que sua empresa deixa de seguir as regras simplificadas do MEI e passa a ter novas obrigações, como:
-              </p>
-              <ul className="list-disc pl-5 mt-2 text-muted-foreground">
-                  <li>pagamento de impostos de forma diferente</li>
-                  <li>envio de declarações mais completas</li>
-                  <li>possível necessidade de contador</li>
-              </ul>
-            </>
-          ),
-        },
+  header={header}
 
-        why: {
-          title: "Por que isso é necessário no seu caso?",
-          content: (
-            <>
-              <p>{data.analise}</p>
+  sections={{
 
-              <div className="space-y-3 mt-3">
-                {motivos.map((m, i: number) => (
-                  <div key={i} className="border-l-2 pl-3">
-                    <p className="font-medium text-foreground">
-                      {m.regra}
-                    </p>
+    whatIs: {
+      title: "O que é o Desenquadramento do MEI?",
+      content: (
+        <>
+          <p>
+            O <b>desenquadramento</b> é o processo em que sua empresa deixa de ser
+            MEI (Microempreendedor Individual) e passa a atuar como outro tipo de empresa,
+            como uma <b>Microempresa (ME)</b>.
+          </p>
 
-                    <ul className="list-disc pl-4 text-muted-foreground text-sm mt-1">
-                      {m.razoes.map((r, j: number) => (
-                        <li key={j}>{r}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </>
-          ),
-        },
-
-        when: {
-          title: "Quando isso acontece no seu caso?",
-          content: (
-            <>
-              O desenquadramento pode ocorrer automaticamente ou por solicitação.
-
-              <ul className="list-disc pl-4 mt-2">
-                {motivos.map((m, i: number) => (
-                  <li key={i}>{m.regra}</li>
-                ))}
-              </ul>
-            </>
-          ),
-        },
-
-        requirements: {
-          title: "O que você vai precisar?",
-          content: (
-            <>
-              <ul className="list-disc pl-5 mt-1 text-muted-foreground">
-                <li>CNPJ.</li>
-                <li>Possuir uma conta gov.br (o nível básico já é suficiente).</li>
-                <li>Ter acesso ao Portal do Simples Nacional.</li>
-                <ul className="list-disc pl-5 mt-1 text-muted-foreground">
-                  <li>Observação: lembre-se de marcar os documentos necessários no menu de Checklist de Documentos.</li>
-                </ul>
-              </ul>
-              <br />
-              <p>Em alguns casos, você não precisa enviar documentos, apenas informar o motivo do desenquadramento dentro do sistema. </p>
-            </>
-          ),
-        },
-      }}
-
-      howTo={{
-        title: "Como fazer?",
-        content: (
-          <>
-            <p>O processo pode acontecer de duas formas:</p>
-
-            <p><b>Caso 1: Automático (você não precisa fazer nada) </b></p>
-            <p>O desenquadramento acontece automaticamente quando:</p>
-
-            <ul className="list-disc pl-5 mt-2 text-muted-foreground">
-              <li>você ultrapassa o limite de faturamento anual do MEI</li>
-              <li>ou exerce uma atividade não permitida</li>
+          <div className="mt-3 border rounded-md p-3 text-sm text-muted-foreground">
+            <p className="font-medium text-foreground mb-1">Na prática, isso significa:</p>
+            <ul className="list-disc pl-5">
+              <li>mudança na forma de pagamento de impostos</li>
+              <li>novas obrigações fiscais</li>
+              <li>possível necessidade de contador</li>
             </ul>
+          </div>
+        </>
+      ),
+    },
 
-            <p>Nesses casos, a própria Receita Federal realiza o desenquadramento.</p>
+    why: {
+      title: "Por que isso está acontecendo com você?",
+      content: (
+        <>
+          <p>{data.analise}</p>
 
-            <p><b>Caso 2: Manual (você precisa solicitar)</b></p>
+          <div className="mt-4 space-y-3">
+            {motivos.map((m, i: number) => (
+              <div key={i} className="border rounded-md p-3">
+                <p className="font-medium">{m.regra}</p>
 
-            <p>Se o desenquadramento não for automático, siga este passo a passo:</p>
+                <ul className="list-disc pl-5 mt-2 text-sm text-muted-foreground">
+                  {m.razoes.map((r, j: number) => (
+                    <li key={j}>{r}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </>
+      ),
+    },
 
-            <ul className="list-disc pl-5 mt-2 text-muted-foreground">
+    when: {
+      title: "Quando o desenquadramento acontece?",
+      content: (
+        <>
+          <p>
+            O desenquadramento pode ocorrer de forma <b>automática</b> ou
+            <b> manual</b>, dependendo da situação.
+          </p>
+
+          <div className="mt-3 grid md:grid-cols-2 gap-3 text-sm">
+
+            <div className="border rounded-md p-3">
+              <p className="font-medium text-foreground">Automático</p>
+              <p className="text-muted-foreground mt-1">
+                A Receita Federal realiza o desenquadramento sem ação sua.
+              </p>
+            </div>
+
+            <div className="border rounded-md p-3">
+              <p className="font-medium text-foreground">Manual</p>
+              <p className="text-muted-foreground mt-1">
+                Você precisa solicitar o desenquadramento no sistema.
+              </p>
+            </div>
+
+          </div>
+        </>
+      ),
+    },
+
+    requirements: {
+      title: "O que você precisa?",
+      content: (
+        <>
+          <p>Para realizar o desenquadramento manual, você precisa de:</p>
+
+          <ul className="list-disc pl-5 mt-2 text-muted-foreground">
+            <li>CNPJ da empresa</li>
+            <li>Conta gov.br (nível básico já funciona)</li>
+            <li>Acesso ao Portal do Simples Nacional</li>
+          </ul>
+
+          <div className="mt-4 border-l-4 border-primary pl-3 text-sm text-muted-foreground">
+            Em muitos casos, não é necessário enviar documentos — apenas informar o motivo dentro do sistema.
+          </div>
+        </>
+      ),
+    },
+  }}
+
+  howTo={{
+    title: "O que você precisa fazer agora?",
+    content: (
+      <>
+        <div className="space-y-4">
+
+          {/* AUTOMÁTICO */}
+          <div className="border rounded-md p-3">
+            <p className="font-medium text-foreground">
+              ✔ Caso automático
+            </p>
+
+            <p className="text-sm text-muted-foreground mt-1">
+              Se sua situação se enquadrar em regras da Receita, o desenquadramento
+              já será feito automaticamente.
+            </p>
+
+            <p className="text-sm mt-2">
+              👉 <b>Você não precisa fazer nada.</b>
+            </p>
+          </div>
+
+          {/* MANUAL */}
+          <div className="border rounded-md p-3">
+            <p className="font-medium text-foreground">
+              ⚠ Caso manual
+            </p>
+
+            <p className="text-sm text-muted-foreground mt-1">
+              Se não for automático, siga este passo a passo:
+            </p>
+
+            <ul className="list-disc pl-5 mt-2 text-sm text-muted-foreground">
               <li>Acesse o Portal do Simples Nacional</li>
-              <li>Entre na opção “Desenquadramento do SIMEI”</li>
-              <li>Informe o motivo do desenquadramento</li>
+              <li>Entre em “Desenquadramento do SIMEI”</li>
+              <li>Informe o motivo</li>
               <li>Confirme a solicitação</li>
             </ul>
 
-            <p>Após isso, o sistema registra sua saída do MEI.</p>
-
-            <Button variant="secondary" className="mt-2" onClick={() => window.open('https://www8.receita.fazenda.gov.br/SimplesNacional/Servicos/Grupo.aspx?grp=t&area=2', '_blank')}>
+            <Button
+              variant="secondary"
+              className="mt-3"
+              onClick={() =>
+                window.open(
+                  "https://www8.receita.fazenda.gov.br/SimplesNacional/Servicos/Grupo.aspx?grp=t&area=2",
+                  "_blank"
+                )
+              }
+            >
               Acessar Portal
             </Button>
-          </>
-        ),
-      }}
+          </div>
 
-      tips={{
-        title: "Dicas, riscos e base legal",
-        content: (
-          <>
-            {/* 🔴 RISCOS */}
-            <div className="space-y-2">
-              {riscosUnicos.map((r: string, i: number) => (
-                <p key={i}>{r}</p>
-              ))}
-            </div>
+        </div>
+      </>
+    ),
+  }}
 
-            {/* 📜 REFERÊNCIAS LEGAIS */}
-            <div className="mt-4 space-y-2">
-              <p className="font-medium text-foreground">
-                Referências legais:
-              </p>
+  tips={{
+    title: "Dicas e cuidados importantes",
+    content: (
+      <>
+        {/* RISCOS */}
+        <div className="space-y-2 text-muted-foreground">
+          <p className="font-medium text-foreground mb-2">
+            Riscos de acordo com sua situação atual:
+          </p>
+          {riscosUnicos.map((r: string, i: number) => (
+            <p key={i}>⚠ {r}</p>
+          ))}
+        </div>
 
-              {motivos.map((m, i: number) => (
-                <details key={i} className="text-sm">
-                  <summary className="cursor-pointer hover:underline">
-                    {m.regra}
-                  </summary>
+        {/* LEGAL */}
+        <div className="mt-5">
+          <p className="font-medium text-foreground mb-2">
+            Base legal (opcional para consulta)
+          </p>
 
-                  <ul className="list-disc pl-5 mt-1 text-muted-foreground">
-                    {m.referenciasLegais.map((ref, j: number) => (
-                      <li key={j}>{ref}</li>
-                    ))}
-                  </ul>
-                </details>
-              ))}
-            </div>
-          </>
-        ),
-      }}
-    />
+          <div className="space-y-2">
+            {motivos.map((m, i: number) => (
+              <details key={i} className="text-sm">
+                <summary className="cursor-pointer hover:underline">
+                  {m.regra}
+                </summary>
+
+                <ul className="list-disc pl-5 mt-1 text-muted-foreground">
+                  {m.referenciasLegais.map((ref, j: number) => (
+                    <li key={j}>{ref}</li>
+                  ))}
+                </ul>
+              </details>
+            ))}
+          </div>
+        </div>
+      </>
+    ),
+  }}
+/>
   )
 }

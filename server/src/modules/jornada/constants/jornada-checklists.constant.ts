@@ -83,37 +83,41 @@ export const JORNADA_CHECKLISTS: Record<JornadaStep, JornadaChecklistItem[]> = {
 
   [JornadaStep.JUNTA_COMERCIAL]: [
     {
-      id: 'acessei-portal-junta',
+      id: 'iniciei-processo-junta',
       step: JornadaStep.JUNTA_COMERCIAL,
-      label: 'Fiz o acesso ao Portal da Junta Comercial',
+      label:
+        'Iniciei o processo de registro da empresa no portal da Junta Comercial (JUCESP).',
       isChecked: false,
       required: true,
     },
     {
-      id: 'preenchi-dados-empresa',
+      id: 'preenchi-dados-e-anexei-documentos',
       step: JornadaStep.JUNTA_COMERCIAL,
-      label: 'Fiz o preenchimento de dados da empresa',
+      label:
+        'Preenchi os dados da empresa e anexei o Ato Constitutivo e demais documentos.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'enviei-documentos-junta',
+      id: 'realizei-pagamento-taxas',
       step: JornadaStep.JUNTA_COMERCIAL,
-      label: 'Enviei os documentos necessários',
+      label: 'Realizei o pagamento das taxas de registro.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'realizei-pagamentos-taxes',
+      id: 'acompanhei-protocolo',
       step: JornadaStep.JUNTA_COMERCIAL,
-      label: 'Realizei os pagamentos das taxas',
+      label:
+        'Acompanhei o andamento do processo utilizando o número de protocolo.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'acompanhei-status-registro',
+      id: 'registro-aprovado-ou-ajustado',
       step: JornadaStep.JUNTA_COMERCIAL,
-      label: 'Acompanhei o status do registro',
+      label:
+        'Obtive a aprovação do registro ou realizei ajustes solicitados pela Junta Comercial.',
       isChecked: false,
       required: true,
     },
@@ -121,37 +125,37 @@ export const JORNADA_CHECKLISTS: Record<JornadaStep, JornadaChecklistItem[]> = {
 
   [JornadaStep.CNPJ]: [
     {
-      id: 'acessei-portal-receita',
+      id: 'verifiquei-situacao-cnpj',
       step: JornadaStep.CNPJ,
-      label: 'Fiz o acesso ao sistema da Receita Federal',
+      label: 'Consultei a situação do meu CNPJ na Receita Federal',
       isChecked: false,
       required: true,
     },
     {
-      id: 'preenchi-dbe',
+      id: 'confirmei-atualizacao-automatica',
       step: JornadaStep.CNPJ,
-      label: 'Fiz o preenchimento do DBE',
+      label: 'Verifiquei se os dados foram atualizados automaticamente',
       isChecked: false,
       required: true,
     },
     {
-      id: 'revisei-dados-informados',
+      id: 'revisei-dados-cadastrais',
       step: JornadaStep.CNPJ,
-      label: 'Revisei os dados informados',
+      label: 'Revisei se os dados cadastrais estão corretos',
       isChecked: false,
       required: true,
     },
     {
-      id: 'enviei-solicitacao',
+      id: 'realizei-ajustes-se-necessario',
       step: JornadaStep.CNPJ,
-      label: 'Enviei a solicitação',
+      label: 'Realizei a atualização via DBE (apenas se necessário)',
       isChecked: false,
-      required: true,
+      required: false,
     },
     {
-      id: 'acompanhei-status-processo',
+      id: 'confirmei-regularizacao-cnpj',
       step: JornadaStep.CNPJ,
-      label: 'Acompanhei o status do processo',
+      label: 'Confirmei que o CNPJ está regular e atualizado',
       isChecked: false,
       required: true,
     },
@@ -159,37 +163,40 @@ export const JORNADA_CHECKLISTS: Record<JornadaStep, JornadaChecklistItem[]> = {
 
   [JornadaStep.LICENCIAMENTO]: [
     {
-      id: 'verifiquei-licenciamento',
+      id: 'verifiquei-exigencia-licenciamento',
       step: JornadaStep.LICENCIAMENTO,
-      label: 'Verifiquei se minha atividade exige licenciamento',
+      label:
+        'Verifiquei se minha atividade exige licenciamento no meu município.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'consultei-orgaos-responsaveis',
+      id: 'consultei-prefeitura',
       step: JornadaStep.LICENCIAMENTO,
-      label: 'Consultei os órgãos responsáveis no meu município',
+      label:
+        'Consultei o portal da prefeitura para entender as exigências aplicáveis.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'solicitei-licencas',
+      id: 'identifiquei-necessidade-licencas',
       step: JornadaStep.LICENCIAMENTO,
-      label: 'Solicitei as licenças necessárias',
+      label:
+        'Identifiquei se preciso solicitar licenças ou alvará de funcionamento.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'separei-documentos-exigidos',
+      id: 'iniciei-licenciamento-se-necessario',
       step: JornadaStep.LICENCIAMENTO,
-      label: 'Separei os documentos exigidos',
+      label: 'Iniciei o processo de licenciamento (se necessário).',
       isChecked: false,
-      required: true,
+      required: false,
     },
     {
-      id: 'acompanhei-solicitacoes',
+      id: 'regularidade-operacional',
       step: JornadaStep.LICENCIAMENTO,
-      label: 'Acompanhei o andamento das solicitações',
+      label: 'Confirmei que minha empresa está regular para operar.',
       isChecked: false,
       required: true,
     },
@@ -197,37 +204,40 @@ export const JORNADA_CHECKLISTS: Record<JornadaStep, JornadaChecklistItem[]> = {
 
   [JornadaStep.REGIME_TRIBUTARIO]: [
     {
-      id: 'entendi-regime-tributario',
+      id: 'compreendi-impacto-regime',
       step: JornadaStep.REGIME_TRIBUTARIO,
-      label: 'Entendi o que é o regime tributário',
+      label:
+        'Compreendi como o regime tributário impacta os impostos e o lucro da empresa.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'analisei-opcoes',
+      id: 'realizei-ou-avaliei-simulacao',
       step: JornadaStep.REGIME_TRIBUTARIO,
-      label: 'Analisei as opções disponíveis',
+      label:
+        'Realizei ou analisei a simulação para comparar os regimes tributários.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'utilizei-simulador',
+      id: 'comparei-regimes',
       step: JornadaStep.REGIME_TRIBUTARIO,
-      label: 'Utilizei o simulador (se necessário)',
+      label: 'Comparei os resultados entre Simples Nacional e Lucro Presumido.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'avaliei-regime',
+      id: 'defini-regime',
       step: JornadaStep.REGIME_TRIBUTARIO,
-      label: 'Avaliei qual seria o regime mais adequado ao meu caso',
+      label: 'Defini qual regime tributário é mais adequado para o meu caso.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'realizei-escolha-regime',
+      id: 'ciente-prazo-opcao',
       step: JornadaStep.REGIME_TRIBUTARIO,
-      label: 'Realizei minha escolha dentro do prazo',
+      label:
+        'Estou ciente do prazo para formalizar a escolha do regime tributário.',
       isChecked: false,
       required: true,
     },
@@ -235,37 +245,39 @@ export const JORNADA_CHECKLISTS: Record<JornadaStep, JornadaChecklistItem[]> = {
 
   [JornadaStep.OBRIGACOES_FISCAIS]: [
     {
-      id: 'entendi-obrigacoes-fiscais',
+      id: 'compreendi-obrigacoes',
       step: JornadaStep.OBRIGACOES_FISCAIS,
-      label: 'Entendi minhas obrigações fiscais',
+      label: 'Compreendi as principais obrigações fiscais da minha empresa.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'sei-como-emitir-notas-fiscais',
+      id: 'entendi-emissao-notas',
       step: JornadaStep.OBRIGACOES_FISCAIS,
-      label: 'Sei como emitir notas fiscais',
+      label: 'Entendi quando e como devo emitir notas fiscais.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'entendi-prazos-pagamento',
+      id: 'conheco-prazos',
       step: JornadaStep.OBRIGACOES_FISCAIS,
-      label: 'Estou ciente dos prazos de pagamento de impostos',
+      label:
+        'Estou ciente dos prazos de pagamento de impostos e envio de declarações.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'organizei-controle-financeiro',
+      id: 'organizei-controle',
       step: JornadaStep.OBRIGACOES_FISCAIS,
-      label: 'Organizei o controle financeiro básico',
+      label: 'Organizei um controle básico das receitas e despesas da empresa.',
       isChecked: false,
       required: true,
     },
     {
-      id: 'considerei-apoio-contador',
+      id: 'planejei-apoio-contabil',
       step: JornadaStep.OBRIGACOES_FISCAIS,
-      label: 'Considerei o apoio de um contador',
+      label:
+        'Avaliei a necessidade de contar com um contador para manter a empresa regular.',
       isChecked: false,
       required: true,
     },
