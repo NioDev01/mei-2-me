@@ -1,5 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 import { ZoomableDialogImage } from "@/features/ZoomableDialogImage";
 import { NavBarMain } from "@/features/NavBarMain";
 import { Link } from 'react-router-dom';
@@ -16,7 +23,7 @@ import {
 } from "lucide-react";
 import PrevCheckDocs from "@/assets/previews/checklist-docs-prev.png";
 import PrevJornada from "@/assets/previews/jornada-prev.png";
-import PrevSimulador from "@/assets/previews/simulador-prev.png";
+import PrevSimulador from "@/assets/previews/simulador-regime-prev.png";
 import PrevContAI from "@/assets/previews/contai-prev.png";
 
 const features = [
@@ -213,22 +220,47 @@ export function Home() {
               Ferramentas inteligentes que simplificam cada etapa da sua transição.
             </p>
           </div>
-
+          
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
             {features.map(({ icon: Icon, title, description, preview }) => (
-              <Card
-                key={title}
-                className="p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-default border-border/60"
-              >
-                <div
-                  className={`bg-primary w-12 h-12 rounded-xl flex items-center justify-center mb-5 group-hover:scale-105 transition-transform duration-300 shadow-sm`}
-                >
-                  <Icon className="text-white w-6 h-6" />
-                </div>
-                <h3 className="text-base font-bold text-foreground mb-2">{title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
-                {preview && <div className="mt-4">{preview}</div>}
-              </Card>
+              <Dialog key={title}>
+                <DialogTrigger asChild>
+                  <Card className="p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-pointer border-border/60">
+                    <div className="bg-primary w-12 h-12 rounded-xl flex items-center justify-center mb-5 group-hover:scale-105 transition-transform duration-300 shadow-sm">
+                      <Icon className="text-white w-6 h-6" />
+                    </div>
+
+                    <h3 className="text-base font-bold text-foreground mb-2">
+                      {title}
+                    </h3>
+
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {description}
+                    </p>
+                  </Card>
+                </DialogTrigger>
+
+                <DialogContent className="w-[95vw] sm:max-w-4xl max-h-[85vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-3">
+                      <Icon className="w-5 h-5 text-primary" />
+                      {title}
+                    </DialogTitle>
+                  </DialogHeader>
+
+                  <div className="mt-4 space-y-4">
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {description}
+                    </p>
+
+                    {preview && (
+                      <div className="rounded-lg overflow-hidden border border-border">
+                        {preview}
+                      </div>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
             ))}
           </div>
         </div>
