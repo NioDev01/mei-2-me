@@ -131,12 +131,15 @@ const documents: Document[] = [
   },
   {
     id: "9",
-    name: "Contrato Social (em caso de mudança na natureza jurídica)",
+    name: "Ato Constitutivo",
     description:
-      "Documento que formaliza a alteração da natureza jurídica da empresa.",
-    purpose: "Alterar a estrutura jurídica da empresa.",
-    howToObtain: "MEI redige modelo próprio ou usa da JUCESP",
-    hasTemplate: false,
+      "Documento oficial que comprova a formalização do MEI, contendo CNPJ, dados do titular, atividades e data de abertura.",
+    purpose:
+      "Comprovar a existência legal da empresa e servir como base para processos como migração de regime, abertura de conta bancária e emissão de notas fiscais.",
+    howToObtain:
+      "Acesse o Portal do Empreendedor, informe o CNPJ do MEI e emita gratuitamente o CCMEI atualizado.",
+    hasTemplate: true,
+    templateUrl: "/docs/ato-constitutivo.docx",
   },
   {
     id: "10",

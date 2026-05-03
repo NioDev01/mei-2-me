@@ -45,7 +45,7 @@ export class ChecklistDocumentoResponseDto {
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()
-  contrato_social?: boolean;
+  ato_constitutivo?: boolean;
 
   @IsBoolean()
   @IsOptional()
