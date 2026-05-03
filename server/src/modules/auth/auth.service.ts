@@ -106,6 +106,29 @@ export class AuthService {
     };
   }
 
+  async getProfile(userId: number) {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id_user: userId },
+      select: {
+        id_user: true,
+        id_mei: true,
+        email_user: true,
+        cnpj_user: true,
+        nome_user: true,
+        celular_user: true,
+      },
+    });
+
+    return {
+      id_user: usuario?.id_user,
+      id_mei: usuario?.id_mei,
+      email: usuario?.email_user,
+      cnpj: usuario?.cnpj_user,
+      nome: usuario?.nome_user,
+      celular: usuario?.celular_user,
+    };
+  }
+
   async logout(refreshToken: string | undefined) {
     try {
       if (!refreshToken) return;
@@ -248,5 +271,38 @@ export class AuthService {
     });
 
     return { message: 'Senha atualizada com sucesso' };
+  }
+
+  async changePassword(userId: number, senhaAtual: string, novaSenha: string) {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id_user: userId },
+    });
+
+    if (!usuario) {
+      throw new UnauthorizedException('Usuário não encontrado');
+    }
+
+    const senhaValida = await bcrypt.compare(senhaAtual, usuario.senha_user);
+
+    if (!senhaValida) {
+      throw new UnauthorizedException('Senha atual incorreta');
+    }
+
+    const hashedPassword = await bcrypt.hash(novaSenha, 10);
+
+    await this.prisma.usuario.update({
+      where: { id_user: userId },
+      data: { senha_user: hashedPassword },
+    });
+
+    return { message: 'Senha atualizada com sucesso' };
+  }
+
+  async deleteAccount(userId: number) {
+    await this.prisma.usuario.delete({
+      where: { id_user: userId },
+    });
+
+    return { message: 'Conta deletada com sucesso' };
   }
 }
