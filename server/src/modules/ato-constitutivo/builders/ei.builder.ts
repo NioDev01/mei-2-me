@@ -7,11 +7,34 @@ export function buildEIDocument(data: GenerateEIDto): Document {
       {
         children: [
           buildTitle(),
-          ...buildIdentification(data),
-          ...buildActivity(data),
-          ...buildCapital(data),
+          buildIntro(data),
+          buildClause(
+            1,
+            'DO NOME EMPRESARIAL',
+            `O Empresário Individual adotará como nome empresarial a seguinte firma: ${data.nomeEmpresarial}.`,
+          ),
+          buildClause(
+            2,
+            'DO CAPITAL',
+            `O capital é de R$ ${data.capitalSocial}, totalmente subscrito e integralizado, neste ato, em moeda corrente do País.`,
+          ),
+          buildClause(
+            3,
+            'DA SEDE',
+            `O Empresário Individual terá sua sede no seguinte endereço: ${data.endereco}.`,
+          ),
+          buildClause(
+            4,
+            'DO OBJETO',
+            `O Empresário Individual terá por objeto o exercício das seguintes atividades econômicas: ${data.atividade}.`,
+          ),
+          buildClause(
+            5,
+            'DA DECLARAÇÃO DE DESIMPEDIMENTO',
+            'O empresário declara, sob as penas da lei, inclusive que são verídicas todas as informações prestadas neste instrumento e quanto ao disposto no artigo 299 do Código Penal, não estar impedido de exercer atividade empresária e não possuir outro registro como Empresário Individual no País.',
+          ),
           buildDeclaration(),
-          ...buildSignature(),
+          ...buildSignature(data),
         ],
       },
     ],
@@ -27,9 +50,27 @@ function buildTitle(): Paragraph {
     alignment: AlignmentType.CENTER,
     children: [
       new TextRun({
-        text: 'REQUERIMENTO DE EMPRESÁRIO',
+        text: `INSTRUMENTO DE INSCRIÇÃO DE EMPRESÁRIO INDIVIDUAL`,
         bold: true,
         size: 32,
+      }),
+    ],
+    spacing: { after: 120 },
+  });
+}
+
+// ===============================
+// BLOCO: SUBTÍTULO (nome empresarial)
+// ===============================
+
+function buildIntro(data: GenerateEIDto): Paragraph {
+  return new Paragraph({
+    alignment: AlignmentType.CENTER,
+    children: [
+      new TextRun({
+        text: data.nomeEmpresarial,
+        bold: true,
+        size: 28,
       }),
     ],
     spacing: { after: 400 },
@@ -37,116 +78,94 @@ function buildTitle(): Paragraph {
 }
 
 // ===============================
-// IDENTIFICAÇÃO
+// BLOCO: CLÁUSULA GENÉRICA
 // ===============================
 
-function buildIdentification(data: GenerateEIDto): Paragraph[] {
-  return [
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: `Eu, ${data.nomeEmpresarial}, inscrito no CNPJ sob o nº ${data.cnpj},`,
-        }),
-      ],
-    }),
+function buildClause(number: number, title: string, body: string): Paragraph {
+  const ordinals: Record<number, string> = {
+    1: 'Primeira',
+    2: 'Segunda',
+    3: 'Terceira',
+    4: 'Quarta',
+    5: 'Quinta',
+    6: 'Sexta',
+    7: 'Sétima',
+    8: 'Oitava',
+    9: 'Nona',
+    10: 'Décima',
+  };
 
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: `estabelecido à ${data.endereco}, declaro que exerço a seguinte atividade empresarial:`,
-        }),
-      ],
-      spacing: { after: 200 },
-    }),
-  ];
+  const ordinal = ordinals[number] ?? `${number}ª`;
+
+  return new Paragraph({
+    children: [
+      new TextRun({
+        text: `Cláusula ${ordinal} - ${title} - `,
+        bold: true,
+      }),
+      new TextRun({
+        text: body,
+      }),
+    ],
+    spacing: { after: 240 },
+  });
 }
 
 // ===============================
-// ATIVIDADE
-// ===============================
-
-function buildActivity(data: GenerateEIDto): Paragraph[] {
-  return [
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: 'Objeto:',
-          bold: true,
-        }),
-      ],
-    }),
-
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: data.atividade,
-        }),
-      ],
-      spacing: { after: 200 },
-    }),
-  ];
-}
-
-// ===============================
-// CAPITAL
-// ===============================
-
-function buildCapital(data: GenerateEIDto): Paragraph[] {
-  return [
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: 'Capital Social:',
-          bold: true,
-        }),
-      ],
-    }),
-
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: `R$ ${data.capitalSocial}`,
-        }),
-      ],
-      spacing: { after: 300 },
-    }),
-  ];
-}
-
-// ===============================
-// DECLARAÇÃO
+// BLOCO: DECLARAÇÃO FINAL
 // ===============================
 
 function buildDeclaration(): Paragraph {
   return new Paragraph({
     children: [
       new TextRun({
-        text: 'Declaro que as informações acima são verdadeiras e estou ciente das obrigações legais decorrentes da atividade empresarial.',
+        text: 'E, por estar assim constituído, assino o presente instrumento.',
       }),
     ],
-    spacing: { after: 400 },
+    spacing: { before: 200, after: 400 },
   });
 }
 
 // ===============================
-// ASSINATURA
+// BLOCO: ASSINATURA
 // ===============================
 
-function buildSignature(): Paragraph[] {
+function buildSignature(data: GenerateEIDto): Paragraph[] {
   return [
     new Paragraph({
       children: [
         new TextRun({
-          text: 'Local e Data: ___________________________',
+          text: '_____________________, _______ de _________________________ de _________',
         }),
       ],
-      spacing: { after: 200 },
+      spacing: { after: 600 },
     }),
 
     new Paragraph({
+      alignment: AlignmentType.CENTER,
       children: [
         new TextRun({
-          text: 'Assinatura: _____________________________',
+          text: '________________________________________',
+        }),
+      ],
+      spacing: { after: 80 },
+    }),
+
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      children: [
+        new TextRun({
+          text: data.nomeEmpresarial,
+          bold: true,
+        }),
+      ],
+    }),
+
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      children: [
+        new TextRun({
+          text: `CNPJ: ${data.cnpj}`,
         }),
       ],
     }),
