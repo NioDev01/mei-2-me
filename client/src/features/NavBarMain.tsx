@@ -45,33 +45,33 @@ export function NavBarMain() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-              <Link 
-                  to="/" 
-                  className="flex items-center space-x-2 hover:opacity-80 transition-opacity duration-200"
-                  aria-label="Ir para página inicial"
-              >
-                  <img 
-                      className="h-8 w-auto sm:h-10" 
-                      src={mei2me} 
-                      alt="Logo Mei2ME"
-                  />
-              </Link>
+            <Link
+                to="/"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="flex items-center space-x-2 hover:opacity-80 transition-opacity duration-200"
+                aria-label="Ir para página inicial"
+            >
+                <img
+                className="h-8 w-auto sm:h-10"
+                src={mei2me}
+                alt="Logo Mei2ME"
+                />
+            </Link>
           </div>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
             <button
-              onClick={() => handleScroll("recursos")}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Recursos
-            </button>
-
-            <button
               onClick={() => handleScroll("como-funciona")}
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               Como Funciona
+            </button>
+            <button
+              onClick={() => handleScroll("recursos")}
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Recursos
             </button>
           </nav>
 

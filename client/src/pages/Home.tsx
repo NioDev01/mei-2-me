@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ZoomableDialogImage } from "@/features/ZoomableDialogImage";
 import { NavBarMain } from "@/features/NavBarMain";
 import { Link } from 'react-router-dom';
 import {
@@ -13,6 +14,10 @@ import {
   ShieldCheck,
   Clock,
 } from "lucide-react";
+import PrevCheckDocs from "@/assets/previews/checklist-docs-prev.png";
+import PrevJornada from "@/assets/previews/jornada-prev.png";
+import PrevSimulador from "@/assets/previews/simulador-prev.png";
+import PrevContAI from "@/assets/previews/contai-prev.png";
 
 const features = [
   {
@@ -21,6 +26,7 @@ const features = [
     description:
       "Organize e acompanhe todos os documentos importantes em um só lugar. Saiba exatamente o que falta e o que já foi entregue, com mais agilidade e segurança.",
     color: "bg-blue-50 text-primary",
+    preview: <ZoomableDialogImage src={PrevCheckDocs} alt="Preview Checklist de Documentos" />,
   },
   {
     icon: Route,
@@ -28,6 +34,7 @@ const features = [
     description:
       "Acompanhe cada etapa do processo de forma simples e visual. Veja seu progresso, o que foi concluído e o que ainda está por vir, com clareza total.",
     color: "bg-emerald-50 text-secondary",
+    preview: <ZoomableDialogImage src={PrevJornada} alt="Preview Jornada Guiada" />,
   },
   {
     icon: BadgeDollarSign,
@@ -35,6 +42,7 @@ const features = [
     description:
       "Descubra qual regime tributário é mais vantajoso na transição de MEI para ME. Cenários personalizados para decisões mais seguras e lucrativas.",
     color: "bg-amber-50 text-warning",
+    preview: <ZoomableDialogImage src={PrevSimulador} alt="Preview Simulador de Regime" />,
   },
   {
     icon: BotMessageSquare,
@@ -42,6 +50,7 @@ const features = [
     description:
       "Tire dúvidas e receba orientação durante toda a sua transição. Mais facilidade, menos erros.",
     color: "bg-blue-50 text-primary",
+    preview: <ZoomableDialogImage src={PrevContAI} alt="Preview ContAI" />,
   },
 ];
 
@@ -206,7 +215,7 @@ export function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {features.map(({ icon: Icon, title, description }) => (
+            {features.map(({ icon: Icon, title, description, preview }) => (
               <Card
                 key={title}
                 className="p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-default border-border/60"
@@ -218,6 +227,7 @@ export function Home() {
                 </div>
                 <h3 className="text-base font-bold text-foreground mb-2">{title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+                {preview && <div className="mt-4">{preview}</div>}
               </Card>
             ))}
           </div>
