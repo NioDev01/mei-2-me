@@ -9,9 +9,7 @@ type Transform = { zoom: number; offset: Point };
 export type ZoomableDialogImageProps = {
   src: string;
   alt: string;
-  /** Maximum zoom level (default: 4) */
   maxZoom?: number;
-  /** Step used by the +/− buttons and keyboard shortcuts (default: 0.5) */
   zoomStep?: number;
 };
 
