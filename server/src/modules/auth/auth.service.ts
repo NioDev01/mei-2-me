@@ -299,8 +299,38 @@ export class AuthService {
   }
 
   async deleteAccount(userId: number) {
-    await this.prisma.usuario.delete({
-      where: { id_user: userId },
+    await this.prisma.$transaction(async (tx) => {
+      // 1. Deletar mensagens do chat
+      await tx.chatMessage.deleteMany({
+        where: { user_id: userId },
+      });
+
+      // 2. Buscar usuário (pra pegar id_mei)
+      const user = await tx.usuario.findUnique({
+        where: { id_user: userId },
+      });
+
+      if (user?.id_mei) {
+        const idMei = user.id_mei;
+
+        // 3. Deletar tudo relacionado ao MEI
+        await tx.jornadaChecklistItem.deleteMany({ where: { id_mei: idMei } });
+        await tx.jornadaStepProgress.deleteMany({ where: { id_mei: idMei } });
+
+        await tx.calculoRegime.deleteMany({ where: { id_mei: idMei } });
+        await tx.diagnostico.deleteMany({ where: { id_mei: idMei } });
+        await tx.documentosMei.deleteMany({ where: { id_mei: idMei } });
+        await tx.empresaTransicao.deleteMany({ where: { id_mei: idMei } });
+
+        await tx.mei.delete({
+          where: { id_mei: idMei },
+        });
+      }
+
+      // 4. Deletar usuário
+      await tx.usuario.delete({
+        where: { id_user: userId },
+      });
     });
 
     return { message: 'Conta deletada com sucesso' };

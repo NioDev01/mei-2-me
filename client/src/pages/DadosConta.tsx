@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Building, Trash2, User, ArrowLeft, UserLock } from "lucide-react";
+import { Building, Trash2, User, ArrowLeft, UserLock, Eye, EyeOff, Check, AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
@@ -38,12 +38,31 @@ import type { MeiData } from "@/interfaces/mei";
 
 type Tab = "informacoes" | "seguranca";
 
+const passwordSchema = z
+  .string()
+  .min(6, "A nova senha deve ter pelo menos 6 caracteres.")
+  .regex(/[a-z]/, "Deve conter letra minúscula.")
+  .regex(/[A-Z]/, "Deve conter letra maiúscula.")
+  .regex(/[0-9]/, "Deve conter número.")
+  .regex(/[!@#$%^&*(),.?:{}|<>]/, "Deve conter caractere especial.");
+
+const validatePassword = (senha: string) => {
+  const result = passwordSchema.safeParse(senha);
+
+  if (result.success) {
+    return { isValid: true, errors: [] };
+  }
+
+  return {
+    isValid: false,
+    errors: result.error.errors.map((err) => err.message),
+  };
+};
+
 const senhaSchema = z
   .object({
     senhaAtual: z.string().min(1, "Informe a senha atual"),
-    novaSenha: z
-      .string()
-      .min(6, "A nova senha deve ter no mínimo 6 caracteres"),
+    novaSenha: passwordSchema,
     confirmarSenha: z.string().min(1, "Confirme a nova senha"),
   })
   .refine((d) => d.novaSenha === d.confirmarSenha, {
@@ -100,6 +119,10 @@ export function DadosConta() {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
+  const [showSenhaAtual, setShowSenhaAtual] = useState(false);
+  const [showNovaSenha, setShowNovaSenha] = useState(false);
+  const [showConfirmarSenha, setShowConfirmarSenha] = useState(false);
+
   const [tab, setTab] = useState<Tab>("informacoes");
   const [conta, setConta] = useState<ContaData | null>(null);
   const [mei, setMei] = useState<MeiData | null>(null);
@@ -111,6 +134,10 @@ export function DadosConta() {
     resolver: zodResolver(senhaSchema),
     defaultValues: { senhaAtual: "", novaSenha: "", confirmarSenha: "" },
   });
+
+  const novaSenha = form.watch("novaSenha");
+  const passwordValidation = validatePassword(novaSenha);
+  const senhaStrength = 5 - passwordValidation.errors.length;
 
   useEffect(() => {
     Promise.all([
@@ -328,44 +355,138 @@ export function DadosConta() {
                 >
                   <FormField
                     control={form.control}
-                    name='senhaAtual'
+                    name="senhaAtual"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Senha atual</FormLabel>
                         <FormControl>
-                          <Input type='password' {...field} />
+                          <div className="relative">
+                            <Input
+                              type={showSenhaAtual ? "text" : "password"}
+                              {...field}
+                              className="pr-10"
+                            />
+
+                            <button
+                              type="button"
+                              onClick={() => setShowSenhaAtual((prev) => !prev)}
+                              className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                            >
+                              {showSenhaAtual ? (
+                                <EyeOff className="w-4 h-4" />
+                              ) : (
+                                <Eye className="w-4 h-4" />
+                              )}
+                            </button>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <div className='grid grid-cols-2 gap-4'>
+                  <div className="grid grid-cols-2 gap-4 items-start">
+                    {/* Nova senha */}
                     <FormField
                       control={form.control}
-                      name='novaSenha'
+                      name="novaSenha"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Nova senha</FormLabel>
                           <FormControl>
-                            <Input type='password' {...field} />
+                            <div className="relative">
+                              <Input
+                                type={showNovaSenha ? "text" : "password"}
+                                {...field}
+                                className="pr-10"
+                              />
+
+                              <button
+                                type="button"
+                                onClick={() => setShowNovaSenha((prev) => !prev)}
+                                className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                              >
+                                {showNovaSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                              </button>
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+
+                    {/* Confirmar senha */}
                     <FormField
                       control={form.control}
-                      name='confirmarSenha'
+                      name="confirmarSenha"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Confirmar nova senha</FormLabel>
                           <FormControl>
-                            <Input type='password' {...field} />
+                            <div className="relative">
+                              <Input
+                                type={showConfirmarSenha ? "text" : "password"}
+                                {...field}
+                                className="pr-10"
+                              />
+
+                              <button
+                                type="button"
+                                onClick={() => setShowConfirmarSenha((prev) => !prev)}
+                                className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                              >
+                                {showConfirmarSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                              </button>
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+                  </div>
+
+                  {/* Feedback da senha (fora do grid) */}
+                  <div className="mt-3 space-y-2">
+                    {/* Barra */}
+                    <div className="h-2 rounded bg-accent overflow-hidden">
+                      <div
+                        className={`h-full transition-all ${
+                          senhaStrength <= 2
+                            ? "bg-red-500"
+                            : senhaStrength <= 4
+                            ? "bg-yellow-500"
+                            : "bg-green-500"
+                        }`}
+                        style={{ width: `${(senhaStrength / 5) * 100}%` }}
+                      />
+                    </div>
+
+                    {/* Regras da senha */}
+                    <div className="space-y-1 mt-2 text-xs">
+                      {[
+                        { label: "Mínimo 6 caracteres", regex: /.{6,}/ },
+                        { label: "Letra minúscula", regex: /[a-z]/ },
+                        { label: "Letra maiúscula", regex: /[A-Z]/ },
+                        { label: "Número", regex: /[0-9]/ },
+                        { label: "Caractere especial", regex: /[!@#$%^&*(),.?:{}|<>]/ },
+                      ].map((rule, i) => {
+                        const valid = rule.regex.test(novaSenha || "");
+
+                        return (
+                          <div key={i} className="flex items-center gap-2">
+                            {valid ? (
+                              <Check className="w-3 h-3 text-green-500" />
+                            ) : (
+                              <AlertCircle className="w-3 h-3 text-muted-foreground" />
+                            )}
+                            <span
+                              className={valid ? "text-green-500" : "text-muted-foreground"}
+                            >
+                              {rule.label}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                   <div className='flex justify-end pt-2 mt-6'>
                     <Button

@@ -47,12 +47,14 @@ const items = [
 function SidebarInner({
   activeHash,
   iniciais,
+  userName,
   onOpenChat,
   onLogout,
   onNavigateConta,
 }: {
   activeHash: string;
   iniciais: string;
+  userName: string;
   onOpenChat: () => void;
   onLogout: () => void;
   onNavigateConta: () => void;
@@ -80,10 +82,6 @@ function SidebarInner({
                   <User />
                   Dados da Conta
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings />
-                  Configurações
-                </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={onLogout}>
@@ -92,7 +90,7 @@ function SidebarInner({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <p className='text-lg font-semibold pl-2'>MEI2ME</p>
+          <p className='text-lg font-semibold pl-2'>{userName}</p>
         </div>
       </SidebarHeader>
       <Separator />
@@ -153,6 +151,16 @@ export function AppSidebar() {
 
   const handleNavigateConta = () => navigate("/conta");
 
+  const userName = user?.nome
+    ? (() => {
+        const partes = user.nome.trim().split(" ");
+        const primeiro = partes[0];
+        const ultimo = partes[partes.length - 1];
+
+        return `${primeiro} ${ultimo}`;
+      })()
+    : "MEI2ME";
+
   const iniciais =
     user?.nome
       .split(" ")
@@ -175,6 +183,7 @@ export function AppSidebar() {
       <SidebarInner
         activeHash={activeHash}
         iniciais={iniciais}
+        userName={userName}
         onOpenChat={() => setOpenChat(true)}
         onLogout={handleLogout}
         onNavigateConta={handleNavigateConta}

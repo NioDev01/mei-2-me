@@ -35,7 +35,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog"
 
-import { Toaster, toast } from "sonner"
+import { toast } from "sonner"
 import {
   User,
   Building2,
@@ -200,7 +200,6 @@ export function SignIn() {
 
   return (
     <div className="min-h-screen overflow-hidden flex items-center justify-center p-4 bg-background">
-      <Toaster position="top-center" />
       <Card className="w-full h-full max-w-md shadow-lg">
         <CardHeader className="text-center space-y-1">
           <CardTitle className="text-2xl font-bold">Criar Conta</CardTitle>

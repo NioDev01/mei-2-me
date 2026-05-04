@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 
 import { api } from "@/lib/api";
@@ -144,7 +144,6 @@ export function LoginForm() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
-      <Toaster position="top-center" />
 
       <Card className="w-full max-w-md">
         <CardHeader>

@@ -9,7 +9,7 @@ export const checklistSchema = z.object({
   formulario_capa_marrom: z.boolean(),
   requerimento_desenquadramento: z.boolean(),
   comprovante_pagamento_dare: z.boolean(),
-  contrato_social: z.boolean(),
+  ato_constitutivo: z.boolean(),
   possui_ccmei: z.boolean(),
   possui_cadesp: z.boolean(),
   comprovante_situacao_simples_nacional: z.boolean(),

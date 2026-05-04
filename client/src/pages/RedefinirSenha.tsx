@@ -32,7 +32,7 @@ import {
 
 import { Eye, EyeOff, Lock, ArrowLeft, Check, AlertCircle } from "lucide-react"
 
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 
 const passwordSchema = z
   .string()
@@ -159,7 +159,6 @@ export function RedefinirSenha() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <Toaster position="top-center" />
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold">Redefinir Senha</CardTitle>

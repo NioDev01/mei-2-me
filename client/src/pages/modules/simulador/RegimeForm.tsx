@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "@/lib/api";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import type { ResultadoSimulador } from "./types/ResultadoSimulador";
 
 const formSchema = z.object({
@@ -26,15 +26,6 @@ const formSchema = z.object({
   receitas_nao_operacionais: z.coerce.number().nonnegative(),
   despesas_financeiras: z.coerce.number().nonnegative(),
 });
-
-// function handleMoneyChange(
-//   value: string,
-//   onChange: (v: number) => void
-// ) {
-//   const parsed = parseFloat(value);
-//   if (!isNaN(parsed)) onChange(Math.abs(parsed));
-//   else onChange(0);
-// }
 
 interface RegimeFormProps {
   dadosIniciais?: any;
@@ -104,7 +95,6 @@ export function RegimeForm({
 
   return (
     <div>
-      <Toaster position='top-center' />
 
       <p className='mb-4'>
         Faturamento:{" "}
