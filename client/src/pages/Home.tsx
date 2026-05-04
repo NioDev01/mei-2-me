@@ -1,160 +1,331 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import { ZoomableDialogImage } from "@/features/ZoomableDialogImage";
 import { NavBarMain } from "@/features/NavBarMain";
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import {
   FileText,
   BadgeDollarSign,
   Route,
   BotMessageSquare,
+  ArrowRight,
+  CheckCircle2,
+  TrendingUp,
+  ShieldCheck,
+  Clock,
 } from "lucide-react";
+import PrevCheckDocs from "@/assets/previews/checklist-docs-prev.png";
+import PrevJornada from "@/assets/previews/jornada-prev.png";
+import PrevSimulador from "@/assets/previews/simulador-regime-prev.png";
+import PrevContAI from "@/assets/previews/contai-prev.png";
+
+const features = [
+  {
+    icon: FileText,
+    title: "Checklist de Documentos",
+    description:
+      "Organize e acompanhe todos os documentos importantes em um só lugar. Saiba exatamente o que falta e o que já foi entregue, com mais agilidade e segurança.",
+    color: "bg-blue-50 text-primary",
+    preview: <ZoomableDialogImage src={PrevCheckDocs} alt="Preview Checklist de Documentos" />,
+  },
+  {
+    icon: Route,
+    title: "Jornada Guiada",
+    description:
+      "Acompanhe cada etapa do processo de forma simples e visual. Veja seu progresso, o que foi concluído e o que ainda está por vir, com clareza total.",
+    color: "bg-emerald-50 text-secondary",
+    preview: <ZoomableDialogImage src={PrevJornada} alt="Preview Jornada Guiada" />,
+  },
+  {
+    icon: BadgeDollarSign,
+    title: "Simulador de Regime",
+    description:
+      "Descubra qual regime tributário é mais vantajoso na transição de MEI para ME. Cenários personalizados para decisões mais seguras e lucrativas.",
+    color: "bg-amber-50 text-warning",
+    preview: <ZoomableDialogImage src={PrevSimulador} alt="Preview Simulador de Regime" />,
+  },
+  {
+    icon: BotMessageSquare,
+    title: "ContAI",
+    description:
+      "Tire dúvidas e receba orientação durante toda a sua transição. Mais facilidade, menos erros.",
+    color: "bg-blue-50 text-primary",
+    preview: <ZoomableDialogImage src={PrevContAI} alt="Preview ContAI" />,
+  },
+];
+
+const steps = [
+  {
+    number: "01",
+    title: "Faça o diagnóstico",
+    description: "Responda algumas perguntas simples sobre o seu negócio e descubra se é hora de migrar.",
+  },
+  {
+    number: "02",
+    title: "Receba seu plano",
+    description: "Nossa plataforma gera um roteiro personalizado com todos os passos para a sua transição.",
+  },
+  {
+    number: "03",
+    title: "Execute com suporte",
+    description: "Siga a jornada guiada, organize seus documentos e use nossas ferramentas de simulação.",
+  },
+];
+
+const stats = [
+  { value: "2.000+", label: "Empreendedores atendidos" },
+  { value: "98%", label: "Taxa de satisfação" },
+  { value: "< 5 min", label: "Tempo médio de diagnóstico" },
+];
 
 export function Home() {
   return (
-    <div className='pt-15 min-h-screen bg-background text-foreground font-sans'>
-      {/* Navigation Bar */}
+    <div className="min-h-screen bg-background text-foreground font-sans">
       <NavBarMain />
 
-      {/* Hero Section */}
-      <section className='py-16 px-6'>
-        <div className='container mx-auto'>
-          <div className='grid lg:grid-cols-2 gap-12 items-start'>
-            {/* Left Column - Main Content */}
-            <div className='space-y-8'>
-              <div>
-                <h1 className='font-semi-bold text-foreground lg:text-3xl mb-6 leading-tight'>
-                  Do MEI à Microempresa: Conquiste o Sucesso com o {""}
-                  <span className='text-primary'>MEI</span>
-                  <span className='text-green-500'>2ME</span>
-                </h1>
-                <p className='text-2xl text-muted-foreground mb-8'>
-                  Boas vindas à nossa plataforma digital.
-                </p>
-              </div>
+      {/* Hero*/}
+      <section className="relative pt-24 pb-20 px-6 overflow-hidden">
+        {/* Decorative background blobs */}
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-40 -left-24 w-72 h-72 bg-secondary/8 rounded-full blur-3xl pointer-events-none" />
 
-              <div className='text-muted-foreground leading-relaxed space-y-4'>
-                <p>
-                  Transformar um sonho em realidade exige coragem, planejamento
-                  e as ferramentas certas. É por isso que o MEI2ME foi criado:
-                  para ser um parceiro verdadeiro na sua jornada empreendedora.
-                </p>
-                <p>
-                  Nossa plataforma digital foi desenvolvida pensando em você,
-                  que começou como MEI e agora quer dar o próximo passo rumo a
-                  uma Microempresa de sucesso.
-                </p>
-              </div>
-            </div>
+        <div className="container mx-auto">
+          <div className="flex justify-center mb-8">
+            <span className="inline-flex items-center gap-2 bg-accent text-accent-foreground text-xs font-semibold px-4 py-1.5 rounded-full border border-primary/20">
+              <TrendingUp size={12} />
+              Plataforma digital para MEIs em crescimento
+            </span>
+          </div>
 
-            {/* Right Column - CTA Card */}
-            <div className='lg:pl-8'>
-              <div className='bg-primary rounded-lg p-8 shadow-2xl transform hover:scale-105 transition-all duration-300'>
-                <h2 className='text-2xl text-white lg:text-3xl font-bold text-center mb-6 leading-tight'>
-                  Decifre o Futuro do Seu Negócio: Transição de MEI é Para Você?
+          <div className="max-w-3xl mx-auto text-center mb-14">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground leading-[1.1] tracking-tight mb-6">
+              Do{" "}
+              <span className="text-primary">MEI</span>{" "}
+              à{" "}
+              <span className="text-green-500">Microempresa</span>
+              <br />
+              sem complicação
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+              Evite problemas fiscais e descubra se seu MEI precisa evoluir para ME.
+              O <strong className="text-foreground font-semibold">MEI2ME</strong> é seu parceiro verdadeiro
+              em cada etapa da jornada de transição.
+            </p>
+          </div>
+
+          {/* CTA Card */}
+          <div className="max-w-xl mx-auto">
+            <div className="relative bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-8 shadow-2xl shadow-primary/25 overflow-hidden">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-black/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+
+              <div className="relative z-10">
+                <div className="flex items-center justify-center w-12 h-12 bg-white/15 rounded-xl mb-5">
+                  <ShieldCheck className="text-white w-6 h-6" />
+                </div>
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-3 leading-tight">
+                  A transição de MEI é para você?
                 </h2>
-                <p className='text-secondary text-center mb-8 text-lg'>
-                  Em poucos minutos, tenha clareza sobre as oportunidades e o
-                  melhor caminho para sua empresa.
+                <p className="text-white/80 mb-6 leading-relaxed">
+                  Em poucos minutos, tenha clareza sobre as oportunidades e o melhor caminho para sua empresa.
                 </p>
+
+                <ul className="space-y-2 mb-7">
+                  {["100% gratuito", "Resultado imediato", "Sem burocracia"].map((item) => (
+                    <li key={item} className="flex items-center gap-2 text-white/90 text-sm">
+                      <CheckCircle2 size={15} className="text-secondary flex-shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
                 <Button
-                  variant={"secondary"}
-                  className='w-full h-full font-bold py-4 px-8 text-xl'
+                  variant="secondary"
+                  className="w-full h-12 text-base font-bold group"
                   asChild
                 >
-                  <Link to='/Diagnostico'>Faça o Diagnóstico Gratuito</Link>
+                  <Link to="/Diagnostico">
+                    Descobrir se preciso migrar
+                    <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Link>
                 </Button>
               </div>
             </div>
           </div>
+
+          {/* Social proof stats */}
+          <div className="mt-14 grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+            {stats.map(({ value, label }) => (
+              <div key={label} className="text-center">
+                <div className="text-2xl md:text-3xl font-extrabold text-foreground">{value}</div>
+                <div className="text-xs md:text-sm text-muted-foreground mt-1">{label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className='py-8 px-6 '>
-        <div className='container mx-auto'>
-          <div className='text-center mb-12'>
-            <h2 className='text-3xl text-foreground lg:text-2xl font-bold mb-4'>
-              Com o MEI2ME você estará sempre no controle da sua vida
-              profissional.
+      {/* How it works */}
+      <section id="como-funciona" className="py-20 px-6 bg-muted/50">
+        <div className="container mx-auto">
+          <div className="text-center mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-primary mb-3 block">
+              Como funciona
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4">
+              Simples como deve ser
             </h2>
-            <p className='text-xl text-muted-foreground'>
-              Além de uma migração personalizada e simples, você terá:
+            <p className="text-muted-foreground max-w-lg mx-auto text-base">
+              Três passos para sair do MEI e entrar no próximo nível do seu negócio.
             </p>
           </div>
 
-          <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-2 mt-16'>
-            {/* Feature 1 */}
-            <Card className='bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group'>
-              <div className='bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300'>
-                <FileText className='text-primary-foreground w-8 h-8' />
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {steps.map((step, i) => (
+              <div key={step.number} className="relative">
+                {i < steps.length - 1 && (
+                  <div className="hidden md:block absolute top-8 left-[calc(50%+2rem)] right-[-calc(50%-2rem)] h-px bg-border" />
+                )}
+                <div className="flex flex-col items-center text-center p-6">
+                  <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground font-extrabold text-lg mb-4 shadow-md shadow-primary/25">
+                    {step.number}
+                  </div>
+                  <h3 className="text-base font-bold text-foreground mb-2">{step.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
+                </div>
               </div>
-              <h3 className='text-xl font-bold mb-4'>
-                Checklist de documentos
-              </h3>
-              <p className='text-muted-foreground leading-relaxed'>
-                Organize e acompanhe todos os documentos importantes em um só
-                lugar. Nosso módulo de checklist mostra exatamente o que falta e
-                o que já foi entregue, trazendo mais agilidade e segurança para
-                o seu processo. Cadastre-se agora e tenha acesso completo aos
-                nossos módulos exclusivos!
-              </p>
-            </Card>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Feature 2 */}
-            <Card className='bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group'>
-              <div className='bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300'>
-                <Route className='text-primary-foreground w-8 h-8' />
-              </div>
-              <h3 className='text-xl font-bold mb-4'>Jornada</h3>
-              <p className='text-muted-foreground leading-relaxed'>
-                Acompanhe cada etapa do seu processo de forma simples e visual.
-                O módulo mostra seu progresso, o que já foi concluído e o que
-                ainda está por vir, garantindo clareza e organização.
-              </p>
-            </Card>
+      {/* Features / Resources */}
+      <section id="recursos" className="py-20 px-6">
+        <div className="container mx-auto">
+          <div className="text-center mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-primary mb-3 block">
+              Recursos
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4">
+              Tudo que você precisa para crescer
+            </h2>
+            <p className="text-muted-foreground max-w-lg mx-auto text-base">
+              Ferramentas inteligentes que simplificam cada etapa da sua transição.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {features.map(({ icon: Icon, title, description, preview }) => (
+              <Dialog key={title}>
+                <DialogTrigger asChild>
+                  <Card className="p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group cursor-pointer border-border/60">
+                    <div className="bg-primary w-12 h-12 rounded-xl flex items-center justify-center mb-5 group-hover:scale-105 transition-transform duration-300 shadow-sm">
+                      <Icon className="text-white w-6 h-6" />
+                    </div>
 
-            {/* Feature 3 */}
-            <Card className='bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group'>
-              <div className='bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300'>
-                <BadgeDollarSign className='text-primary-foreground w-8 h-8' />
-              </div>
-              <h3 className='text-xl font-bold mb-4'>Simulador de Regime</h3>
-              <p className='text-muted-foreground leading-relaxed'>
-                Descubra qual regime tributário é mais vantajoso para o seu
-                negócio na transição de MEI para ME. Nosso simulador mostra
-                cenários personalizados e ajuda você a tomar decisões mais
-                seguras.
-              </p>
-            </Card>
+                    <h3 className="text-base font-bold text-foreground mb-2">
+                      {title}
+                    </h3>
 
-            {/* Feature 4 */}
-            <Card className='bg-muted p-8 hover:border-ring transition-all duration-300 hover:shadow-xl group'>
-              <div className='bg-primary w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300'>
-                <BotMessageSquare className='text-primary-foreground w-8 h-8' />
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {description}
+                    </p>
+                  </Card>
+                </DialogTrigger>
+
+                <DialogContent className="w-[95vw] sm:max-w-4xl max-h-[85vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-3">
+                      <Icon className="w-5 h-5 text-primary" />
+                      {title}
+                    </DialogTitle>
+                  </DialogHeader>
+
+                  <div className="mt-4 space-y-4">
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {description}
+                    </p>
+
+                    {preview && (
+                      <div className="rounded-lg overflow-hidden border border-border">
+                        {preview}
+                      </div>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Value proposition strip */}
+      <section className="py-14 px-6 bg-muted/50 border-y border-border">
+        <div className="container mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            {[
+              { icon: Clock, title: "Economize tempo", text: "Sem burocracia manual. Tudo centralizado em um só lugar." },
+              { icon: ShieldCheck, title: "Decisões seguras", text: "Simulações tributárias baseadas no seu cenário." },
+              { icon: TrendingUp, title: "Cresça com confiança", text: "Jornada guiada, do início ao fim, sem surpresas." },
+            ].map(({ icon: Icon, title, text }) => (
+              <div key={title} className="flex gap-4 items-start">
+                <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Icon className="text-accent-foreground w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-foreground mb-1">{title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{text}</p>
+                </div>
               </div>
-              <h3 className='text-xl font-bold mb-4'>ContAI</h3>
-              <p className='text-muted-foreground leading-relaxed'>
-                Deixe a burocracia com a tecnologia! O módulo ajuda você a
-                organizar e automatizar cálculos, simulações e obrigações da sua
-                empresa durante a transição de MEI para ME. Mais facilidade,
-                menos erros.
-              </p>
-            </Card>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Footer CTA */}
-      <section className='py-16 px-6 bg-sidebar'>
-        <div className='container mx-auto text-center'>
-          <h2 className='text-3xl lg:text-4xl font-bold mb-8'>
-            Pronto para transformar o seu negócio?
+      <section className="py-24 px-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5 pointer-events-none" />
+        <div className="container mx-auto text-center relative z-10">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4 leading-tight">
+            Pronto para transformar
+            <br />
+            o seu negócio?
           </h2>
-          <Button className='py-4 px-12 h-14 text-lg' asChild>
-            <Link to='/Diagnostico'>Comece Agora Gratuitamente</Link>
+          <p className="text-muted-foreground text-lg mb-10 max-w-md mx-auto">
+            Junte-se a milhares de empreendedores que já deram o próximo passo com o MEI2ME.
+          </p>
+          <Button className="h-14 px-10 text-base font-bold group shadow-lg shadow-primary/25" asChild>
+            <Link to="/Diagnostico">
+              Comece Agora Gratuitamente
+              <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </Button>
+          <p className="text-xs text-muted-foreground mt-5">
+            Sem cartão de crédito. Sem compromisso.
+          </p>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="py-8 px-6 border-t border-border bg-muted/30">
+        <div className="container mx-auto text-center space-y-2">
+          <div className="flex justify-center items-center gap-1">
+            <span className="text-sm font-bold text-primary">MEI</span>
+            <span className="text-sm font-bold text-green-500">2ME</span>
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            &copy; {new Date().getFullYear()} MEI2ME. Todos os direitos reservados.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
