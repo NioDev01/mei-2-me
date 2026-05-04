@@ -485,8 +485,26 @@ export function Checklist() {
                 </div>
               </div>
 
-              <div className='flex gap-2 pt-4'>
-                {selectedDocument.hasTemplate &&
+              <div className="flex gap-2 pt-4">
+                {selectedDocument?.id === "9" ? (
+                  <Button
+                    onClick={handleGenerateAto}
+                    disabled={!canGenerateAto || isGeneratingAto}
+                  >
+                    {isGeneratingAto ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                        Gerando...
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="h-4 w-4 mr-1" />
+                        Gerar documento
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  selectedDocument?.hasTemplate &&
                   (selectedDocument.isExternal ? (
                     <Button
                       onClick={() =>
@@ -501,14 +519,19 @@ export function Checklist() {
                       onClick={() =>
                         handleDownload(
                           selectedDocument.templateUrl!,
-                          `${selectedDocument.name.toLowerCase().replace(/\s+/g, "-")}.${selectedDocument.templateUrl?.split(".").pop()}`,
+                          `${selectedDocument.name
+                            .toLowerCase()
+                            .replace(/\s+/g, "-")}.${
+                            selectedDocument.templateUrl?.split(".").pop()
+                          }`
                         )
                       }
                     >
-                      <Download className='h-4 w-4 mr-1' />
+                      <Download className="h-4 w-4 mr-1" />
                       Modelo
                     </Button>
-                  ))}
+                  ))
+                )}
               </div>
             </>
           )}
