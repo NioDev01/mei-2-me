@@ -10,6 +10,8 @@ import {
   Res,
   Req,
   UnauthorizedException,
+  Patch,
+  Delete,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -78,6 +80,25 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   getProfile(@Request() req) {
-    return req.user;
+    return this.authService.getProfile(req.user.id_user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('senha')
+  async changePassword(
+    @Request() req,
+    @Body() body: { senhaAtual: string; novaSenha: string },
+  ) {
+    return this.authService.changePassword(
+      req.user.id_user,
+      body.senhaAtual,
+      body.novaSenha,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('me')
+  async deleteAccount(@Request() req) {
+    return this.authService.deleteAccount(req.user.id_user);
   }
 }

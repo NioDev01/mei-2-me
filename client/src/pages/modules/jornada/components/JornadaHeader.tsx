@@ -8,7 +8,7 @@ type Props = {
 
 export function JornadaHeader({ data, onStepClick }: Props) {
   return (
-    <Card className="sticky top-0 z-10 bg-card">
+    <Card className="sticky top-0 z-10 bg-card overflow-x-auto whitespace-nowrap">
         <CardContent className="py-4">
 
             <div className="flex items-center justify-between relative">

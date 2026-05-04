@@ -106,6 +106,29 @@ export class AuthService {
     };
   }
 
+  async getProfile(userId: number) {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id_user: userId },
+      select: {
+        id_user: true,
+        id_mei: true,
+        email_user: true,
+        cnpj_user: true,
+        nome_user: true,
+        celular_user: true,
+      },
+    });
+
+    return {
+      id_user: usuario?.id_user,
+      id_mei: usuario?.id_mei,
+      email: usuario?.email_user,
+      cnpj: usuario?.cnpj_user,
+      nome: usuario?.nome_user,
+      celular: usuario?.celular_user,
+    };
+  }
+
   async logout(refreshToken: string | undefined) {
     try {
       if (!refreshToken) return;
@@ -248,5 +271,68 @@ export class AuthService {
     });
 
     return { message: 'Senha atualizada com sucesso' };
+  }
+
+  async changePassword(userId: number, senhaAtual: string, novaSenha: string) {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id_user: userId },
+    });
+
+    if (!usuario) {
+      throw new UnauthorizedException('Usuário não encontrado');
+    }
+
+    const senhaValida = await bcrypt.compare(senhaAtual, usuario.senha_user);
+
+    if (!senhaValida) {
+      throw new UnauthorizedException('Senha atual incorreta');
+    }
+
+    const hashedPassword = await bcrypt.hash(novaSenha, 10);
+
+    await this.prisma.usuario.update({
+      where: { id_user: userId },
+      data: { senha_user: hashedPassword },
+    });
+
+    return { message: 'Senha atualizada com sucesso' };
+  }
+
+  async deleteAccount(userId: number) {
+    await this.prisma.$transaction(async (tx) => {
+      // 1. Deletar mensagens do chat
+      await tx.chatMessage.deleteMany({
+        where: { user_id: userId },
+      });
+
+      // 2. Buscar usuário (pra pegar id_mei)
+      const user = await tx.usuario.findUnique({
+        where: { id_user: userId },
+      });
+
+      if (user?.id_mei) {
+        const idMei = user.id_mei;
+
+        // 3. Deletar tudo relacionado ao MEI
+        await tx.jornadaChecklistItem.deleteMany({ where: { id_mei: idMei } });
+        await tx.jornadaStepProgress.deleteMany({ where: { id_mei: idMei } });
+
+        await tx.calculoRegime.deleteMany({ where: { id_mei: idMei } });
+        await tx.diagnostico.deleteMany({ where: { id_mei: idMei } });
+        await tx.documentosMei.deleteMany({ where: { id_mei: idMei } });
+        await tx.empresaTransicao.deleteMany({ where: { id_mei: idMei } });
+
+        await tx.mei.delete({
+          where: { id_mei: idMei },
+        });
+      }
+
+      // 4. Deletar usuário
+      await tx.usuario.delete({
+        where: { id_user: userId },
+      });
+    });
+
+    return { message: 'Conta deletada com sucesso' };
   }
 }

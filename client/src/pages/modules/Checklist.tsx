@@ -6,6 +6,7 @@ import {
   Download,
   FileText,
   ExternalLink,
+  Loader2,
 } from "lucide-react";
 
 import {
@@ -33,6 +34,8 @@ import { toast } from "sonner";
 import type { ChecklistFormData } from "@/types/checklist-form";
 import { checklistSchema } from "@/types/checklist-form";
 
+import { generateAtoConstitutivo, getEmpresaTransicao } from "@/services/ato-constitutivo.service";
+
 const documentIdToFieldName: Record<
   string,
   keyof Omit<ChecklistFormData, "id_mei">
@@ -45,7 +48,7 @@ const documentIdToFieldName: Record<
   "6": "formulario_capa_marrom",
   "7": "requerimento_desenquadramento",
   "8": "comprovante_pagamento_dare",
-  "9": "contrato_social",
+  "9": "ato_constitutivo",
   "10": "possui_ccmei",
   "11": "possui_cadesp",
   "12": "comprovante_situacao_simples_nacional",
@@ -131,12 +134,14 @@ const documents: Document[] = [
   },
   {
     id: "9",
-    name: "Contrato Social (em caso de mudança na natureza jurídica)",
+    name: "Ato Constitutivo",
     description:
-      "Documento que formaliza a alteração da natureza jurídica da empresa.",
-    purpose: "Alterar a estrutura jurídica da empresa.",
-    howToObtain: "MEI redige modelo próprio ou usa da JUCESP",
-    hasTemplate: false,
+      "Documento oficial que comprova a formalização do MEI, contendo CNPJ, dados do titular, atividades e data de abertura.",
+    purpose:
+      "Comprovar a existência legal da empresa e servir como base para processos como migração de regime, abertura de conta bancária e emissão de notas fiscais.",
+    howToObtain:
+      "Gerado automaticamente pela plataforma.",
+    hasTemplate: true,
   },
   {
     id: "10",
@@ -179,6 +184,9 @@ export function Checklist() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
+  const [isGeneratingAto, setIsGeneratingAto] = useState(false);
+  const [canGenerateAto, setCanGenerateAto] = useState(false);
+
   const form = useForm<ChecklistFormData>({
     resolver: zodResolver(checklistSchema),
     defaultValues: {
@@ -190,7 +198,7 @@ export function Checklist() {
       formulario_capa_marrom: false,
       requerimento_desenquadramento: false,
       comprovante_pagamento_dare: false,
-      contrato_social: false,
+      ato_constitutivo: false,
       possui_ccmei: false,
       possui_cadesp: false,
       comprovante_situacao_simples_nacional: false,
@@ -210,7 +218,7 @@ export function Checklist() {
     watchedValues.formulario_capa_marrom,
     watchedValues.requerimento_desenquadramento,
     watchedValues.comprovante_pagamento_dare,
-    watchedValues.contrato_social,
+    watchedValues.ato_constitutivo,
     watchedValues.possui_ccmei,
     watchedValues.possui_cadesp,
     watchedValues.comprovante_situacao_simples_nacional,
@@ -284,6 +292,43 @@ export function Checklist() {
     return () => clearTimeout(timeout);
   }, [isInitialized, ...checklistFields]);
 
+  useEffect(() => {
+    async function checkAtoData() {
+      try {
+        const data = await getEmpresaTransicao();
+        setCanGenerateAto(!!data);
+      } catch {
+        setCanGenerateAto(false);
+      }
+    }
+
+    checkAtoData();
+  }, []);
+
+  const handleGenerateAto = async () => {
+    setIsGeneratingAto(true);
+
+    try {
+      const blob = await generateAtoConstitutivo();
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "ato-constitutivo.docx";
+
+      link.click();
+
+      toast.success("Documento gerado com sucesso!");
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Erro ao gerar documento"
+      );
+    } finally {
+      setIsGeneratingAto(false);
+    }
+  };
+
   return (
     <div className='w-full space-y-8 pt-3'>
       {/* Header */}
@@ -355,36 +400,54 @@ export function Checklist() {
                     <Info className='h-4 w-4 mr-1' />
                     Info
                   </Button>
-                  {doc.hasTemplate &&
-                    (doc.isExternal ? (
-                      <Button
-                        type='button'
-                        size='sm'
-                        onClick={() => window.open(doc.templateUrl!, "_blank")}
-                      >
-                        Ir para o site
-                        <ExternalLink />
-                      </Button>
+                  {doc.id === "9" ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleGenerateAto}
+                    disabled={!canGenerateAto || isGeneratingAto}
+                  >
+                    {isGeneratingAto ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                        Gerando...
+                      </>
                     ) : (
-                      <Button
-                        type='button'
-                        size='sm'
-                        onClick={() =>
-                          handleDownload(
-                            doc.templateUrl!,
-                            `${doc.name
-                              .toLowerCase()
-                              .replace(
-                                /\s+/g,
-                                "-",
-                              )}.${doc.templateUrl?.split(".").pop()}`,
-                          )
-                        }
-                      >
-                        <Download className='h-4 w-4 mr-1' />
-                        Modelo
-                      </Button>
-                    ))}
+                      <>
+                        <FileText className="h-4 w-4 mr-1" />
+                        Gerar documento
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  doc.hasTemplate &&
+                  (doc.isExternal ? (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => window.open(doc.templateUrl!, "_blank")}
+                    >
+                      Ir para o site
+                      <ExternalLink />
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() =>
+                        handleDownload(
+                          doc.templateUrl!,
+                          `${doc.name
+                            .toLowerCase()
+                            .replace(/\s+/g, "-")}.${doc.templateUrl?.split(".").pop()}`
+                        )
+                      }
+                    >
+                      <Download className="h-4 w-4 mr-1" />
+                      Modelo
+                    </Button>
+                  ))
+                )}
                 </CardContent>
               </Card>
             );
@@ -422,8 +485,26 @@ export function Checklist() {
                 </div>
               </div>
 
-              <div className='flex gap-2 pt-4'>
-                {selectedDocument.hasTemplate &&
+              <div className="flex gap-2 pt-4">
+                {selectedDocument?.id === "9" ? (
+                  <Button
+                    onClick={handleGenerateAto}
+                    disabled={!canGenerateAto || isGeneratingAto}
+                  >
+                    {isGeneratingAto ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                        Gerando...
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="h-4 w-4 mr-1" />
+                        Gerar documento
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  selectedDocument?.hasTemplate &&
                   (selectedDocument.isExternal ? (
                     <Button
                       onClick={() =>
@@ -438,14 +519,19 @@ export function Checklist() {
                       onClick={() =>
                         handleDownload(
                           selectedDocument.templateUrl!,
-                          `${selectedDocument.name.toLowerCase().replace(/\s+/g, "-")}.${selectedDocument.templateUrl?.split(".").pop()}`,
+                          `${selectedDocument.name
+                            .toLowerCase()
+                            .replace(/\s+/g, "-")}.${
+                            selectedDocument.templateUrl?.split(".").pop()
+                          }`
                         )
                       }
                     >
-                      <Download className='h-4 w-4 mr-1' />
+                      <Download className="h-4 w-4 mr-1" />
                       Modelo
                     </Button>
-                  ))}
+                  ))
+                )}
               </div>
             </>
           )}

@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       {/* Rotas */}
-      <Toaster />
+      <Toaster position='top-center'/>
       <AppRoutes />
       <SpeedInsights />
     </>

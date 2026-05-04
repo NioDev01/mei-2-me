@@ -130,7 +130,7 @@ export function Painel() {
           <div className='w-12 h-12 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center font-medium text-sm shrink-0'>
             <Building size={20} />
           </div>
-          <div className='flex-1'>
+          <div className='flex-1 truncate'>
             <p className='font-medium truncate'>{nomeEmpresa}</p>
             <p className='text-sm text-muted-foreground'>
               {[mei?.municipio_mei, mei?.uf_mei].filter(Boolean).join("/") ||
