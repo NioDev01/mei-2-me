@@ -1,33 +1,71 @@
 @startuml
 autonumber
 
-actor "MEI" as User
+actor "Usuário" as U
 participant "Frontend" as FE
 participant "AuthController" as AC
 participant "AuthService" as AS
 participant "PrismaService" as DB
 
+== Registro ==
+U -> FE : Preenche cadastro
+FE -> AC : POST /auth/register
+AC -> AS : register(dto)
+AS -> DB : Cria Usuario
+DB --> AS : Usuario criado
+AS --> AC : Resultado
+AC --> FE : 201 Created
+
 == Login ==
-User -> FE : Informa email/senha
+U -> FE : Informa email e senha
 FE -> AC : POST /auth/login
 AC -> AS : login(dto)
-AS -> DB : Busca usuário por email
-DB --> AS : Dados do usuário
+AS -> DB : Busca usuário + valida senha
+DB --> AS : Usuário válido
 AS --> AC : accessToken + refreshToken
 AC --> FE : 200 + accessToken\nSet-Cookie(refreshToken)
 
 == Refresh ==
 FE -> AC : POST /auth/refresh\n(cookie refreshToken)
 AC -> AS : refresh(refreshToken)
-AS -> DB : Valida refresh token do usuário
-DB --> AS : Usuário válido
+AS -> DB : Valida refresh token persistido
+DB --> AS : Token válido
 AS --> AC : Novo accessToken
 AC --> FE : 200 + accessToken
+
+== Perfil ==
+FE -> AC : GET /auth/me\n(Bearer accessToken)
+AC --> FE : 200 + dados do usuário
+
+== Esqueci senha ==
+U -> FE : Solicita redefinição de senha
+FE -> AC : POST /auth/forgot-password
+AC -> AS : forgotPassword(email)
+AS --> AC : Instruções/token de redefinição
+AC --> FE : 200 OK
+
+== Redefinir senha ==
+U -> FE : Informa token e nova senha
+FE -> AC : POST /auth/reset-password
+AC -> AS : resetPassword(dto)
+AS -> DB : Atualiza hash da senha
+DB --> AS : OK
+AS --> AC : Senha redefinida
+AC --> FE : 200 OK
+
+== Excluir conta ==
+U -> FE : Solicita exclusão da conta
+FE -> AC : POST /api/auth/delete\n(Bearer accessToken)
+AC -> AS : deleteAccount(userId)
+AS -> DB : Remove usuário e dados associados
+DB --> AS : OK
+AS --> AC : Conta excluída
+AC --> FE : 200 OK
 
 == Logout ==
 FE -> AC : POST /auth/logout
 AC -> AS : logout(refreshToken)
-AS -> DB : Invalida refresh token
+AS -> DB : Limpa refresh token
 DB --> AS : OK
 AC --> FE : 200 + clear cookie
 @enduml

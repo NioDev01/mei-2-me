@@ -3,6 +3,8 @@
 hide methods
 hide stereotypes
 
+' ================= ENTIDADES =================
+
 entity Mei {
   +id_mei : Int <<PK>>
   --
@@ -26,30 +28,15 @@ entity Mei {
 }
 
 entity Diagnostico {
-  +id_mei : Int <<PK>>
+  +id_mei : Int <<PK, FK>>
   --
   resultado_diag : String
   atualizado_em : DateTime
   motivos_resultado : Json
 }
 
-entity Cnae {
-  +id_cnae : Int <<PK>>
-  --
-  cnae : String
-  ocupacao_cnae : String
-  descricao_subclasse : String
-  iss_cnae : String
-  icms_cnae : String
-  lucrop_aliq_csll : Decimal
-  lucrop_aliq_irpj : Decimal
-  setor_cnae : String
-  simples_anexo : String
-  simples_fatorr : String
-}
-
 entity CalculoRegime {
-  +id_mei : Int <<PK>>
+  +id_mei : Int <<PK, FK>>
   --
   receitas_financeiras : Decimal
   receitas_nao_operacionais : Decimal
@@ -62,6 +49,19 @@ entity CalculoRegime {
   lucro_liq_lucrop : Decimal
   lucro_liq_simples : Decimal
   recomendacao : String
+}
+
+entity EmpresaTransicao {
+  +id : Int <<PK>>
+  --
+  id_mei : Int <<FK, U>>
+  natureza_juridica : String
+  capital_social : Decimal
+  titular_nome : String
+  titular_cpf : String
+  socios : Json
+  criado_em : DateTime
+  atualizado_em : DateTime
 }
 
 entity JornadaStepProgress {
@@ -103,7 +103,7 @@ entity Usuario {
 }
 
 entity DocumentosMei {
-  +id_mei : Int <<PK>>
+  +id_mei : Int <<PK, FK>>
   --
   possui_rg : Boolean
   possui_cpf : Boolean
@@ -112,7 +112,7 @@ entity DocumentosMei {
   formulario_capa_marrom : Boolean
   requerimento_desenquadramento : Boolean
   comprovante_pagamento_dare : Boolean
-  contrato_social : Boolean
+  ato_constitutivo : Boolean
   possui_ccmei : Boolean
   possui_cadesp : Boolean
   comprovante_situacao_simples_nacional : Boolean
@@ -130,14 +130,32 @@ entity ChatMessage {
   created_at : DateTime
 }
 
+entity Cnae {
+  +id_cnae : Int <<PK>>
+  --
+  cnae : String
+  ocupacao_cnae : String
+  descricao_subclasse : String
+  iss_cnae : String
+  icms_cnae : String
+  lucrop_aliq_csll : Decimal
+  lucrop_aliq_irpj : Decimal
+  setor_cnae : String
+  simples_anexo : String
+  simples_fatorr : String
+}
+
 ' ================= RELACIONAMENTOS =================
 
 Mei ||--|| Diagnostico
 Mei ||--|| CalculoRegime
 Mei ||--|| DocumentosMei
+Mei ||--|| EmpresaTransicao
+
 Mei ||--o{ JornadaStepProgress
 Mei ||--o{ JornadaChecklistItem
-Mei ||--|| Usuario
+
+Mei ||--o| Usuario
 
 Usuario ||--o{ ChatMessage
 

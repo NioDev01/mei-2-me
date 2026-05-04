@@ -2,13 +2,15 @@
 skinparam componentStyle rectangle
 skinparam shadowing false
 
-actor "MEI" as user
+actor "Usuário" as USER
 
 node "Frontend (React + Vite)" as FE {
-  component "Rotas\n(Home/Login/Diagnóstico/AppHub)" as FE_ROUTES
-  component "Módulos\nPainel/Jornada/Checklist/Simulador" as FE_MODULES
-  component "ContAIChat" as FE_CHAT
-  component "AuthContext" as FE_AUTH
+  component "AuthContext\n(token + sessão)" as FE_AUTH
+  component "Rotas públicas\nHome/Login/Signin/RecuperaçãoSenha" as FE_PUBLIC
+  component "Rotas protegidas\nDiagnóstico/AppHub/DadosConta" as FE_PRIVATE
+  component "AppHub por hash\nPainel/Jornada/Checklist/Simulador" as FE_HUB
+  component "Componente AppHub Sidebar\nContAIChat" as FE_CHAT
+  component "Services\n(api.ts + *.service.ts)" as FE_SERVICES
 }
 
 node "Backend (NestJS)" as BE {
@@ -18,6 +20,7 @@ node "Backend (NestJS)" as BE {
   component "SimuladorRegimesModule" as SIM
   component "ChecklistDocumentosModule" as CHECK
   component "JornadaModule" as JORNADA
+  component "AtoConstitutivoModule" as ATOCONST
   component "AiModule" as AI
   component "ReceitawsApiService" as RECEITA_SVC
   component "PrismaModule" as PRISMA
@@ -25,13 +28,18 @@ node "Backend (NestJS)" as BE {
 
 database "PostgreSQL" as DB
 cloud "ReceitaWS API" as RECEITA_API
-cloud "Gemini API" as GEMINI_API
+cloud "Resend API" as RESEND_API
+cloud "Gemini 2.5 Flash API" as GEMINI_API
 
-user --> FE_ROUTES
-FE_MODULES --> FE_AUTH
-FE_ROUTES --> BE
-FE_MODULES --> BE
-FE_CHAT --> BE
+USER --> FE_PUBLIC
+USER --> FE_PRIVATE
+
+FE_PUBLIC --> FE_SERVICES
+FE_PRIVATE --> FE_HUB
+FE_HUB --> FE_SERVICES
+FE_HUB --> FE_CHAT
+FE_CHAT --> FE_SERVICES
+FE_SERVICES --> BE
 
 BE --> PRISMA
 PRISMA --> DB
@@ -40,11 +48,13 @@ DIAG --> ANALISE
 DIAG --> RECEITA_SVC
 RECEITA_SVC --> RECEITA_API
 AI --> GEMINI_API
+AUTH --> RESEND_API
 
 AUTH --> PRISMA
 DIAG --> PRISMA
 SIM --> PRISMA
 CHECK --> PRISMA
 JORNADA --> PRISMA
+ATOCONST --> PRISMA
 AI --> PRISMA
 @enduml

@@ -3,34 +3,55 @@ left to right direction
 skinparam packageStyle rectangle
 skinparam actorStyle awesome
 
-actor "MEI (Usuário)" as MEI
-actor "Serviço Externo\nReceitaWS" as RECEITA
-actor "Serviço Externo\nGemini API" as GEMINI
+actor "MEI (Usuário autenticado)" as MEI
+actor "Visitante" as GUEST
+actor "ReceitaWS API" as RECEITA
+actor "Gemini API" as GEMINI
 
-rectangle "MEI2ME" {
-  usecase "Cadastrar conta" as UC_REGISTER
-  usecase "Autenticar (login)" as UC_LOGIN
-  usecase "Recuperar senha" as UC_RECOVER
-  usecase "Preencher diagnóstico\ninicial" as UC_DIAG
+rectangle "Plataforma MEI2ME" {
+  usecase "Criar conta" as UC_REGISTER
+  usecase "Fazer login" as UC_LOGIN
+  usecase "Recuperar senha" as UC_RESET
+  usecase "Redefinir senha" as UC_CHANGE
+  usecase "Consultar perfil" as UC_ME
+  usecase "Excluir conta" as UC_DEL_ME
+
   usecase "Consultar CNPJ" as UC_CNPJ
-  usecase "Visualizar painel" as UC_DASH
+  usecase "Criar diagnóstico inicial" as UC_DIAG_CREATE
+  usecase "Consultar diagnóstico" as UC_DIAG_GET
+
+  usecase "Executar simulação\ntributária" as UC_SIM
   usecase "Gerenciar checklist\nde documentos" as UC_CHECK
-  usecase "Executar simulação\nde regime" as UC_SIM
-  usecase "Acompanhar jornada\nde migração" as UC_JORNADA
+
+  usecase "Acompanhar jornada\n(resumo, etapas, checklist)" as UC_JORNADA
+  usecase "Gerar Ato Constitutivo\n(Requerimento de Empresário\nou Contrato Social)" as UC_JORNADA_ATO 
+  usecase "Concluir etapa" as UC_JORNADA_DONE
+
   usecase "Conversar com ContAI" as UC_CHAT
+  usecase "Ler histórico do chat" as UC_CHAT_HIST
 }
 
-MEI --> UC_REGISTER
-MEI --> UC_LOGIN
-MEI --> UC_RECOVER
-MEI --> UC_DIAG
-MEI --> UC_DASH
-MEI --> UC_CHECK
-MEI --> UC_SIM
-MEI --> UC_JORNADA
-MEI --> UC_CHAT
+GUEST --> UC_REGISTER
+GUEST --> UC_LOGIN
+GUEST --> UC_RESET
+GUEST --> UC_CHANGE
 
-UC_DIAG .> UC_CNPJ : <<include>>
+MEI --> UC_ME
+MEI --> UC_DEL_ME
+MEI --> UC_CHANGE
+MEI --> UC_CNPJ
+MEI --> UC_DIAG_CREATE
+MEI --> UC_DIAG_GET
+MEI --> UC_SIM
+MEI --> UC_CHECK
+MEI --> UC_JORNADA
+MEI --> UC_JORNADA_ATO
+MEI --> UC_JORNADA_DONE
+MEI --> UC_CHAT
+MEI --> UC_CHAT_HIST
+
+UC_DIAG_CREATE .> UC_CNPJ : <<include>>
+UC_RESET .> UC_CHANGE : <<include>>
 RECEITA --> UC_CNPJ
 GEMINI --> UC_CHAT
 @enduml

@@ -1,7 +1,7 @@
 @startuml
 autonumber
 
-actor "MEI" as User
+actor "Usuário" as U
 participant "Frontend" as FE
 participant "DiagnosticoInicialController" as DC
 participant "DiagnosticoInicialService" as DS
@@ -9,25 +9,34 @@ participant "ReceitawsApiService" as RS
 participant "AnaliseMigracaoService" as AMS
 participant "PrismaService" as DB
 
-== Consulta CNPJ ==
-User -> FE : Digita CNPJ
+== 1) Consulta de CNPJ ==
+U -> FE : Digita CNPJ
 FE -> DC : GET /diagnostico-inicial/cnpj/{cnpj}
 DC -> DS : findCnpjData(cnpj)
 DS -> RS : findOne(cnpj)
 RS -> "ReceitaWS API" : GET /v1/cnpj/{cnpj}
 "ReceitaWS API" --> RS : Dados cadastrais
-RS --> DS : Dados normalizados
-DS --> DC : Dados para formulário
+RS --> DS : Dados da empresa
+DS --> DC : Payload de pré-preenchimento
 DC --> FE : 200 OK
 
-== Criação do diagnóstico ==
-User -> FE : Confirma dados + envia formulário
+== 2) Criação de diagnóstico ==
+U -> FE : Confirma dados e envia formulário
 FE -> DC : POST /diagnostico-inicial
 DC -> DS : create(dto, user)
 DS -> AMS : analisar(mei, cnaesPermitidos)
-AMS --> DS : status/analise/motivos
-DS -> DB : upsert Mei + Diagnostico
-DB --> DS : Registro persistido
+AMS --> DS : status + análise + motivos
+DS -> DB : upsert Mei
+DS -> DB : upsert Diagnostico
+DB --> DS : Persistência concluída
 DS --> DC : Diagnóstico consolidado
 DC --> FE : 201 Created
+
+== 3) Consulta por usuário ==
+FE -> DC : GET /diagnostico-inicial
+DC -> DS : findByUser(user.id_user)
+DS -> DB : Busca Mei + Diagnostico + Analise
+DB --> DS : Dados consolidados
+DS --> DC : Resultado final
+DC --> FE : 200 OK
 @enduml
