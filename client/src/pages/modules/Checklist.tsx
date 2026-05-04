@@ -6,6 +6,7 @@ import {
   Download,
   FileText,
   ExternalLink,
+  Loader2,
 } from "lucide-react";
 
 import {
@@ -32,6 +33,8 @@ import { api } from "@/lib/api";
 import { toast } from "sonner";
 import type { ChecklistFormData } from "@/types/checklist-form";
 import { checklistSchema } from "@/types/checklist-form";
+
+import { generateAtoConstitutivo, getEmpresaTransicao } from "@/services/ato-constitutivo.service";
 
 const documentIdToFieldName: Record<
   string,
@@ -137,9 +140,8 @@ const documents: Document[] = [
     purpose:
       "Comprovar a existência legal da empresa e servir como base para processos como migração de regime, abertura de conta bancária e emissão de notas fiscais.",
     howToObtain:
-      "Acesse o Portal do Empreendedor, informe o CNPJ do MEI e emita gratuitamente o CCMEI atualizado.",
+      "Gerado automaticamente pela plataforma.",
     hasTemplate: true,
-    templateUrl: "/docs/ato-constitutivo.docx",
   },
   {
     id: "10",
@@ -181,6 +183,9 @@ export function Checklist() {
   );
   const [isInitialized, setIsInitialized] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+
+  const [isGeneratingAto, setIsGeneratingAto] = useState(false);
+  const [canGenerateAto, setCanGenerateAto] = useState(false);
 
   const form = useForm<ChecklistFormData>({
     resolver: zodResolver(checklistSchema),
@@ -287,6 +292,43 @@ export function Checklist() {
     return () => clearTimeout(timeout);
   }, [isInitialized, ...checklistFields]);
 
+  useEffect(() => {
+    async function checkAtoData() {
+      try {
+        const data = await getEmpresaTransicao();
+        setCanGenerateAto(!!data);
+      } catch {
+        setCanGenerateAto(false);
+      }
+    }
+
+    checkAtoData();
+  }, []);
+
+  const handleGenerateAto = async () => {
+    setIsGeneratingAto(true);
+
+    try {
+      const blob = await generateAtoConstitutivo();
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "ato-constitutivo.docx";
+
+      link.click();
+
+      toast.success("Documento gerado com sucesso!");
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Erro ao gerar documento"
+      );
+    } finally {
+      setIsGeneratingAto(false);
+    }
+  };
+
   return (
     <div className='w-full space-y-8 pt-3'>
       {/* Header */}
@@ -358,36 +400,54 @@ export function Checklist() {
                     <Info className='h-4 w-4 mr-1' />
                     Info
                   </Button>
-                  {doc.hasTemplate &&
-                    (doc.isExternal ? (
-                      <Button
-                        type='button'
-                        size='sm'
-                        onClick={() => window.open(doc.templateUrl!, "_blank")}
-                      >
-                        Ir para o site
-                        <ExternalLink />
-                      </Button>
+                  {doc.id === "9" ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleGenerateAto}
+                    disabled={!canGenerateAto || isGeneratingAto}
+                  >
+                    {isGeneratingAto ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                        Gerando...
+                      </>
                     ) : (
-                      <Button
-                        type='button'
-                        size='sm'
-                        onClick={() =>
-                          handleDownload(
-                            doc.templateUrl!,
-                            `${doc.name
-                              .toLowerCase()
-                              .replace(
-                                /\s+/g,
-                                "-",
-                              )}.${doc.templateUrl?.split(".").pop()}`,
-                          )
-                        }
-                      >
-                        <Download className='h-4 w-4 mr-1' />
-                        Modelo
-                      </Button>
-                    ))}
+                      <>
+                        <FileText className="h-4 w-4 mr-1" />
+                        Gerar documento
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  doc.hasTemplate &&
+                  (doc.isExternal ? (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => window.open(doc.templateUrl!, "_blank")}
+                    >
+                      Ir para o site
+                      <ExternalLink />
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() =>
+                        handleDownload(
+                          doc.templateUrl!,
+                          `${doc.name
+                            .toLowerCase()
+                            .replace(/\s+/g, "-")}.${doc.templateUrl?.split(".").pop()}`
+                        )
+                      }
+                    >
+                      <Download className="h-4 w-4 mr-1" />
+                      Modelo
+                    </Button>
+                  ))
+                )}
                 </CardContent>
               </Card>
             );
