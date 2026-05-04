@@ -98,19 +98,17 @@ interface FieldProps {
   readOnly?: boolean;
 }
 
-function Field({ label, value, readOnly }: FieldProps) {
+function Field({ label, value }: FieldProps) {
   return (
-    <div className='flex flex-col gap-1.5'>
-      <p className='text-xs font-medium text-muted-foreground'>{label}</p>
-      <div
-        className={`h-10 flex items-center px-3 rounded-md border text-sm ${
-          readOnly
-            ? "bg-muted/30 text-muted-foreground border-border/50"
-            : "bg-muted/50 text-foreground border-border"
-        }`}
-      >
-        {value ?? "—"}
-      </div>
+    <div className="flex flex-col gap-1.5 min-w-0">
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+
+      <Input
+        value={String(value ?? "—")}
+        readOnly
+        className="truncate"
+        title={String(value ?? "")}
+      />
     </div>
   );
 }
@@ -257,7 +255,7 @@ export function DadosConta() {
               <div className='w-16 h-16 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center font-medium text-xl shrink-0'>
                 {iniciais}
               </div>
-              <div>
+              <div className="truncate">
                 <p className='font-medium text-base'>{conta?.nome ?? "—"}</p>
                 <p className='text-sm text-muted-foreground mt-0.5'>
                   {conta?.email ?? "—"}
