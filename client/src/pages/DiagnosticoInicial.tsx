@@ -3,8 +3,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { NavBarMain } from "@/features/NavBarMain";
 import {
   Form,
@@ -22,11 +20,25 @@ import {
   DialogContent,
   DialogDescription,
   DialogFooter,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import {
+  Building2,
+  TrendingUp,
+  ClipboardCheck,
+  Search,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  ArrowRight,
+  Users,
+  DollarSign,
+  ShoppingCart,
+  Loader2,
+} from "lucide-react";
 
 const formSchema = z.object({
   cnpj_mei: z.string().min(14, "CNPJ inválido").max(18),
@@ -42,6 +54,50 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+function SectionCard({
+  icon: Icon,
+  title,
+  description,
+  children,
+  step,
+}: {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  children: React.ReactNode;
+  step: number;
+}) {
+  return (
+    <Card>
+      <CardHeader className="px-5 py-5 flex flex-row items-center gap-4 pb-0">
+        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-primary shrink-0">
+          <Icon size={20} className="text-primary-foreground"/>
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center">
+            <span className="text-xs font-semibold text-accent-foreground uppercase">
+              Passo {step}
+            </span>
+          </div>
+
+          <h2 className="font-semibold text-card-foreground mt-0.5">
+            {title}
+          </h2>
+
+          <p className="text-sm text-muted-foreground mt-0.5">
+            {description}
+          </p>
+        </div>
+      </CardHeader>
+
+      <CardContent className="px-6 py-6">
+        {children}
+      </CardContent>
+    </Card>
+  );
+}
+
 export function DiagInicial() {
   const [empresaData, setEmpresaData] = useState<{
     razao_social?: string;
@@ -49,6 +105,7 @@ export function DiagInicial() {
     uf?: string;
     municipio?: string;
   }>({});
+  const [cnpjLoading, setCnpjLoading] = useState(false);
   const [analise, setAnalise] = useState<null | {
     cnpj: string;
     razaoSocial: string;
@@ -69,9 +126,7 @@ export function DiagInicial() {
 
   const handleNavigate = async () => {
     setOpen(false);
-
     await refreshUser();
-
     setTimeout(() => {
       navigate("/app");
     }, 0);
@@ -103,7 +158,6 @@ export function DiagInicial() {
 
   const formatCurrency = (value: number) => {
     if (!value && value !== 0) return "";
-
     return value.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
@@ -114,13 +168,12 @@ export function DiagInicial() {
 
   const handleSearchCNPJ = async (cnpj: string) => {
     const clean = cnpj.replace(/\D/g, "");
-
     if (clean.length !== 14) return;
 
+    setCnpjLoading(true);
     try {
       const res = await api.get(`diagnostico-inicial/cnpj/${clean}`);
       const data = res.data;
-
       setEmpresaData({
         razao_social: data.razao_social,
         nome_fantasia: data.nome_fantasia,
@@ -131,6 +184,8 @@ export function DiagInicial() {
       console.error(`Erro ao buscar CNPJ: ${error}`);
       setEmpresaData({});
       toast.error("Não foi possível buscar os dados do CNPJ.");
+    } finally {
+      setCnpjLoading(false);
     }
   };
 
@@ -141,7 +196,6 @@ export function DiagInicial() {
     };
 
     setLoading(true);
-
     try {
       const res = await api.post("diagnostico-inicial", payload);
       setAnalise(res.data.analise);
@@ -155,131 +209,160 @@ export function DiagInicial() {
     }
   };
 
+  const booleanFields = [
+    {
+      name: "paga_acima_piso" as const,
+      label: "Paga salário acima do piso?",
+      description: "Considera todos os funcionários ativos",
+    },
+    {
+      name: "participa_outra_empresa" as const,
+      label: "Participa de outra empresa?",
+      description: "Como sócio, titular ou administrador",
+    },
+    {
+      name: "importacao_direta" as const,
+      label: "Realiza importação direta?",
+      description: "Importação de mercadorias do exterior",
+    },
+    {
+      name: "exporta_acima_limite" as const,
+      label: "Exporta acima do limite permitido?",
+      description: "Considera o limite anual do MEI",
+    },
+    {
+      name: "possui_filial" as const,
+      label: "Possui filial?",
+      description: "Unidades adicionais de operação",
+    },
+  ];
+
+  const isApto = analise?.status === "APTO";
+
   return (
-    <div className='min-h-screen p-6'>
+    <div className="min-h-screen bg-background">
       <NavBarMain />
-      <div className='max-w-4xl mx-auto px-6 py-24'>
-        <div className='mb-8'>
-          <h1 className='text-2xl font-bold mb-4'>DIAGNÓSTICO INICIAL</h1>
-          <p className='mb-2'>
-            Quer fazer uma simulação para verificar se você está apto a se
-            transformar em uma Microempresa?
+
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 pt-24">
+        {/* Header */}
+        <div className="mb-5">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-secondary rounded-full mb-4">
+            <ClipboardCheck size={14} className="text-primary" />
+            <span className="text-xs font-semibold text-primary uppercase">
+              Simulação gratuita
+            </span>
+          </div>
+          <h1 className="text-3xl font-bold text-primary mb-3 leading-tight">
+            Diagnóstico de Migração
+          </h1>
+          <p className="text-foreground leading-relaxed max-w-lg">
+            Descubra se o seu MEI está apto para se transformar em uma
+            Microempresa. Preencha os dados abaixo e receba uma análise
+            imediata.
           </p>
-          <p>Preencha o formulário abaixo e saiba agora.</p>
         </div>
 
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className='p-6 rounded-lg space-y-8'
+            className="space-y-5"
           >
-            <div>
-              <h2 className='text-sm font-semibold uppercase tracking-wide mb-4'>
-                Identificação
-              </h2>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            {/* Identificação */}
+            <SectionCard
+              icon={Building2}
+              title="Identificação da empresa"
+              description="Informe o CNPJ para buscarmos os dados automaticamente"
+              step={1}
+            >
+              <div className="space-y-5">
                 <FormField
                   control={form.control}
-                  name='cnpj_mei'
+                  name="cnpj_mei"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>CNPJ da empresa *</FormLabel>
+                      <FormLabel>
+                        CNPJ da empresa <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder='Ex: 00.000.000/0001-00'
-                          onChange={(e) =>
-                            field.onChange(formatCNPJ(e.target.value))
-                          }
-                          onBlur={(e) => handleSearchCNPJ(e.target.value)}
-                        />
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            placeholder="00.000.000/0001-00"
+                            className="h-11"
+                            onChange={(e) =>
+                              field.onChange(formatCNPJ(e.target.value))
+                            }
+                            onBlur={(e) => handleSearchCNPJ(e.target.value)}
+                          />
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                            {cnpjLoading ? (
+                              <Loader2 size={16} className="animate-spin text-primary" />
+                            ) : (
+                              <Search size={16} />
+                            )}
+                          </div>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                {/* Placeholder invisível para manter o CNPJ na primeira coluna */}
-                {!empresaData.uf && <div className='hidden md:block' />}
-
-                {/* Dados da empresa (readonly) */}
                 {empresaData.uf && (
-                  <>
-                    <FormItem>
-                      <FormLabel className='text-gray-400'>
-                        Razão social
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          className='bg-accent cursor-not-allowed opacity-50'
-                          value={empresaData.razao_social}
-                          readOnly
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-
-                    <FormItem>
-                      <FormLabel className='text-gray-400'>
-                        Nome fantasia
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          className='bg-accent cursor-not-allowed opacity-50'
-                          value={empresaData.nome_fantasia}
-                          readOnly
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-
-                    <FormItem>
-                      <FormLabel className='text-gray-400'>UF</FormLabel>
-                      <FormControl>
-                        <Input
-                          className='bg-accent cursor-not-allowed opacity-50'
-                          value={empresaData.uf}
-                          readOnly
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-
-                    <FormItem>
-                      <FormLabel className='text-gray-400'>Município</FormLabel>
-                      <FormControl>
-                        <Input
-                          className='bg-accent cursor-not-allowed opacity-50'
-                          value={empresaData.municipio}
-                          readOnly
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  </>
+                  <div className="rounded-xl bg-secondary p-4 space-y-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <CheckCircle2 size={15} className="text-primary" />
+                      <span className="text-xs font-semibold text-primary uppercase tracking-wide">
+                        Empresa encontrada
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {[
+                        { label: "Razão social", value: empresaData.razao_social },
+                        { label: "Nome fantasia", value: empresaData.nome_fantasia },
+                        { label: "UF", value: empresaData.uf },
+                        { label: "Município", value: empresaData.municipio },
+                      ].map((item) => (
+                        <div key={item.label}>
+                          <p className="text-xs text-primary font-medium mb-0.5">
+                            {item.label}
+                          </p>
+                          <p className="text-sm font-medium text-secondary-foreground">
+                            {item.value || "—"}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
-            </div>
+            </SectionCard>
 
             {/* Dados financeiros */}
-            <div>
-              <h2 className='text-sm font-semibold uppercase tracking-wide mb-4'>
-                Dados financeiros
-              </h2>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            <SectionCard
+              icon={TrendingUp}
+              title="Dados financeiros"
+              description="Valores referentes aos últimos 12 meses de operação"
+              step={2}
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <FormField
                   control={form.control}
-                  name='qtd_funcionario'
+                  name="qtd_funcionario"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Quantidade de funcionários *</FormLabel>
+                      <FormLabel>
+                        <Users size={14} />
+                        Funcionários <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
-                          value={field.value}
-                          placeholder='Ex: 10'
+                          value={field.value || ""}
+                          placeholder="0"
+                          className="h-11"
                           onChange={(e) =>
                             field.onChange(
-                              Number(formatOnlyNumbers(e.target.value)),
+                              Number(formatOnlyNumbers(e.target.value))
                             )
                           }
                         />
@@ -291,16 +374,19 @@ export function DiagInicial() {
 
                 <FormField
                   control={form.control}
-                  name='faturamento_12m'
+                  name="faturamento_12m"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="sm:col-span-2">
                       <FormLabel>
-                        Quanto foi o faturamento de MEI nos últimos 12 meses? *
+                        <DollarSign size={14}/>
+                        Faturamento bruto (12 meses){" "}
+                        <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
                           value={formatCurrency(field.value)}
-                          placeholder='Ex: R$ 20.000,00'
+                          placeholder="R$ 0,00"
+                          className="h-11"
                           onChange={(e) => {
                             const digits = e.target.value.replace(/\D/g, "");
                             field.onChange(digits ? Number(digits) / 100 : 0);
@@ -314,17 +400,19 @@ export function DiagInicial() {
 
                 <FormField
                   control={form.control}
-                  name='compras_12m'
+                  name="compras_12m"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="sm:col-span-2">
                       <FormLabel>
-                        Quanto foi gasto em compras de mercadorias ou insumos
-                        nos últimos 12 meses? *
+                        <ShoppingCart size={14}/>
+                        Compras de mercadorias ou insumos (12 meses){" "}
+                        <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
                           value={formatCurrency(field.value)}
-                          placeholder='Ex: R$ 20.000,00'
+                          placeholder="R$ 0,00"
+                          className="h-11"
                           onChange={(e) => {
                             const digits = e.target.value.replace(/\D/g, "");
                             field.onChange(digits ? Number(digits) / 100 : 0);
@@ -336,115 +424,171 @@ export function DiagInicial() {
                   )}
                 />
               </div>
-            </div>
+            </SectionCard>
 
             {/* Situação da empresa */}
-            <div>
-              <h2 className='text-sm font-semibold uppercase tracking-wide mb-4'>
-                Situação da empresa
-              </h2>
-
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-12 mt-6'>
-                {[
-                  { name: "paga_acima_piso", label: "Paga acima do piso?" },
-                  {
-                    name: "participa_outra_empresa",
-                    label: "Participa de outra empresa?",
-                  },
-                  { name: "importacao_direta", label: "Importa mercadorias?" },
-                  {
-                    name: "exporta_acima_limite",
-                    label: "Exporta acima do limite?",
-                  },
-                  { name: "possui_filial", label: "Possui filial?" },
-                ].map((item) => (
+            <SectionCard
+              icon={ClipboardCheck}
+              title="Situação da empresa"
+              description="Responda sobre as características operacionais do seu negócio"
+              step={3}
+            >
+              <div className="space-y-1">
+                {booleanFields.map((item) => (
                   <FormField
                     key={item.name}
                     control={form.control}
-                    name={item.name as keyof FormValues}
+                    name={item.name}
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{item.label}</FormLabel>
+                      <FormItem className={"flex items-center justify-between gap-4 py-4"}>
+                        <div className="flex-1 min-w-0">
+                          <FormLabel>
+                            {item.label}
+                          </FormLabel>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {item.description}
+                          </p>
+                        </div>
                         <FormControl>
-                          <RadioGroup
-                            value={String(field.value)}
-                            onValueChange={(val) =>
-                              field.onChange(val === "true")
-                            }
-                          >
-                            <div className='flex gap-10'>
-                              <div className='flex items-center gap-2'>
-                                <RadioGroupItem value='true' />
-                                <Label>Sim</Label>
-                              </div>
-                              <div className='flex items-center gap-2'>
-                                <RadioGroupItem value='false' />
-                                <Label>Não</Label>
-                              </div>
-                            </div>
-                          </RadioGroup>
+                          <div className="flex gap-2 shrink-0">
+                            <Button
+                              type="button"
+                              onClick={() => field.onChange(true)}
+                              className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-150 ${
+                                field.value === true
+                                  ? "bg-blue-600 border-blue-600 text-white shadow-sm"
+                                  : "bg-white border-gray-200 text-gray-500 hover:border-gray-300"
+                              }`}
+                            >
+                              Sim
+                            </Button>
+                            <Button
+                              type="button"
+                              onClick={() => field.onChange(false)}
+                              className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-150 ${
+                                field.value === false
+                                  ? "bg-gray-800 border-gray-800 text-white shadow-sm"
+                                  : "bg-white border-gray-200 text-gray-500 hover:border-gray-300"
+                              }`}
+                            >
+                              Não
+                            </Button>
+                          </div>
                         </FormControl>
                       </FormItem>
                     )}
                   />
                 ))}
               </div>
-            </div>
+            </SectionCard>
 
-            <div className='mt-8'>
-              <Button
-                type='submit'
-                className='w-full py-3 text-lg'
-                disabled={loading}
-              >
-                {loading ? "Enviando..." : "Enviar"}
-              </Button>
-            </div>
+            {/* Submit */}
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full h-12 text-base font-semibold rounded-xl"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={18} className="animate-spin mr-2" />
+                  Analisando...
+                </>
+              ) : (
+                <>
+                  Realizar diagnóstico
+                  <ArrowRight size={18} className="ml-2" />
+                </>
+              )}
+            </Button>
+
+            <p className="text-center text-xs text-foreground pb-4">
+              Análise baseada na legislação vigente do Simples Nacional
+            </p>
           </form>
         </Form>
       </div>
 
+      {/* Result Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className='max-w-2xl max-h-[80vh] overflow-y-auto'>
-          <DialogHeader>
-            <DialogTitle className='text-primary'>
-              Resultado do Diagnóstico
-            </DialogTitle>
-            <p className='text-sm text-muted-foreground'>
-              O usuário está{" "}
-              <span
-                className={`font-semibold text-sm ${analise?.status === "APTO" ? "text-[#49af50]" : "text-red-700"}`}
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto p-0 gap-0">
+          {/* Status header */}
+          <div
+            className={`px-6 pt-6 pb-5 ${
+              isApto
+                ? "bg-green-600"
+                : "bg-red-600"
+            }`}
+          >
+            <div className="flex items-start gap-4">
+              <div
+                className={`flex items-center justify-center w-12 h-12 rounded-full shrink-0 ${
+                  isApto ? "bg-green-300" : "bg-red-300"
+                }`}
               >
-                {analise?.status}
-              </span>{" "}
-              para fazer a migração!
-            </p>
-          </DialogHeader>
-
-          <div className='mt-4'>
-            <DialogDescription className='text-muted-foreground'>
-              {analise?.analise}.
-            </DialogDescription>
+                {isApto ? (
+                  <CheckCircle2 size={24} className="text-green-600" />
+                ) : (
+                  <XCircle size={24} className="text-red-600" />
+                )}
+              </div>
+              <div>
+                <DialogTitle className="text-lg font-bold text-background mb-0.5">
+                  Resultado do Diagnóstico
+                </DialogTitle>
+                <p className="text-sm text-muted">
+                  MEI{" "}
+                  <span
+                    className={`font-bold ${
+                      isApto ? "text-green-300" : "text-red-300"
+                    }`}
+                  >
+                    {analise?.status}
+                  </span>{" "}
+                  para migração para Microempresa
+                </p>
+              </div>
+            </div>
           </div>
 
-          {analise?.motivos && analise.motivos.length > 0 && (
-            <div className='space-y-2 '>
-              <p className='font-semibold text-primary'>Regras violadas:</p>
-              <ul className='list-disc pl-4 space-y-1'>
-                {analise.motivos.map((motivo, i) => (
-                  <li key={i} className='text-sm text-muted-foreground'>
-                    {motivo.regra}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {/* Body */}
+          <div className="px-6 py-5 space-y-5">
+            <DialogDescription className="text-sm text-muted-foreground leading-relaxed">
+              {analise?.analise}
+            </DialogDescription>
 
-          <DialogFooter>
-            <Button variant='outline' onClick={handleNavigate}>
+            {analise?.motivos && analise.motivos.length > 0 && (
+              <div className="rounded-xl border border-amber-100 bg-amber-50 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertTriangle size={15} className="text-amber-500" />
+                  <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide">
+                    Regras que impedem a migração
+                  </p>
+                </div>
+                <ul className="space-y-2">
+                  {analise.motivos.map((motivo, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+                      <span className="text-sm text-amber-800">{motivo.regra}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="px-6 pb-6 gap-2 flex-col sm:flex-row">
+            <Button
+              variant="outline"
+              onClick={handleNavigate}
+              className="flex-1 h-10"
+            >
               Ver mais informações
             </Button>
-            <Button onClick={handleNavigate}>Continuar</Button>
+            <Button onClick={handleNavigate} className="flex-1 h-10">
+              Continuar
+              <ArrowRight size={16} className="ml-1.5" />
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

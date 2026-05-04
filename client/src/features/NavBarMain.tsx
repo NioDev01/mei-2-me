@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import { Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ToggleTemas } from "./ToggleTemas";
@@ -9,6 +10,7 @@ export function NavBarMain() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const { isAuthenticated, loading } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -80,9 +82,9 @@ export function NavBarMain() {
             <ToggleTemas />
 
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/login">
+              <Link to={!loading && isAuthenticated ? "/app" : "/login"}>
                 <User className="w-4 h-4 mr-1" />
-                Entrar
+                {!loading && isAuthenticated ? "Minha conta" : "Entrar"}
               </Link>
             </Button>
           </div>
@@ -117,8 +119,11 @@ export function NavBarMain() {
 
           <div className="pt-2 flex flex-col gap-2">
             <Button variant="outline" asChild>
-              <Link to="/login" onClick={() => setMenuOpen(false)}>
-                Entrar
+              <Link
+                to={!loading && isAuthenticated ? "/app" : "/login"}
+                onClick={() => setMenuOpen(false)}
+              >
+                {!loading && isAuthenticated ? "Minha conta" : "Entrar"}
               </Link>
             </Button>
 
