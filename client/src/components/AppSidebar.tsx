@@ -28,7 +28,6 @@ import {
   ListChecks,
   BotMessageSquare,
   User,
-  Settings,
   LogOut,
 } from "lucide-react";
 
