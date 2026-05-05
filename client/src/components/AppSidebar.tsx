@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 
 import { useEffect, useState, Fragment } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { ContAIChat } from "@/components/ContAIChat";
 
@@ -42,6 +42,18 @@ const items = [
   { title: "Jornada", icon: Route, hash: "jornada" },
   { title: "Simulador de Regime", icon: Calculator, hash: "simulador" },
 ];
+
+/**
+ * Reseta os locks de estilo que o Radix UI aplica no document.body ao abrir
+ * overlays (DropdownMenu, Sheet, Dialog). Se a rota mudar enquanto algum
+ * desses componentes ainda não terminou de fechar, o cleanup do Radix não
+ * é executado e o body fica com pointer-events: none / overflow: hidden
+ * indefinidamente — bloqueando todos os cliques em qualquer breakpoint.
+ */
+function resetRadixBodyLocks() {
+  document.body.style.pointerEvents = "";
+  document.body.style.overflow = "";
+}
 
 function SidebarInner({
   activeHash,
@@ -65,19 +77,32 @@ function SidebarInner({
     onOpenChat();
   };
 
+  const handleNavClick = () => {
+    setOpenMobile(false);
+  };
+
+  // Fecha o sidebar e aguarda 300ms (duração padrão de animação do Radix)
+  // antes de navegar. Sem esse delay, o DropdownMenu e/ou o Sheet do Sidebar
+  // não terminam o ciclo de fechamento, e o Radix deixa pointer-events: none
+  // no document.body sem fazer o cleanup.
+  const handleNavigateConta = () => {
+    setOpenMobile(false);
+    setTimeout(() => onNavigateConta(), 300);
+  };
+
   return (
     <Sidebar variant='sidebar'>
       <SidebarHeader>
         <div className='flex items-center space-x-2 p-4'>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Avatar className=' cursor-pointer border border-gray-400/50'>
+              <Avatar className='cursor-pointer border border-gray-400/50'>
                 <AvatarFallback className='text-sm'>{iniciais}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className='w-56' align='start'>
               <DropdownMenuGroup>
-                <DropdownMenuItem onClick={onNavigateConta}>
+                <DropdownMenuItem onClick={handleNavigateConta}>
                   <User />
                   Dados da Conta
                 </DropdownMenuItem>
@@ -104,6 +129,7 @@ function SidebarInner({
                     <SidebarMenuButton asChild>
                       <a
                         href={`#${item.hash}`}
+                        onClick={handleNavClick}
                         className={`flex items-center w-full rounded-md px-2 py-1.5 transition-colors
                           ${
                             isActive
@@ -141,7 +167,24 @@ export function AppSidebar() {
   const [openChat, setOpenChat] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout, user } = useAuth();
+  const { setOpenMobile } = useSidebar();
+
+  // Ao mudar de rota (incluindo botão voltar/avançar do browser),
+  // força o fechamento do sidebar e reseta os locks do Radix no body.
+  useEffect(() => {
+    setOpenMobile(false);
+    resetRadixBodyLocks();
+  }, [location.pathname]);
+
+  // Garante o cleanup mesmo se o componente desmontar de forma abrupta
+  // (ex: logout, erro, suspense boundary).
+  useEffect(() => {
+    return () => {
+      resetRadixBodyLocks();
+    };
+  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -155,7 +198,6 @@ export function AppSidebar() {
         const partes = user.nome.trim().split(" ");
         const primeiro = partes[0];
         const ultimo = partes[partes.length - 1];
-
         return `${primeiro} ${ultimo}`;
       })()
     : "MEI2ME";
