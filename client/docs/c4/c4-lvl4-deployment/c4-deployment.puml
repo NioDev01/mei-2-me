@@ -1,0 +1,36 @@
+@startuml C4_Deployment_Mei2Me
+!include ./C4_Deployment.puml
+
+title C4 - Deployment Diagram - MEI2ME
+
+Person(usuario, "Usuário (MEI)", "Acessa via navegador")
+
+Deployment_Node(vercel, "Vercel", "Cloud Platform", "Hospedagem do frontend (CDN + Edge + monitoramento de performance)") {
+    Container(frontend, "Frontend Web", "React + Vite", "Executado no navegador do usuário")
+}
+
+Deployment_Node(render, "Render", "Cloud Platform (PaaS)", "Execução do backend") {
+    Container(backend, "Backend API", "NestJS (Node.js)", "API monolítica modular com regras de negócio e orquestração de serviços")
+}
+
+Deployment_Node(neon, "Neon", "Serverless Database Platform", "Banco PostgreSQL gerenciado") {
+    ContainerDb(database, "PostgreSQL", "Serverless", "Persistência de dados e histórico de interações")
+}
+
+System_Ext(receita, "ReceitaWS API", "Consulta fiscal")
+System_Ext(gemini, "Gemini API", "Processamento de linguagem natural")
+System_Ext(resend, "Resend API", "Envio de e-mails")
+System_Ext(clarity, "Microsoft Clarity", "Analytics")
+
+Rel(usuario, frontend, "Acessa", "HTTPS")
+
+Rel(frontend, backend, "Consome API", "HTTPS/REST")
+Rel(frontend, clarity, "Coleta dados de uso", "HTTPS")
+
+Rel(backend, database, "Lê e escreve", "Prisma ORM")
+
+Rel(backend, receita, "Consulta dados fiscais", "HTTPS")
+Rel(backend, gemini, "Processa mensagens via IA", "HTTPS")
+Rel(backend, resend, "Envia e-mails", "HTTPS")
+
+@enduml

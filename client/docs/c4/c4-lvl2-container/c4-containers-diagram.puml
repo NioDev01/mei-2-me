@@ -1,0 +1,34 @@
+@startuml C4_Container_Mei2Me
+!include ./C4_Container.puml
+
+title C4 - Nível 2: Diagrama de Containers - MEI2ME
+
+Person(usuario, "Usuário (MEI)")
+
+System_Boundary(mei2me, "MEI2ME System") {
+
+    Container(frontend, "Frontend Web", "React + Vite (Vercel)", "Interface do usuário e consumo da API")
+
+    Container(backend, "Backend API", "NestJS (Node.js) - Render", "Regras de negócio, autenticação e processamento")
+
+    ContainerDb(database, "Database", "PostgreSQL (Neon - Serverless)", "Persistência de dados da aplicação")
+
+}
+
+System_Ext(receita, "ReceitaWS API", "Consulta de dados fiscais")
+System_Ext(gemini, "Gemini API", "IA para chatbot")
+System_Ext(resend, "Resend API", "Envio de e-mails")
+System_Ext(clarity, "Microsoft Clarity", "Analytics de comportamento do usuário")
+
+Rel(usuario, frontend, "Acessa", "HTTPS")
+
+Rel(frontend, backend, "Consome API", "HTTPS/REST")
+Rel(frontend, clarity, "Envia eventos de uso", "HTTPS")
+
+Rel(backend, database, "Lê e escreve", "Prisma ORM")
+
+Rel(backend, receita, "Consulta dados fiscais", "HTTPS")
+Rel(backend, gemini, "Processa interações do chatbot", "HTTPS")
+Rel(backend, resend, "Envia e-mails", "HTTPS")
+
+@enduml

@@ -1,0 +1,20 @@
+@startuml C4_Context_Mei2Me
+!include ./C4_Context.puml
+
+title C4 - Nível 1: Diagrama de Contexto - MEI2ME
+
+Person(usuario, "Usuário (MEI)", "Microempreendedor que realiza a transição de MEI para ME")
+
+System(mei2me, "MEI2ME", "Sistema web que auxilia no processo de transição de MEI para ME")
+
+System_Ext(receita, "ReceitaWS API", "Consulta de dados fiscais")
+System_Ext(gemini, "Gemini API", "IA para chatbot")
+System_Ext(resend, "Resend API", "Envio de e-mails")
+
+Rel(usuario, mei2me, "Utiliza", "HTTPS")
+
+Rel(mei2me, receita, "Consulta dados fiscais", "HTTPS")
+Rel(mei2me, gemini, "Chatbot", "HTTPS")
+Rel(mei2me, resend, "Envia e-mails", "HTTPS")
+
+@enduml

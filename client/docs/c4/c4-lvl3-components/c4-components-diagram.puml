@@ -1,0 +1,67 @@
+@startuml C4_Component_Mei2Me
+!include ./C4_Component.puml
+
+title C4 - Nível 3: Componentes do Backend - MEI2ME
+
+Container_Boundary(backend, "Backend API (NestJS)") {
+
+    Component(auth, "Auth Module", "NestJS Module", "Autenticação e controle de acesso")
+
+    Component(diagnostico, "Diagnóstico Inicial Module", "NestJS Module", "Recebe dados do usuário e retorna diagnóstico de elegibilidade")
+
+    Component(analise, "Análise Migração Module", "NestJS Module", "Aplica regras de transição com base nos dados informados")
+
+    Component(jornada, "Jornada Module", "NestJS Module", "Gerencia o progresso do usuário na transição")
+
+    Component(ato, "Ato Constitutivo Module", "NestJS Module", "Gera Requerimento de Empresário ou Contrato Social conforme natureza jurídica")
+
+    Component(checklist, "Checklist de Documentos Module", "NestJS Module", "Controle e acompanhamento de documentos")
+
+    Component(simulador, "Simulador de Regimes Module", "NestJS Module", "Simulação de cenários tributários")
+
+    Component(ai, "AI Module", "NestJS Module", "Orquestra contexto do usuário, histórico de mensagens e integração com serviço de IA")
+
+    Component(prisma, "Prisma ORM", "Data Access Layer", "Abstração de acesso ao banco de dados PostgreSQL")
+
+}
+
+ContainerDb(database, "PostgreSQL (Neon)", "Database", "Persistência de dados da aplicação")
+
+System_Ext(receita, "ReceitaWS API", "Consulta de dados fiscais")
+System_Ext(gemini, "Gemini API", "Processamento de linguagem natural")
+System_Ext(resend, "Resend API", "Envio de e-mails")
+
+' =========================
+' RELAÇÕES INTERNAS
+' =========================
+
+Rel(auth, prisma, "Utiliza")
+Rel(diagnostico, analise, "Solicita análise")
+Rel(diagnostico, prisma, "Utiliza")
+
+Rel(jornada, ato, "Orquestra geração")
+Rel(jornada, prisma, "Utiliza")
+Rel(ato, prisma, "Utiliza")
+
+Rel(checklist, prisma, "Utiliza")
+Rel(simulador, prisma, "Utiliza")
+
+Rel(ai, prisma, "Lê e persiste histórico")
+
+' =========================
+' INFRAESTRUTURA
+' =========================
+
+Rel(prisma, database, "Conecta")
+
+' =========================
+' INTEGRAÇÕES EXTERNAS
+' =========================
+
+Rel(diagnostico, receita, "Consulta dados fiscais")
+
+Rel(ai, gemini, "Processa mensagens e gera respostas")
+
+Rel(auth, resend, "Envia e-mails transacionais")
+
+@enduml
