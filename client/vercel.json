@@ -8,6 +8,10 @@
       "dest": "/assets/$1"
     },
     {
+      "src": "/docs/(.*)",
+      "dest": "/docs/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
