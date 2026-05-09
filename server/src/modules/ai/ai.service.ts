@@ -83,7 +83,7 @@ export class AiService {
             ? `R$ ${Number(ato.capitalSocial).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
             : 'não informado';
 
-        // Titular é obrigatório apenas para SLU e LTDA
+        // Titular não se aplica para EI
         const titularLabel =
           natureza === 'EI'
             ? '(não se aplica para EI)'
@@ -91,7 +91,7 @@ export class AiService {
               ? `${ato.titular.nome} (CPF: ${ato.titular.cpf || 'não informado'})`
               : 'não informado';
 
-        // Sócios são obrigatórios apenas para LTDA
+        // Sócios só se aplicam para LTDA
         const sociosLabel =
           natureza === 'EI' || natureza === 'SLU'
             ? '(não se aplica para esta natureza jurídica)'
@@ -113,23 +113,53 @@ export class AiService {
       const diagnosticoText = context?.diagnostico
         ? `- Status: ${context.diagnostico.status || 'não informado'}
         - Resumo: ${context.diagnostico.resumo || 'não disponível'}
-        - Principais motivos: ${context.diagnostico.principaisMotivos?.length ? context.diagnostico.principaisMotivos.join(', ') : 'nenhum'}`
+        - Principais motivos: ${
+          context.diagnostico.principaisMotivos?.length
+            ? context.diagnostico.principaisMotivos.join(', ')
+            : 'nenhum'
+        }`
         : '- Diagnóstico ainda não realizado.';
 
       // =========================
       // Simulador
+      // Formata os dados de comparação entre os dois regimes para que
+      // o ContAI possa explicar a recomendação com dados concretos.
       // =========================
+      const fmtBRL = (n: number | undefined | null): string =>
+        n != null
+          ? `R$ ${Number(n).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+          : 'não informado';
+
+      const fmtPct = (n: number | undefined | null): string =>
+        n != null ? `${(Number(n) * 100).toFixed(2)}%` : 'não informado';
+
+      const fmtRecomendacao = (r: string | undefined | null): string => {
+        if (r === 'SN') return 'Simples Nacional';
+        if (r === 'LP') return 'Lucro Presumido';
+        return r ?? 'não definido';
+      };
+
       const simuladorText = context?.simulador
-        ? `- Faturamento (12m): ${context.simulador.faturamento_12m ?? 'não informado'}
-        - Regime recomendado: ${context.simulador.recomendacao ?? 'não definido'}`
+        ? `- Faturamento (12m): ${fmtBRL(context.simulador.faturamento_12m)}
+        - Regime recomendado: ${fmtRecomendacao(context.simulador.recomendacao)}
+        - Simples Nacional → tributos: ${fmtBRL(context.simulador.tributos_simples)} | alíq. efetiva: ${fmtPct(context.simulador.aliq_efetiva_simples)} | lucro líq.: ${fmtBRL(context.simulador.lucro_liq_simples)}
+        - Lucro Presumido  → tributos: ${fmtBRL(context.simulador.tributos_lucrop)} | alíq. efetiva: ${fmtPct(context.simulador.aliq_efetiva_lucrop)} | lucro líq.: ${fmtBRL(context.simulador.lucro_liq_lucrop)}`
         : '- Simulação ainda não realizada.';
 
       // =========================
       // Checklist
+      // Recebe um array de labels já traduzidos pelo frontend.
+      // Filtra apenas os itens pendentes (enviados pelo cliente).
       // =========================
-      const checklistText = context?.checklist?.length
-        ? `Documentos pendentes: ${context.checklist.join(', ')}`
-        : 'Todos os documentos foram registrados.';
+      const checklistItems: string[] = Array.isArray(context?.checklist)
+        ? context.checklist.filter(
+            (item: any) => typeof item === 'string' && item.trim() !== '',
+          )
+        : [];
+
+      const checklistText = checklistItems.length
+        ? `Documentos pendentes (${checklistItems.length}): ${checklistItems.join(', ')}`
+        : '- Todos os documentos foram registrados.';
 
       // =========================
       // Foco por módulo
@@ -138,7 +168,7 @@ export class AiService {
         jornada:
           'O usuário está na tela da Jornada. Caso ele solicite, oriente o próximo passo de forma direta e prática. O Ato Constitutivo é uma funcionalidade dentro deste módulo — se for relevante, explique como utilizá-la.',
         simulador:
-          'O usuário está no Simulador de Regime Tributário. Caso ele solicite, Ajude a interpretar os resultados e a decidir entre os regimes disponíveis.',
+          'O usuário está no Simulador de Regime Tributário. Caso ele solicite, ajude a interpretar os resultados e a decidir entre os regimes disponíveis.',
         checklist:
           'O usuário está no Checklist de Documentos. Caso ele solicite, foque nos documentos que ainda faltam e oriente como obtê-los.',
         painel:
@@ -229,7 +259,7 @@ export class AiService {
         10. NUNCA use linguagem que simule percepção própria ou acesso ativo aos dados do usuário. Em vez de "percebi que...", "vi que...", "notei que..." — use "de acordo com suas informações...", "conforme o preenchido..." ou simplesmente afirme o fato diretamente.
         11. APENAS aponte pendências quando o contexto indicar explicitamente que algo está incompleto.
         12. APENAS indique ao usuário onde realizar uma ação específica dentro da plataforma (qual tela, etapa ou ferramenta acessar) se essa informação está explicitamente mapeada no contexto.
-        13. NUNCA suponha o que o sistema pode ou não pode fazer. Se o usuário pedir algo, responda com base no que a plataforma oferece de acordo com oque é descrito no contexto, sem especular sobre possibilidades técnicas.
+        13. NUNCA suponha o que o sistema pode ou não pode fazer. Se o usuário pedir algo, responda com base no que a plataforma oferece de acordo com o que é descrito no contexto, sem especular sobre possibilidades técnicas.
 
         # HISTÓRICO RECENTE
         ${historyText}

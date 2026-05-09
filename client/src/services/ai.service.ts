@@ -7,10 +7,29 @@ export type ChatMessage = {
 };
 
 export type AtoConstitutivoContext = {
-  naturezaJuridica?: string;
-  capitalSocial?: number;
-  titular?: { nome?: string; cpf?: string };
+  naturezaJuridica?: string | null;
+  capitalSocial?: number | null;
+  titular?: { nome?: string; cpf?: string } | null;
   socios?: { nome?: string; cpf?: string }[];
+};
+
+export type SimuladorContext = {
+  faturamento_12m?: number;
+  recomendacao?: string;
+  // Simples Nacional
+  tributos_simples?: number;
+  aliq_efetiva_simples?: number;
+  lucro_liq_simples?: number;
+  // Lucro Presumido
+  tributos_lucrop?: number;
+  aliq_efetiva_lucrop?: number;
+  lucro_liq_lucrop?: number;
+};
+
+export type DiagnosticoContext = {
+  status?: string | null;
+  resumo?: string | null;
+  principaisMotivos?: string[];
 };
 
 export type AIContext = {
@@ -22,11 +41,10 @@ export type AIContext = {
     }[];
     progress?: number;
   };
-  simulador?: {
-    faturamento_12m?: number;
-    recomendacao?: string;
-  };
+  simulador?: SimuladorContext;
+  // Array de labels legíveis dos documentos ainda pendentes
   checklist?: string[];
+  diagnostico?: DiagnosticoContext;
   atoConstitutivo?: AtoConstitutivoContext;
 };
 
