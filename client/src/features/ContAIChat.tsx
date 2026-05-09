@@ -20,6 +20,25 @@ type Message = {
 
 type Position = "bottom-right" | "bottom-left" | "top-right" | "top-left"
 
+// =========================
+// Mapa de labels do checklist
+// Traduz as chaves técnicas da API para nomes legíveis no prompt
+// =========================
+const checklistLabels: Record<string, string> = {
+  possui_rg: "RG",
+  possui_cpf: "CPF",
+  possui_comprovante_residencia: "Comprovante de residência",
+  possui_cartao_cnpj: "Cartão CNPJ",
+  comunicacao_desenquadramento_simei: "Comunicação de desenquadramento do SIMEI",
+  formulario_capa_marrom: "Formulário capa marrom",
+  requerimento_desenquadramento: "Requerimento de desenquadramento",
+  comprovante_pagamento_dare: "Comprovante de pagamento do DARE",
+  ato_constitutivo: "Ato constitutivo",
+  possui_ccmei: "CCMEI",
+  possui_cadesp: "CADESP",
+  comprovante_situacao_simples_nacional: "Comprovante de situação no Simples Nacional",
+}
+
 function getCurrentModule() {
   const hash = window.location.hash.replace("#", "")
   return hash || "painel"
@@ -97,15 +116,20 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
     loadHistory()
   }, [])
 
-  // =========================
-  // CONTEXTO
-  // =========================
   async function fetchContext() {
     try {
       const jornada = await getJornadaSummary()
-      const simulador = await getSimulador()
+
+      // Simulador pode retornar 404 quando ainda não foi feito
+      let simulador = null
+      try {
+        simulador = await getSimulador()
+      } catch { simulador = null }
+
+      // Checklist sempre disponível após diagnóstico
       const checklist = await getChecklistDocumentos()
 
+      // Diagnóstico depende do CNPJ do usuário
       let diagnostico = null
       if (user?.cnpj) {
         try {
@@ -118,6 +142,7 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
         } catch { diagnostico = null }
       }
 
+      // Ato constitutivo pode retornar 400 quando ainda não foi preenchido
       let atoConstitutivo = null
       try {
         const raw = await getEmpresaTransicao()
@@ -126,8 +151,11 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
           const eiData = raw.eiData
           atoConstitutivo = {
             naturezaJuridica: raw.naturezaJuridica || null,
+            // Capital social pode estar em ltdaData (LTDA/SLU) ou eiData (EI)
             capitalSocial: ltdaData?.capitalSocial ?? eiData?.capitalSocial ?? null,
+            // Titular só existe para LTDA e SLU
             titular: ltdaData?.titular || null,
+            // Sócios só existem para LTDA; SLU envia array vazio
             socios: ltdaData?.socios || [],
           }
         }
@@ -139,15 +167,38 @@ export function ContAIChat({ onClose }: { onClose: () => void }) {
 
   function buildContext(raw: any) {
     if (!raw) return undefined
+
     return {
       module: getCurrentModule(),
-      jornada: { steps: raw.jornada?.steps || [], progress: raw.jornada?.progress },
+
+      jornada: {
+        steps: raw.jornada?.steps || [],
+        progress: raw.jornada?.progress,
+      },
+
+      // Envia todos os campos do simulador para o backend poder
+      // montar a comparação completa entre Simples Nacional e Lucro Presumido
       simulador: raw.simulador
-        ? { faturamento_12m: raw.simulador.faturamento_12m, recomendacao: raw.simulador.recomendacao }
+        ? {
+            faturamento_12m: raw.simulador.faturamento_12m,
+            recomendacao: raw.simulador.recomendacao,
+            tributos_simples: raw.simulador.tributos_simples,
+            aliq_efetiva_simples: raw.simulador.aliq_efetiva_simples,
+            lucro_liq_simples: raw.simulador.lucro_liq_simples,
+            tributos_lucrop: raw.simulador.tributos_lucrop,
+            aliq_efetiva_lucrop: raw.simulador.aliq_efetiva_lucrop,
+            lucro_liq_lucrop: raw.simulador.lucro_liq_lucrop,
+          }
         : undefined,
+
+      // Filtra apenas os documentos pendentes (value === false) e
+      // traduz as chaves técnicas para labels legíveis pelo ContAI
       checklist: raw.checklist
-        ? Object.entries(raw.checklist).filter(([_, v]) => v === false).map(([k]) => k)
+        ? Object.entries(raw.checklist as Record<string, boolean>)
+            .filter(([_, v]) => v === false)
+            .map(([k]) => checklistLabels[k] ?? k)
         : [],
+
       diagnostico: raw.diagnostico || undefined,
       atoConstitutivo: raw.atoConstitutivo || undefined,
     }
