@@ -11,7 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Calculator, BanknoteArrowUp, BanknoteArrowDown } from "lucide-react";
+import { Calculator, BanknoteArrowUp, BanknoteArrowDown, Loader2 } from "lucide-react";
 import { NumericFormat } from "react-number-format";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -212,8 +212,18 @@ export function RegimeForm({
             className='w-full text-lg'
             disabled={isSubmitting}
           >
-            <Calculator className='mr-2' />
-            {isSubmitting ? "Calculando..." : "Calcular"}
+
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 animate-spin" />
+                Calculando...
+              </>
+            ) : (
+              <>
+                <Calculator className="mr-2" />
+                Calcular
+              </>
+            )}
           </Button>
         </form>
       </Form>

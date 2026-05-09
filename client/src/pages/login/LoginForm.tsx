@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2, LogIn } from "lucide-react";
 
 import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
@@ -305,7 +305,18 @@ export function LoginForm() {
                   className="w-full"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Entrando..." : "Entrar"}
+
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 animate-spin" />
+                      Entrando...
+                    </>
+                  ) : (
+                    <>
+                      <LogIn className="mr-2" />
+                      Entrar
+                    </>
+                  )}
                 </Button>
               </form>
             </Tabs>

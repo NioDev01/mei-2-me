@@ -34,7 +34,7 @@ import {
 import { useEffect, useState, Fragment } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { ContAIChat } from "@/components/ContAIChat";
+import { ContAIChat } from "@/features/ContAIChat";
 
 const items = [
   { title: "Painel MEI", icon: PanelsLeftBottom, hash: "painel" },

@@ -1,5 +1,5 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/AppSidebar"
+import { AppSidebar } from "@/features/AppSidebar"
 import { ToggleTemas } from "@/features/ToggleTemas"
 
 import { useState, useEffect } from "react"

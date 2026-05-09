@@ -12,6 +12,7 @@ import { stepComponentMap } from "@/pages/modules/jornada/steps"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { JornadaHeader } from "../components/JornadaHeader"
+import { StepTemplateSkeleton } from "../components/StepTemplateSkeleton"
 
 type Props = {
   step: string
@@ -73,7 +74,7 @@ export function JornadaStep({
     (item) => !item.required || item.isChecked
   )
 
-  if (loading) return <div>Carregando...</div>
+  if (loading) return <StepTemplateSkeleton />
 
   return (
     <div className="w-full space-y-8 pt-3">
