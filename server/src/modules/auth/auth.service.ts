@@ -237,7 +237,10 @@ export class AuthService {
       `,
     });
 
-    return { token: code.toString() };
+    return {
+      message:
+        'Se o e-mail informado estiver cadastrado, você receberá as instruções de recuperação em breve.',
+    };
   }
 
   async resetPassword(data: ResetPasswordDto) {
