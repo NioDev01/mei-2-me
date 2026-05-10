@@ -91,7 +91,7 @@ export function RedefinirSenha() {
 
   if (!email) {
     toast.error("Sessão inválida. Solicite o código novamente.");
-    navigate("/recuperar-senha");
+    navigate("/recuperarsenha");
     return;
   } 
 
